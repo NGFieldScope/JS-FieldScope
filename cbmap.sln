@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\cbmap\", ".", "{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.VirtualPath = "/cbmap"
+		Debug.AspNetCompiler.PhysicalPath = "..\cbmap\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\cbmap\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/deploy"
+		Release.AspNetCompiler.PhysicalPath = "..\cbmap\"
+		Release.AspNetCompiler.TargetPath = "E:\Test\deploy\"
+		Release.AspNetCompiler.Updateable = "false"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "2085"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+		Release|.NET = Release|.NET
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}.Debug|.NET.ActiveCfg = Debug|.NET
+		{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}.Debug|.NET.Build.0 = Debug|.NET
+		{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}.Release|.NET.ActiveCfg = Debug|.NET
+		{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}.Release|.NET.Build.0 = Debug|.NET
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
