@@ -105,14 +105,14 @@
             var wfsDiv = dojo.byId("wfsDiv");
             wfsForm.onSave = function () {
                 dojo.byId("wfsWorkingDiv").style.visibility="visible";
-                var record = new GMLRecord();
+                var record = new GML.Record();
                 record.typeName = this.description.typeName;
                 record.xmlns = this.description.xmlns;
                 record.shapeType = shape.GetType();
                 record.attributes = this.getAttributes();
                 record.geomName = this.description.geom.name;
                 record.shapes.push(new VEShape(shape.GetType(), shape.GetPoints()));
-                var serializer = new GMLSerializer();
+                var serializer = new GML.Serializer();
                 WFS.insertAsync(wfsLayer.getTransactionUrl(), 
                                 [serializer.serialize(record)], 
                                 function () {

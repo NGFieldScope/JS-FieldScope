@@ -1,7 +1,5 @@
-/*global dojo */
-/*global GMLParser */
+/*global dojo, GML StringUtils, XMLUtils, xmlns */
 /*global VELatLong, VELatLongRectangle, VEShapeLayer */
-/*global StringUtils, XMLUtils, xmlns */
 /*global Type, Sys, WFS */
 
 Type.registerNamespace("WFS");
@@ -316,7 +314,7 @@ WFS.Layer = function (url) {
     var shapeLayer = new VEShapeLayer();
     var currentRequest = null;
     var currentBounds = null;
-    var parser = new GMLParser();
+    var parser = new GML.Parser();
     var instance = this;
     
     function updateShapeLayer () {

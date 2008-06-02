@@ -46,228 +46,243 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*global VEAltitudeMode, VELatLong, VEShape, VEShapeType */
 /*global StringUtils, XMLUtils, xmlns */
+/*global Type, Sys, GML */
 
-function GMLRecord () {
-  this.typeName = "";
-  this.xmlns = null;
-  this.fid = null;
-  this.shapeType = null;
-  this.attributes = [];
-  this.geomName = "";
-  this.shapes = [];
-}
+Type.registerNamespace("GML");
 
+GML.Record = function () {
+    this.typeName = "";
+    this.xmlns = null;
+    this.fid = null;
+    this.shapeType = null;
+    this.attributes = [];
+    this.geomName = "";
+    this.shapes = [];
+  };
 
-function GMLParser () {
-  
-  function parseAttributes (xml) {
-    var attributes = {};
-    // assume attributes are children of the first type 1 child
-    var childNode = xml.firstChild;
-    var children, child, grandchildren, grandchild, name, value;
-    while (childNode) {
-      if (childNode.nodeType === 1) {
-        // attributes are type 1 children with one type 3 child
-        children = childNode.childNodes;
-        for (var i = 0; i < children.length; i += 1) {
-          child = children[i];
-          if (child.nodeType === 1) {
-            grandchildren = child.childNodes;
-            if (grandchildren.length === 1) {
-              grandchild = grandchildren[0];
-              if ((grandchild.nodeType) === 3 || (grandchild.nodeType === 4)) {
-                name = (child.prefix) ? child.nodeName.split(":")[1] : child.nodeName;
-                value = StringUtils.trimSpaces(grandchild.nodeValue);
-                attributes[name] = value;
+GML.Record.registerClass("GML.Record");
+
+GML.Parser = function () {
+    
+    function parseAttributes (xml) {
+      var attributes = {};
+      // assume attributes are children of the first type 1 child
+      var childNode = xml.firstChild;
+      var children, child, grandchildren, grandchild, name, value;
+      while (childNode) {
+        if (childNode.nodeType === 1) {
+          // attributes are type 1 children with one type 3 child
+          children = childNode.childNodes;
+          for (var i = 0; i < children.length; i += 1) {
+            child = children[i];
+            if (child.nodeType === 1) {
+              grandchildren = child.childNodes;
+              if (grandchildren.length === 1) {
+                grandchild = grandchildren[0];
+                if ((grandchild.nodeType === 3) || (grandchild.nodeType === 4)) {
+                  name = child.prefix ? child.nodeName.split(":")[1] : child.nodeName;
+                  value = StringUtils.trimSpaces(grandchild.nodeValue);
+                  attributes[name] = value;
+                }
               }
             }
           }
+          break;
         }
-        break;
+        childNode = childNode.nextSibling;
       }
-      childNode = childNode.nextSibling;
+      return attributes;
     }
-    return attributes;
-  }
-  
-  // Returns a list of GMLRecords
-  this.parseGML = function (xml) {
-      var featureNodes = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "featureMember");
-      var records = [];
-      for (var i = 0; i < featureNodes.length; i += 1) {
-        records.push(this.parseFeature(featureNodes[i]));
-      }
-      return records;
-    };
-  
-  this.parseFeature = function (xml) {
-      var result = new GMLRecord();
-      // only accept one geometry per feature - look for highest "order"
-      var type, nodeList;
-      for (var t in this.shapeTypes) {
-        if (t) {
-          type = t;
-          nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, type);
-          if (nodeList.length > 0) {
-            // only deal with first geometry of this type
-            var parseMethod = this.parseGeometryMethods[type.toLowerCase()];
-            if (parseMethod) {
-              result.shapes = parseMethod.call(this, nodeList[0]);
-              result.geomName = nodeList[0].parentNode.localName;
-            } else {
-              alert("unsupported geometry type: " + type);
+    
+    // Returns a list of GML.Records
+    this.parseGML = function (xml) {
+        var featureNodes = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "featureMember");
+        var records = [];
+        for (var i = 0; i < featureNodes.length; i += 1) {
+          records.push(this.parseFeature(featureNodes[i]));
+        }
+        return records;
+      };
+    
+    this.parseFeature = function (xml) {
+        var result = new GML.Record();
+        // only accept one geometry per feature - look for highest "order"
+        var type, nodeList;
+        for (var t in this.shapeTypes) {
+          if (t) {
+            type = t;
+            nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, type);
+            if (nodeList.length > 0) {
+              // only deal with first geometry of this type
+              var parseMethod = this.parseGeometryMethods[type.toLowerCase()];
+              if (parseMethod) {
+                result.shapes = parseMethod.call(this, nodeList[0]);
+                result.geomName = nodeList[0].parentNode.localName;
+              } else {
+                alert("unsupported geometry type: " + type);
+              }
+              break;
             }
-            break;
           }
         }
-      }
-      result.typeName = xml.firstChild.localName;
-      result.xmlns = xml.firstChild.namespaceURI;
-      result.fid = xml.firstChild.getAttribute("fid");
-      result.shapeType = this.shapeTypes[type];
-      result.attributes = parseAttributes(xml);
-      return result;
-    };
-  
-  var parseLinestringCoordinates = function (xml) {
-      var nodeList, coordString;
-      var coords = [];
-      var points = [];
-      var i, j, x, y;
-      // look for <gml:posList>
-      nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "posList");
-      if (nodeList.length > 0) {
-        coordString = nodeList[0].text || nodeList[0].textContent;
-        coordString = StringUtils.trimSpace(coordString);
-        coords = StringUtils.splitOnSpaces(coordString);
-        var dim = parseInt(nodeList[0].getAttribute("dimension"), 10);
-        for (i = 0; i < coords.length/dim; i += 1) {
-          j = i * dim;
-          x = coords[j];
-          y = coords[j+1];
-          if (coords.length === 2) {
-            points.push(new VELatLong(parseFloat(y), 
-                                      parseFloat(x)));
-          } else {
-            points.push(new VELatLong(parseFloat(y), 
-                                      parseFloat(x), 
-                                      parseFloat(coords[j+2]), 
-                                      VEAltitudeMode.Absolute));
-          }
-        }
-      }
-      // look for <gml:coordinates>
-      if (coords.length === 0) {
-        nodeList = XMLUtils.getElementsByTagName(xml, "coordinates");
+        result.typeName = xml.firstChild.localName;
+        result.xmlns = xml.firstChild.namespaceURI;
+        result.fid = xml.firstChild.getAttribute("fid");
+        result.shapeType = this.shapeTypes[type];
+        result.attributes = parseAttributes(xml);
+        return result;
+      };
+    
+    var parseLinestringCoordinates = function (xml) {
+        var nodeList, coordString;
+        var coords = [];
+        var points = [];
+        var i, j, x, y;
+        // look for <gml:posList>
+        nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "posList");
         if (nodeList.length > 0) {
           coordString = nodeList[0].text || nodeList[0].textContent;
-          coordString = StringUtils.removeCommas(StringUtils.removeSpaces(coordString));
-          var pointList = StringUtils.splitOnSpaces(coordString);
-          for (i = 0; i < pointList.length; i += 1) {
-            coords = pointList[i].split(",");
+          coordString = StringUtils.trimSpace(coordString);
+          coords = StringUtils.splitOnSpaces(coordString);
+          var dim = parseInt(nodeList[0].getAttribute("dimension"), 10);
+          for (i = 0; i < coords.length/dim; i += 1) {
+            j = i * dim;
+            x = coords[j];
+            y = coords[j+1];
             if (coords.length === 2) {
-              points.push(new VELatLong(parseFloat(coords[1]), 
-                                        parseFloat(coords[0])));
+              points.push(new VELatLong(parseFloat(y), 
+                                        parseFloat(x)));
             } else {
-              points.push(new VELatLong(parseFloat(coords[1]), 
-                                        parseFloat(coords[0]), 
-                                        parseFloat(coords[2]), 
+              points.push(new VELatLong(parseFloat(y), 
+                                        parseFloat(x), 
+                                        parseFloat(coords[j+2]), 
                                         VEAltitudeMode.Absolute));
             }
           }
         }
-      }
-      return points;
-    };
-  
-  this.parseGeometryMethods = {
-    
-    point: function (xml) {
-        var nodeList, coordString, coords = [];
-        // look for <gml:pos>
-        nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "pos");
-        if (nodeList.length > 0) {
-          coordString = nodeList[0].firstChild.nodeValue;
-          coordString = StringUtils.trimSpaces(coordString);
-          coords = StringUtils.splitOnSpaces(coordString).reverse();
-        }
         // look for <gml:coordinates>
         if (coords.length === 0) {
-          nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "coordinates");
+          nodeList = XMLUtils.getElementsByTagName(xml, "coordinates");
           if (nodeList.length > 0) {
-            coordString = nodeList[0].firstChild.nodeValue;
-            coordString = StringUtils.removeSpaces(coordString);
-            coords = coordString.split(",");
-          }
-        }
-        // look for <gml:coord>
-        if (coords.length === 0) {
-          nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "coord");
-          if (nodeList.length > 0) {
-            var xList = XMLUtils.getElementsByTagNameNS(nodeList[0], xmlns.gml, "X");
-            var yList = XMLUtils.getElementsByTagNameNS(nodeList[0], xmlns.gml, "Y");
-            if (xList.length > 0 && yList.length > 0) {
-              coords = [ xList[0].firstChild.nodeValue, yList[0].firstChild.nodeValue ];
+            coordString = nodeList[0].text || nodeList[0].textContent;
+            coordString = StringUtils.removeCommas(StringUtils.removeSpaces(coordString));
+            var pointList = StringUtils.splitOnSpaces(coordString);
+            for (i = 0; i < pointList.length; i += 1) {
+              coords = pointList[i].split(",");
+              if (coords.length === 2) {
+                points.push(new VELatLong(parseFloat(coords[1]), 
+                                          parseFloat(coords[0])));
+              } else {
+                points.push(new VELatLong(parseFloat(coords[1]), 
+                                          parseFloat(coords[0]), 
+                                          parseFloat(coords[2]), 
+                                          VEAltitudeMode.Absolute));
+              }
             }
           }
         }
-        var point = null;
-        // preserve third dimension
-        if (coords.length === 2) {
-          point = new VELatLong(parseFloat(coords[1]), 
-                                parseFloat(coords[0]));
-        } else {
-          point = new VELatLong(parseFloat(coords[1]), 
-                                parseFloat(coords[0]), 
-                                parseFloat(coords[2]), 
-                                VEAltitudeMode.Absolute);
-        }
-        return [new VEShape(VEShapeType.Pushpin, point)];
-      },
+        return points;
+      };
     
-    multipoint: function (xml) {
-        var result = [];
-        var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "Point");
-        for (var i = 0; i < nodeList.length; i += 1) {
-          result.push(this.parseGeometryMethods.point.call(this, nodeList[i]));
+    this.parseGeometryMethods = {
+      
+      point: function (xml) {
+          var nodeList, coordString, coords = [];
+          // look for <gml:pos>
+          nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "pos");
+          if (nodeList.length > 0) {
+            coordString = nodeList[0].firstChild.nodeValue;
+            coordString = StringUtils.trimSpaces(coordString);
+            coords = StringUtils.splitOnSpaces(coordString).reverse();
+          }
+          // look for <gml:coordinates>
+          if (coords.length === 0) {
+            nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "coordinates");
+            if (nodeList.length > 0) {
+              coordString = nodeList[0].firstChild.nodeValue;
+              coordString = StringUtils.removeSpaces(coordString);
+              coords = coordString.split(",");
+            }
+          }
+          // look for <gml:coord>
+          if (coords.length === 0) {
+            nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "coord");
+            if (nodeList.length > 0) {
+              var xList = XMLUtils.getElementsByTagNameNS(nodeList[0], xmlns.gml, "X");
+              var yList = XMLUtils.getElementsByTagNameNS(nodeList[0], xmlns.gml, "Y");
+              if (xList.length > 0 && yList.length > 0) {
+                coords = [ xList[0].firstChild.nodeValue, yList[0].firstChild.nodeValue ];
+              }
+            }
+          }
+          var point = null;
+          // preserve third dimension
+          if (coords.length === 2) {
+            point = new VELatLong(parseFloat(coords[1]), 
+                                  parseFloat(coords[0]));
+          } else {
+            point = new VELatLong(parseFloat(coords[1]), 
+                                  parseFloat(coords[0]), 
+                                  parseFloat(coords[2]), 
+                                  VEAltitudeMode.Absolute);
+          }
+          return [new VEShape(VEShapeType.Pushpin, point)];
+        },
+      
+      multipoint: function (xml) {
+          var result = [];
+          var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "Point");
+          for (var i = 0; i < nodeList.length; i += 1) {
+            result.push(this.parseGeometryMethods.point.call(this, nodeList[i]));
+          }
+          return result;
+        },
+      
+      linestring: function (xml) {
+          return new VEShape(VEShapeType.Polyline, parseLinestringCoordinates(xml));
+        },
+      
+      multilinestring: function (xml) {
+          var result = [];
+          var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "LineString");
+          for (var i = 0; i < nodeList.length; i += 1) {
+            result.push(this.parseGeometryMethods.linestring.call(this, nodeList[i]));
+          }
+          return result;
+        },
+      
+      polygon: function (xml) {
+          var result = [];
+          var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "LinearRing");
+          for (var i = 0; i < nodeList.length; i += 1) {
+            result.push(new VEShape(VEShapeType.Polygon, parseLinestringCoordinates(nodeList[i])));
+          }
+          return result;
+        },
+      
+      multipolygon: function (xml) {
+          var result = [];
+          var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "Polygon");
+          for (var i = 0; i < nodeList.length; i += 1) {
+            result = result.concat(this.parseGeometryMethods.polygon.call(this, nodeList[i]));
+          }
+          return result;
         }
-        return result;
-      },
-    
-    linestring: function (xml) {
-        return new VEShape(VEShapeType.Polyline, parseLinestringCoordinates(xml));
-      },
-    
-    multilinestring: function (xml) {
-        var result = [];
-        var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "LineString");
-        for (var i = 0; i < nodeList.length; i += 1) {
-          result.push(this.parseGeometryMethods.linestring.call(this, nodeList[i]));
-        }
-        return result;
-      },
-    
-    polygon: function (xml) {
-        var result = [];
-        var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "LinearRing");
-        for (var i = 0; i < nodeList.length; i += 1) {
-          result.push(new VEShape(VEShapeType.Polygon, parseLinestringCoordinates(nodeList[i])));
-        }
-        return result;
-      },
-    
-    multipolygon: function (xml) {
-        var result = [];
-        var nodeList = XMLUtils.getElementsByTagNameNS(xml, xmlns.gml, "Polygon");
-        for (var i = 0; i < nodeList.length; i += 1) {
-          result = result.concat(this.parseGeometryMethods.polygon.call(this, nodeList[i]));
-        }
-        return result;
-      }
+    };
   };
-}
 
-function GMLSerializer () {
+GML.Parser.prototype.shapeTypes = { 
+    "MultiPolygon" : VEShapeType.Polygon, 
+    "Polygon" : VEShapeType.Polygon, 
+    "MultiLineString" : VEShapeType.Polyline, 
+    "LineString" : VEShapeType.Polyline, 
+    "MultiPoint" : VEShapeType.Pushpin, 
+    "Point" : VEShapeType.Pushpin 
+  };
+
+GML.Parser.registerClass("GML.Parser");
+
+GML.Serializer = function () {
     
     var buildCoordinatesNode = function (shape) {
         var result = XMLUtils.createElementNS(xmlns.gml, "gml:coordinates");
@@ -376,13 +391,8 @@ function GMLSerializer () {
       result.appendChild(geomNode);
       return result;
     }
-}
+  };
 
-GMLParser.prototype.shapeTypes = { 
-    "MultiPolygon" : VEShapeType.Polygon, 
-    "Polygon" : VEShapeType.Polygon, 
-    "MultiLineString" : VEShapeType.Polyline, 
-    "LineString" : VEShapeType.Polyline, 
-    "MultiPoint" : VEShapeType.Pushpin, 
-    "Point" : VEShapeType.Pushpin 
-};
+GML.Serializer.registerClass("GML.Serializer");
+
+if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
