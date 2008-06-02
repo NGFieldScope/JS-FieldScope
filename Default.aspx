@@ -60,19 +60,19 @@
           map.LoadMap(new VELatLong(38.05, -76.33), 10, VEMapStyle.Hybrid);
           map.SetMouseWheelZoomToCenter(false);
           map.SetDefaultInfoBoxStyles();
-          drawingTool = new VEDrawingTool(map);
+          drawingTool = new VEExtras.DrawingTool(map);
           drawingTool.onFinishShape = function (shape) {
               alert("finished drawing " + shape);
             };
           drawingTool.customIcon = 'images/beaker.gif';
-          searchTool = new VESearchTool(map, "searchResultsDiv");
+          searchTool = new VEExtras.SearchTool(map, "searchResultsDiv");
           searchTool.onBeginSearch = function () {
               dojo.byId("searchWorkingDiv").style.visibility="visible";
             };
           searchTool.onFinishSearch = function () {
               dojo.byId("searchWorkingDiv").style.visibility="hidden";
             };
-          wfsLayer = new WFSLayer("http://216.17.239.66/arcgis/services/chesapeake/test1/GeoDataServer/WFSServer");
+          wfsLayer = new WFS.Layer("http://localhost/arcgis/services/cbobs1/GeoDataServer/WFSServer");
           wfsLayer.onBeginLoading = function () {
               dojo.byId("wfsWorkingDiv").style.visibility="visible";
             };
@@ -113,11 +113,11 @@
                 record.geomName = this.description.geom.name;
                 record.shapes.push(new VEShape(shape.GetType(), shape.GetPoints()));
                 var serializer = new GMLSerializer();
-                wfsInsertAsync(wfsLayer.getTransactionUrl(), 
-                               [serializer.serialize(record)], 
-                               function () {
-                                   dojo.byId("wfsWorkingDiv").style.visibility="hidden";
-                                 });
+                WFS.insertAsync(wfsLayer.getTransactionUrl(), 
+                                [serializer.serialize(record)], 
+                                function () {
+                                    dojo.byId("wfsWorkingDiv").style.visibility="hidden";
+                                  });
                 drawingTool.deleteShape(shape);
                 dojo.byId("wfsWorkingDiv").style.visibility="hidden";
                 wfsDiv.removeChild(wfsForm);
@@ -177,8 +177,7 @@
           <asp:ScriptReference Path="js/Utilities.js" />
           <asp:ScriptReference Path="js/GML.js" />
           <asp:ScriptReference Path="js/WFS.js" />
-          <asp:ScriptReference Path="js/VEDrawingTool.js" />
-          <asp:ScriptReference Path="js/VESearchTool.js" />
+          <asp:ScriptReference Path="js/VEExtras.js" />
         </Scripts>
         <Services>
           <asp:ServiceReference Path="NGSDataService.asmx" />
