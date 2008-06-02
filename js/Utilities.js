@@ -1,14 +1,12 @@
-/*global ActiveXObject */
-/*global VELatLongRectangle */
-/*global XMLSerializer */
+/*global ActiveXObject, VELatLong, XMLSerializer, Sys */
 
 /*global xmlns */
-var xmlns = { xsd: "http://www.w3.org/2001/XMLSchema",
-              gml: "http://www.opengis.net/gml",
-              wfs: "http://www.opengis.net/wfs" };
+xmlns = { xsd: "http://www.w3.org/2001/XMLSchema",
+          gml: "http://www.opengis.net/gml",
+          wfs: "http://www.opengis.net/wfs" };
 
 /*global StringUtils */
-var StringUtils = {
+StringUtils = {
   
   regExes: { 
       surroundingSpaces: (/^\s*|\s*$/g),
@@ -56,29 +54,32 @@ var StringUtils = {
 };
 
 /*global XMLUtils */
-var XMLUtils = {
+XMLUtils = {
 
-  xmldom: (window.ActiveXObject) ? new ActiveXObject("Microsoft.XMLDOM") : null,
+  xmldom: window.ActiveXObject ? new ActiveXObject("Microsoft.XMLDOM") : null,
   
   getElementsByTagNameNS: function (node, uri, name) {
-      var elements = [];
       if (node.getElementsByTagNameNS) {
-        elements = node.getElementsByTagNameNS(uri, name);
+        return node.getElementsByTagNameNS(uri, name);
       } else {
         // brute force method
+        var result = [];
         var allNodes = node.getElementsByTagName("*");
         var potentialNode, fullName;
         for (var i = 0; i < allNodes.length; i += 1) {
           potentialNode = allNodes[i];
-          fullName = (potentialNode.prefix) ? (potentialNode.prefix + ":" + name) : name;
+          fullName = potentialNode.prefix ? (potentialNode.prefix + ":" + name) : name;
           if ((name === "*") || (fullName === potentialNode.nodeName)) {
             if ((uri === "*") || (uri === potentialNode.namespaceURI)) {
-              elements.push(potentialNode);
+              result.push(potentialNode);
             }
           }
         }
+        result.item = function (index) {
+            return this[index];
+          };
+        return result;
       }
-      return elements;
     },
 
   getElementsByTagName: function (node, name) {
@@ -213,17 +214,142 @@ var XMLUtils = {
     }
 };
 
-VELatLongRectangle.prototype.Contains = function (rect) {
-	return (rect.TopLeftLatLong.Longitude >= this.TopLeftLatLong.Longitude) &&
-         (rect.BottomRightLatLong.Latitude >= this.BottomRightLatLong.Latitude) &&
-         (rect.BottomRightLatLong.Longitude <= this.BottomRightLatLong.Longitude) &&
-         (rect.TopLeftLatLong.Latitude <= this.TopLeftLatLong.Latitude);
-  };
+/*global Utility */
+/*jslint bitwise: false */
+Utility = {
+    /// <summary>
+    ///   static Utility class
+    /// </summary>
 
-VELatLongRectangle.prototype.GetWidth = function (rect) {
-    return this.BottomRightLatLong.Longitude - this.TopLeftLatLong.Longitude;
-  };
+    OnFailed: function (error) {
+        /// <summary>
+        ///     This is the failed callback function for all webservices.
+        /// </summary>  
+        /// <param name="error">The error object from the webservice</param>          
+        
+        var stackTrace = error.get_stackTrace();
+        var message = error.get_message();
+        var statusCode = error.get_statusCode();
+        var exceptionType = error.get_exceptionType();
+        var timedout = error.get_timedOut();
+       
+        // Display the error.    
+        var RsltElem = 
+            "Stack Trace: " +  stackTrace + "<br/>" +
+            "Service Error: " + message + "<br/>" +
+            "Status Code: " + statusCode + "<br/>" +
+            "Exception Type: " + exceptionType + "<br/>" +
+            "Timedout: " + timedout;
+            
+            alert(RsltElem);
+    },
+       
+    decodeLine: function (encoded) {
+        /// <summary>
+        ///     Decode an encoded string into a list of VE lat/lng.
+        /// </summary>  
+        /// <param name="encoded">The encoded string</param>       
+        /// <returns>Array of VELatLong</returns>
+       
+        var len = encoded.length;
+        var index = 0;
+        var array = [];
+        var lat = 0;
+        var lng = 0;
+        try {
+            while (index < len) {
+                var b;
+                var shift = 0;
+                var result = 0;
+                do {
+                      b = encoded.charCodeAt(index) - 63;
+                      index += 1;
+                      result |= (b & 0x1f) << shift;
+                      shift += 5;
+                } while (b >= 0x20);
+                var dlat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+                lat += dlat;
 
-VELatLongRectangle.prototype.GetHeight = function (rect) {
-    return this.TopLeftLatLong.Latitude - this.BottomRightLatLong.Latitude;
-  };
+                shift = 0;
+                result = 0;
+                do {
+                      b = encoded.charCodeAt(index) - 63;
+                      index += 1;
+                      result |= (b & 0x1f) << shift;
+                      shift += 5;
+                } while (b >= 0x20);
+                var dlng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+                lng += dlng;
+
+                array.push(new VELatLong((lat * 1e-5), (lng * 1e-5)));
+            }
+        } catch(ex) {
+            //error in encoding.
+        }
+        return array;
+    },  
+
+    createEncodings: function(points) {
+        /// <summary>
+        ///     Create the encoded bounds.
+        /// </summary>  
+        /// <param name="points">Array of VELatLong</param>       
+        /// <returns>The encoded string</returns>    
+        var i = 0;
+        var plat = 0;
+        var plng = 0;
+        var encoded_points = "";
+
+        for(i = 0; i < points.length; i += 1) {
+            var point = points[i];
+            var lat = point.Latitude;
+            var lng = point.Longitude;
+
+            var late5 = Math.floor(lat * 1e5);
+            var lnge5 = Math.floor(lng * 1e5);
+
+            var dlat = late5 - plat;
+            var dlng = lnge5 - plng;
+
+            plat = late5;
+            plng = lnge5;
+
+            encoded_points += this.encodeSignedNumber(dlat) + this.encodeSignedNumber(dlng);
+        } 
+        return encoded_points;
+    },
+    
+    encodeSignedNumber: function(num) {
+        /// <summary>
+        ///     Encode a signed number in the encode format.
+        /// </summary>  
+        /// <param name="num">signed number</param>       
+        /// <returns>encoded string</returns>       
+        var sgn_num = num << 1;
+
+        if (num < 0) {
+            sgn_num = ~(sgn_num);
+        }
+
+        return this.encodeNumber(sgn_num);
+    },
+
+    encodeNumber: function(num) {
+        /// <summary>
+        ///     Encode an unsigned number in the encode format.
+        /// </summary>  
+        /// <param name="num">unsigned number</param>       
+        /// <returns>encoded string</returns>        
+        var encodeString = "";
+
+        while (num >= 0x20) {
+            encodeString += String.fromCharCode((0x20 | (num & 0x1f)) + 63);
+            num >>= 5;
+        }
+
+        encodeString += String.fromCharCode(num + 63);
+        return encodeString;
+    }      
+};
+
+if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
