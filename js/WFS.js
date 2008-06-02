@@ -2,6 +2,7 @@
 /*global GMLParser */
 /*global VELatLong, VELatLongRectangle, VEShapeLayer */
 /*global StringUtils, XMLUtils, xmlns */
+/*global Type, Sys, WFS */
 
 Type.registerNamespace("WFS");
 

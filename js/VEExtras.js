@@ -1,7 +1,7 @@
 // VEExtras.js: extensions to Virtual Earth
 
-/*global VEShapeLayer, VEShapeType, VEPixel, VEShape, VEColor */
-/*global dojo, StringUtils */
+/*global VEShapeLayer, VEShapeType, VEPixel, VEShape, VEColor, VELatLongRectangle */
+/*global dojo, StringUtils, Type, Sys, VEExtras */
 
 Type.registerNamespace("VEExtras");
 
@@ -231,4 +231,23 @@ VEShape.prototype.SetObjectId = function (objectId) {
     this.ObjectId = objectId;
   };
 
+// ----------------------------------------------------------------------------
+// Basic geometric extensions for VELatLongRectangle
+
+VELatLongRectangle.prototype.Contains = function (rect) {
+	return (rect.TopLeftLatLong.Longitude >= this.TopLeftLatLong.Longitude) &&
+         (rect.BottomRightLatLong.Latitude >= this.BottomRightLatLong.Latitude) &&
+         (rect.BottomRightLatLong.Longitude <= this.BottomRightLatLong.Longitude) &&
+         (rect.TopLeftLatLong.Latitude <= this.TopLeftLatLong.Latitude);
+  };
+
+VELatLongRectangle.prototype.GetWidth = function (rect) {
+    return this.BottomRightLatLong.Longitude - this.TopLeftLatLong.Longitude;
+  };
+
+VELatLongRectangle.prototype.GetHeight = function (rect) {
+    return this.TopLeftLatLong.Latitude - this.BottomRightLatLong.Latitude;
+  };
+
+// ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
