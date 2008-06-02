@@ -1,4 +1,4 @@
-﻿
+
 //load map    
 function Page_Load() {  
     var mapArgs = new DTS.MapArgs("myMap", new VELatLong(44.61,-72.02), 8, VEMapStyle.Hybrid, false, VEMapMode.Mode2D, VEDistanceUnit.Kilometers);
