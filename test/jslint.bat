@@ -1,5 +1,7 @@
 @echo off
 
+cls
+
 if "%1"=="" (
     for %%f in (..\js\*.js) do call :_jslint %%f
 ) else (
