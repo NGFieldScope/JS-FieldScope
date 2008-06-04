@@ -1,9 +1,16 @@
 /*global ActiveXObject, VELatLong, XMLSerializer, Sys */
 
+
+// ----------------------------------------------------------------------------
+// xml namespaces
+
 /*global xmlns */
 xmlns = { xsd: "http://www.w3.org/2001/XMLSchema",
           gml: "http://www.opengis.net/gml",
           wfs: "http://www.opengis.net/wfs" };
+
+// ----------------------------------------------------------------------------
+// String utilities
 
 /*global StringUtils */
 StringUtils = {
@@ -13,7 +20,8 @@ StringUtils = {
       allSpaces: (/\s*/g),
       spaces: (/\s+/),
       allCommas: (/\s*,\s*/g),
-      xmlNamespace: (/^\w+:/) 
+      xmlNamespace: (/^\w+:/),
+      portNumber: (/:\d+$/)
     },
   
   trimSpaces: function (string) {
@@ -39,6 +47,14 @@ StringUtils = {
         return name;
       }
     },
+    
+  removePortNumber: function (host) {
+      if (host) {
+        return host.replace(this.regExes.portNumber, "");
+      } else {
+        return host;
+      }
+    },
   
   splitOnce: function (string, delimiter) {
       var result = [];
@@ -52,6 +68,9 @@ StringUtils = {
       return result;
     }
 };
+
+// ----------------------------------------------------------------------------
+// XML DOM utilities
 
 /*global XMLUtils */
 XMLUtils = {
@@ -213,6 +232,9 @@ XMLUtils = {
       }
     }
 };
+
+// ----------------------------------------------------------------------------
+// MetaLens utilities
 
 /*global Utility */
 /*jslint bitwise: false */
