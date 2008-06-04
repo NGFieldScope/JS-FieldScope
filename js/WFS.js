@@ -318,66 +318,66 @@ WFS.Layer = function (url) {
     var instance = this;
     
     function updateShapeLayer () {
-        if (map === null) {
-          return;
-        }
-        if (currentRequest !== null) {
-          currentRequest.cancel();
-          currentRequest = null;
-        }
-        shapeLayer.DeleteAllShapes();
-        var layers = [];
-        for (var i = 0; i < capabilities.featureTypes.length; i += 1) {
-          if (capabilities.featureTypes[i].visible) {
-            layers.push(capabilities.featureTypes[i].name);
-          }
-        }
-        if (layers.length > 0) {
-          instance.onBeginLoading();
-          var mapBounds = map.GetMapView();
-          /*
-             As of beta1, ArcGIS Server 9.3's WFS implementation does not handle BBOX
-             correctly, so we have to work around.
-          
-          currentBounds = new VELatLongRectangle(new VELatLong(mapBounds.TopLeftLatLong.Latitude + mapBounds.GetHeight(),
-                                                               mapBounds.TopLeftLatLong.Longitude - mapBounds.GetWidth()),
-                                                 new VELatLong(mapBounds.BottomRightLatLong.Latitude - mapBounds.GetHeight(),
-                                                               mapBounds.BottomRightLatLong.Longitude + mapBounds.GetWidth()));
-          */
-          currentBounds = new VELatLongRectangle(new VELatLong(90, -180), new VELatLong(-90, 180));
-          currentRequest = WFS.getFeatureAsync(capabilities.getFeatureUrl,
-                                               layers,
-                                               [ currentBounds.TopLeftLatLong.Longitude,
-                                                 currentBounds.BottomRightLatLong.Latitude,
-                                                 currentBounds.BottomRightLatLong.Longitude,
-                                                 currentBounds.TopLeftLatLong.Latitude ],
-                                               function (response, ioArgs) {
-                                                   var records = parser.parseGML(response);
-                                                   for (var i = 0; i < records.length; i += 1) {
-                                                     var record = records[i];
-                                                     var description = instance.generateDescription(record.attributes);
-                                                     for (var j = 0; j < record.shapes.length; j += 1) {
-                                                       var shape = record.shapes[j];
-                                                       if (instance.customIcon) {
-                                                         shape.SetCustomIcon(instance.customIcon);
-                                                       }
-                                                       shape.SetTitle("Student Observation");
-                                                       shape.SetDescription(description);
-                                                       shapeLayer.AddShape(shape);
-                                                     }
-                                                   }
-                                                   currentRequest = null;
-                                                   instance.onFinishLoading();
-                                                   return response;
-                                                 },
-                                               function (response, ioArgs) {
-                                                   console.error("HTTP status code: ", ioArgs.xhr.status);
-                                                   currentRequest = null;
-                                                   instance.onFinishLoading();
-                                                   return response;
-                                                 });
-        } 
+      if (map === null) {
+        return;
       }
+      if (currentRequest !== null) {
+        currentRequest.cancel();
+        currentRequest = null;
+      }
+      shapeLayer.DeleteAllShapes();
+      var layers = [];
+      for (var i = 0; i < capabilities.featureTypes.length; i += 1) {
+        if (capabilities.featureTypes[i].visible) {
+          layers.push(capabilities.featureTypes[i].name);
+        }
+      }
+      if (layers.length > 0) {
+        instance.onBeginLoading();
+        var mapBounds = map.GetMapView();
+        /*
+           As of beta1, ArcGIS Server 9.3's WFS implementation does not handle BBOX
+           correctly, so we have to work around.
+        
+        currentBounds = new VELatLongRectangle(new VELatLong(mapBounds.TopLeftLatLong.Latitude + mapBounds.GetHeight(),
+                                                             mapBounds.TopLeftLatLong.Longitude - mapBounds.GetWidth()),
+                                               new VELatLong(mapBounds.BottomRightLatLong.Latitude - mapBounds.GetHeight(),
+                                                             mapBounds.BottomRightLatLong.Longitude + mapBounds.GetWidth()));
+        */
+        currentBounds = new VELatLongRectangle(new VELatLong(90, -180), new VELatLong(-90, 180));
+        currentRequest = WFS.getFeatureAsync(capabilities.getFeatureUrl,
+                                             layers,
+                                             [ currentBounds.TopLeftLatLong.Longitude,
+                                               currentBounds.BottomRightLatLong.Latitude,
+                                               currentBounds.BottomRightLatLong.Longitude,
+                                               currentBounds.TopLeftLatLong.Latitude ],
+                                             function (response, ioArgs) {
+                                                 var records = parser.parseGML(response);
+                                                 for (var i = 0; i < records.length; i += 1) {
+                                                   var record = records[i];
+                                                   var description = instance.generateDescription(record.attributes);
+                                                   for (var j = 0; j < record.shapes.length; j += 1) {
+                                                     var shape = record.shapes[j];
+                                                     if (instance.customIcon) {
+                                                       shape.SetCustomIcon(instance.customIcon);
+                                                     }
+                                                     shape.SetTitle("Student Observation");
+                                                     shape.SetDescription(description);
+                                                     shapeLayer.AddShape(shape);
+                                                   }
+                                                 }
+                                                 currentRequest = null;
+                                                 instance.onFinishLoading();
+                                                 return response;
+                                               },
+                                             function (response, ioArgs) {
+                                                 console.error("HTTP status code: ", ioArgs.xhr.status);
+                                                 currentRequest = null;
+                                                 instance.onFinishLoading();
+                                                 return response;
+                                               });
+      } 
+    }
     
     this.customIcon = null;
     this.generateDescription = function (gmlRecord) { 
