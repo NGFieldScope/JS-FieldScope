@@ -1,8 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\cbmap\", ".", "{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "cbmap", ".", "{C5EC484E-67FD-4A6F-B8FB-36A6CF12A8D3}"
 	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
 		Debug.AspNetCompiler.VirtualPath = "/cbmap"
 		Debug.AspNetCompiler.PhysicalPath = "..\cbmap\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\cbmap\"
@@ -10,14 +11,14 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\cbmap\", ".", "{C5EC
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/deploy"
+		Release.AspNetCompiler.VirtualPath = "/cbmap"
 		Release.AspNetCompiler.PhysicalPath = "..\cbmap\"
-		Release.AspNetCompiler.TargetPath = "E:\Test\deploy\"
-		Release.AspNetCompiler.Updateable = "false"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\cbmap\"
+		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "2085"
+		VWDPort = "3258"
 	EndProjectSection
 EndProject
 Global
