@@ -1,5 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
-<%@ Register Assembly="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Namespace="System.Web.UI" TagPrefix="asp" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" smartnavigation="false" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
@@ -10,37 +9,38 @@
       @import "css/dts.css";
       body {
 	      padding: 1em;
-      };
+      }
       .handIcon {
         background-image: url(images/Hand24.gif);
         background-repeat: no-repeat; 
         width: 24px;
         height: 24px;
-      };
+      }
       .pointIcon {
         background-image: url(images/CreatePoint24.gif);
         background-repeat: no-repeat; 
         width: 24px;
         height: 24px;
-      };
+      }
       .myList {
         margin: 4px 2px 2px 2px;
         border:1px inset gray;
-      };
+      }
       .header {
         font-weight: bold;
         margin-top: 0px;
         margin-bottom: 0px;
         padding: 2px;
-      };
+      }
       .row {
         margin-top: 0px;
         margin-bottom: 0px;
         border-top: 1px inset gray;
         padding: 2px 2px 2px 6px;
-      };
+      }
     </style>
     <script type="text/javascript" src="http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"></script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/ve/?v=1"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug: true, parseOnLoad: true"></script>
     <script type="text/javascript">
       dojo.require("dijit.layout.AccordionContainer");
@@ -61,39 +61,53 @@
       
       // Setup function
       dojo.addOnLoad(function() {
-          map = new VEMap("mapDiv");
-          map.LoadMap(new VELatLong(38.05, -76.33), 10, VEMapStyle.Hybrid);
-          map.SetMouseWheelZoomToCenter(false);
-          map.SetDefaultInfoBoxStyles();
-          drawingTool = new VEExtras.DrawingTool(map);
-          drawingTool.onFinishShape = function (shape) {
-              alert("finished drawing " + shape);
-            };
-          drawingTool.customIcon = 'images/beaker.gif';
-          searchTool = new VEExtras.SearchTool(map, "searchResultsDiv");
-          searchTool.onBeginSearch = function () {
-              dojo.byId("searchWorkingDiv").style.visibility="visible";
-            };
-          searchTool.onFinishSearch = function () {
-              dojo.byId("searchWorkingDiv").style.visibility="hidden";
-            };
-          wfsLayer = new WFS.Layer("http://" + 
-                                   StringUtils.removePortNumber(location.host) +
-                                   "/arcgis/services/cbobs1/GeoDataServer/WFSServer");
-          wfsLayer.onBeginLoading = function () {
-              dojo.byId("wfsWorkingDiv").style.visibility="visible";
-            };
-          wfsLayer.onFinishLoading = function () {
-              dojo.byId("wfsWorkingDiv").style.visibility="hidden";
-            };
-          wfsLayer.setFeatureTypeVisible(0, true);
-          wfsLayer.customIcon = 'images/beaker.gif';
-          wfsLayer.generateDescription = generateDescription;
-          wfsLayer.addToMap(map);
-          dijit.byId("wfsCheckbox").setValue(wfsLayer.isVisible());
-          
-          metaLensLayer = new MetaLens.Layer(map, NGSDataService);
-          dijit.byId("metaLensCheckbox").setValue(metaLensLayer.isVisible());
+        
+            map = new VEMap("mapDiv");
+            map.LoadMap(new VELatLong(38.05, -76.33), 10, VEMapStyle.Hybrid);
+            map.SetMouseWheelZoomToCenter(false);
+            map.SetDefaultInfoBoxStyles();
+            // Setup the drawing tool
+            drawingTool = new VEExtras.DrawingTool(map);
+            drawingTool.onFinishShape = function (shape) {
+                alert("finished drawing " + shape);
+              };
+            drawingTool.customIcon = 'images/beaker.gif';
+            // Setup the search tool
+            searchTool = new VEExtras.SearchTool(map, "searchResultsDiv");
+            searchTool.onBeginSearch = function () {
+                dojo.byId("searchWorkingDiv").style.visibility="visible";
+              };
+            searchTool.onFinishSearch = function () {
+                dojo.byId("searchWorkingDiv").style.visibility="hidden";
+              };
+            // Setup the MetaLens layer
+            metaLensLayer = new MetaLens.Layer(map, NGSDataService);
+            dijit.byId("metaLensCheckbox").setValue(metaLensLayer.isVisible());
+            // ArcGIS server url
+            var arcServerUrl = "http://" + StringUtils.removePortNumber(location.host);
+            // Setup the WFS layer
+            wfsLayer = new WFS.Layer(arcServerUrl + "/arcgis/services/cbobs1/GeoDataServer/WFSServer");
+            wfsLayer.onBeginLoading = function () {
+                dojo.byId("wfsWorkingDiv").style.visibility="visible";
+              };
+            wfsLayer.onFinishLoading = function () {
+                dojo.byId("wfsWorkingDiv").style.visibility="hidden";
+              };
+            wfsLayer.setFeatureTypeVisible(0, true);
+            wfsLayer.customIcon = 'images/beaker.gif';
+            wfsLayer.generateDescription = generateDescription;
+            wfsLayer.addToMap(map);
+            dijit.byId("wfsCheckbox").setValue(wfsLayer.isVisible());
+            // Setup the watershed boundaries layer
+            /*
+            var agisve_services = new ESRI.ArcGIS.VE.ArcGISLayerFactory();
+            agisve_services.CreateLayer(arcServerUrl + "/arcgis/rest/services/cbhuc8/MapServer", 
+                                        "HUC_8", 
+                                        function (tileSourceSpec, resourceInfo) {
+                                            tileSourceSpec.Opacity=0.5;
+                                            map.AddTileLayer(tileSourceSpec, true);
+                                          });
+            */
         });
       
       // Click handler for "tool" buttons
@@ -200,7 +214,7 @@
   </head>
   <body class="tundra">
     <form id="form1" runat="server">
-      <asp:ScriptManager ID="ScriptManager1" runat="server">
+      <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Release">
         <Scripts>
           <asp:ScriptReference Path="js/Utilities.js" />
           <asp:ScriptReference Path="js/GML.js" />
