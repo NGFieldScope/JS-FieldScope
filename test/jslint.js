@@ -4106,7 +4106,7 @@ klass:                              for (;;) {
                     browser: true,
                     cap: false,
                     debug: false,
-                    eqeqeq: false,
+                    eqeqeq: true,
                     evil: false,
                     forin: false,
                     fragment: false,
