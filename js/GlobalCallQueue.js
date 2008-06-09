@@ -26,7 +26,7 @@ GlobalCallQueue = {
       var queuedCall = new QueuedCall(servicePath, methodName, useGet, params, onSuccess, onFailure, userContext, timeout);
       //if method name is already waiting then remove from queue then add the new call
       for (var x=0;x<GlobalCallQueue.callQueue.length;x+= 1) {
-        if (GlobalCallQueue.callQueue[x].methodName==queuedCall.methodName) {
+        if (GlobalCallQueue.callQueue[x].methodName === queuedCall.methodName) {
           Array.removeAt( GlobalCallQueue.callQueue, x);
           break;
         }
@@ -46,7 +46,7 @@ GlobalCallQueue = {
         for (var x=0;x<GlobalCallQueue.callQueue.length;x+= 1) {
           var found=false;
           for (var y=0;y<GlobalCallQueue.callInProgressNames.length;y += 1) {
-            if (GlobalCallQueue.callQueue[x].methodName==GlobalCallQueue.callInProgressNames[y]) {
+            if (GlobalCallQueue.callQueue[x].methodName === GlobalCallQueue.callInProgressNames[y]) {
               found=true;
               break;
             }
@@ -72,7 +72,7 @@ GlobalCallQueue = {
       GlobalCallQueue.callInProgress -= 1;
       //remove name in progress
       for (var x=0;x<GlobalCallQueue.callInProgressNames.length;x += 1) {
-        if (GlobalCallQueue.callInProgressNames[x]==methodName) {
+        if (GlobalCallQueue.callInProgressNames[x] === methodName) {
           Array.removeAt( GlobalCallQueue.callInProgressNames, x );
           break;
         }

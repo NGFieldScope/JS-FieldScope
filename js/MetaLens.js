@@ -63,7 +63,7 @@ MetaLens.Layer = function (inMap, inService) {
             if (gainsPoint.IsClustered === true) {
                 pinClass = pinClass + '-cl';
             }
-            if (Sys.Browser.agent==Sys.Browser.InternetExplorer&&Sys.Browser.version==6){
+            if ((Sys.Browser.agent === Sys.Browser.InternetExplorer) && (Sys.Browser.version === 6)) {
                 newShape.SetCustomIcon("<div class='" + pinClass + "IE6'></div>");
             } else {  
                 newShape.SetCustomIcon("<div class='" + pinClass + "'></div>");                
@@ -81,7 +81,7 @@ MetaLens.Layer = function (inMap, inService) {
         var points = [];
         var zoom;
         var bboxString;
-        if (this.map.GetMapStyle() == VEMapStyle.Birdseye) {    
+        if (this.map.GetMapStyle() === VEMapStyle.Birdseye) {    
             //set zoomlevel      
             zoom = 19;
             var be = this.map.GetBirdseyeScene();
@@ -95,7 +95,7 @@ MetaLens.Layer = function (inMap, inService) {
             zoom = this.map.GetZoomLevel();
         }
         //var bounds = Utility.createEncodings(points);
-        if (this.zoomlevel != zoom) {
+        if (this.zoomlevel !== zoom) {
             //clear existing pins
             this.samplePointLayer.DeleteAllShapes();
             this.zoomlevel = zoom;
@@ -167,7 +167,7 @@ MetaLens.Layer = function (inMap, inService) {
         if (e.elementID) {
           var popupShape = this.map.GetShapeByID(e.elementID);
           if (popupShape) {
-            if (popupShape.GAINSType == "gainsPoint") {
+            if (popupShape.GAINSType === "gainsPoint") {
               //set current pin
               this.currentPin = popupShape;                
               this.currentIndex = 0;
@@ -182,6 +182,7 @@ MetaLens.Layer = function (inMap, inService) {
             }
           }
         }
+        return false;
       });
     
     this.map.AttachEvent("onmouseover", this.PinHoverDelegate);
