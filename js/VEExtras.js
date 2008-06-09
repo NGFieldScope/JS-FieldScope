@@ -219,19 +219,6 @@ VEExtras.SearchTool = function (map, resultsDivID) {
 VEExtras.SearchTool.registerClass("VEExtras.SearchTool");
 
 // ----------------------------------------------------------------------------
-// Add an objectId Property to the VEShape This allows us to link back to the
-// feature wherever it is stored
-// D.Bouwman - March 3 2008
-
-VEShape.prototype.GetObjectId = function() {
-    return this.ObjectId;
-  };
-
-VEShape.prototype.SetObjectId = function (objectId) {
-    this.ObjectId = objectId;
-  };
-
-// ----------------------------------------------------------------------------
 // Basic geometric extensions for VELatLongRectangle
 
 VELatLongRectangle.prototype.Contains = function (rect) {
