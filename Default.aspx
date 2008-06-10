@@ -37,6 +37,8 @@
         margin-bottom: 0px;
         border-top: 1px inset gray;
         padding: 2px 2px 2px 6px;
+        height: 20px;
+        vertical-align: middle;
       }
     </style>
     <script type="text/javascript" src="http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"></script>
@@ -66,12 +68,14 @@
             map.LoadMap(new VELatLong(38.05, -76.33), 10, VEMapStyle.Hybrid);
             map.SetMouseWheelZoomToCenter(false);
             map.SetDefaultInfoBoxStyles();
+            
             // Setup the drawing tool
             drawingTool = new VEExtras.DrawingTool(map);
             drawingTool.onFinishShape = function (shape) {
                 alert("finished drawing " + shape);
               };
             drawingTool.customIcon = 'images/beaker.gif';
+            
             // Setup the search tool
             searchTool = new VEExtras.SearchTool(map, "searchResultsDiv");
             searchTool.onBeginSearch = function () {
@@ -80,24 +84,35 @@
             searchTool.onFinishSearch = function () {
                 dojo.byId("searchWorkingDiv").style.visibility="hidden";
               };
+            
             // Setup the MetaLens layer
-            metaLensLayer = new MetaLens.Layer(map, NGSDataService);
+            metaLensLayer = new AsyncLayer(map, new MetaLens.DataProvider(NGSDataService));
+            metaLensLayer.AttachEvent("onbeginloading", function (evt) {
+                dojo.byId("metaLensLoadingImg").style.visibility="visible";
+              });
+            metaLensLayer.AttachEvent("onfinishloading", function (evt) {
+                dojo.byId("metaLensLoadingImg").style.visibility="hidden";
+              });
             dijit.byId("metaLensCheckbox").setValue(metaLensLayer.isVisible());
+            
             // ArcGIS server url
             var arcServerUrl = "http://" + StringUtils.removePortNumber(location.host);
+            
             // Setup the WFS layer
-            wfsLayer = new WFS.Layer(arcServerUrl + "/arcgis/services/cbobs1/GeoDataServer/WFSServer");
-            wfsLayer.onBeginLoading = function () {
-                dojo.byId("wfsWorkingDiv").style.visibility="visible";
-              };
-            wfsLayer.onFinishLoading = function () {
-                dojo.byId("wfsWorkingDiv").style.visibility="hidden";
-              };
-            wfsLayer.setFeatureTypeVisible(0, true);
-            wfsLayer.customIcon = 'images/beaker.gif';
-            wfsLayer.generateDescription = generateDescription;
-            wfsLayer.addToMap(map);
+            var wfsDataProvider = new WFS.DataProvider(arcServerUrl + "/arcgis/services/cbobs1/GeoDataServer/WFSServer");
+            wfsDataProvider.capabilities.featureTypes[0].visible = true;
+            wfsDataProvider.customIcon = 'images/beaker.gif';
+            wfsLayer = new AsyncLayer(map, wfsDataProvider);
+            wfsLayer.AttachEvent("onbeginloading", function (evt) {
+                dojo.byId("wfsLoadingImg").style.visibility="visible";
+              });
+            wfsLayer.AttachEvent("onfinishloading", function (evt) {
+                dojo.byId("wfsLoadingImg").style.visibility="hidden";
+              });
             dijit.byId("wfsCheckbox").setValue(wfsLayer.isVisible());
+            
+            
+            
             // Setup the watershed boundaries layer
             /*
             var agisve_services = new ESRI.ArcGIS.VE.ArcGISLayerFactory();
@@ -179,24 +194,6 @@
         metaLensLayer.setVisible(checkbox.checked);
       }
       
-      function generateDescription (attributes) {
-        var result = "<table >";
-        result += "<tr>";
-        result += "<th style='border:1px outset white;font-weight:bold;padding:2px'>Attribute</th>";
-        result += "<th style='border:1px outset white;font-weight:bold;padding:2px'><b>Value</b></th>";
-        result += "</tr>";
-        for (attrib in attributes) {
-          if (attrib != "OBJECTID") {
-            result += "<tr>";
-            result += "<td style='border:1px outset white;padding:3px'>" + attrib + "</td>";
-            result += "<td style='border:1px outset white;padding:3px'>" + attributes[attrib] + "</td>";
-            result += "</tr>";
-          }
-        }
-        result += "</table>";
-        return result;
-      }
-      
       // Dispose of the map when page is unloaded
       function onUnload () {
         if (map) {
@@ -217,11 +214,12 @@
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Release">
         <Scripts>
           <asp:ScriptReference Path="js/Utilities.js" />
+          <asp:ScriptReference Path="js/GlobalCallQueue.js" />
+          <asp:ScriptReference Path="js/VEExtras.js" />
+          <asp:ScriptReference Path="js/AsyncLayer.js" />
           <asp:ScriptReference Path="js/GML.js" />
           <asp:ScriptReference Path="js/WFS.js" />
-          <asp:ScriptReference Path="js/VEExtras.js" />
           <asp:ScriptReference Path="js/MetaLens.js" />
-          <asp:ScriptReference Path="js/GlobalCallQueue.js" />
         </Scripts>
         <Services>
           <asp:ServiceReference Path="NGSDataService.asmx" />
@@ -239,7 +237,7 @@
             </div>
             <div id="wfsDiv"></div>
           </div>
-          <div dojoType="dijit.layout.AccordionPane" title="Upload Photos" onSelected="onDrawingToolClick(dojo.byId('hand'), null);">
+          <div dojoType="dijit.layout.AccordionPane" title="Upload Photos" style="position:relative" onSelected="onDrawingToolClick(dojo.byId('hand'), null);">
             MetaLens controls go here
           </div>
           <div dojoType="dijit.layout.AccordionPane" title="Find a Location" onSelected="onDrawingToolClick(dojo.byId('hand'), null);" style="position:relative">
@@ -255,13 +253,25 @@
           <div dojoType="dijit.layout.AccordionPane" title="Explore Data Layers" onSelected="onDrawingToolClick(dojo.byId('hand'), null);" selected="true">
             <div class="myList">
               <div class="header">Student Data:</div>
+              
               <div class="row">
-                <input type="checkbox" name="layers" id="wfsCheckbox" value="layer1" dojoType="dijit.form.CheckBox" onclick="onShowHideWfsLayerClick(this);">
-                <label for="layer1">Student Observations</label>
+                <div style="float:left">
+                  <input type="checkbox" name="layers" id="wfsCheckbox" value="layer1" dojoType="dijit.form.CheckBox" onclick="onShowHideWfsLayerClick(this);" />
+                  <label for="layer1">Student Observations</label>
+                </div>
+                <div style="float:right">
+                  <img id="wfsLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" />
+                </div>
               </div>
+              
               <div class="row">
-                <input type="checkbox" name="layers" id="metaLensCheckbox" value="layer2" dojoType="dijit.form.CheckBox" onclick="onShowHideMetaLensLayerClick(this);">
-                <label for="layer2">Photo Locations</label>
+                <div style="float:left">
+                  <input type="checkbox" name="layers" id="metaLensCheckbox" value="layer2" dojoType="dijit.form.CheckBox" onclick="onShowHideMetaLensLayerClick(this);" />
+                  <label for="layer2">Photo Locations</label>
+                </div>
+                <div style="float:right">
+                  <img id="metaLensLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" />
+                </div>
               </div>
             </div>
             

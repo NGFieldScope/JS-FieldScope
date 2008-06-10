@@ -1,6 +1,6 @@
-/*global dojo, GML StringUtils, XMLUtils, xmlns */
-/*global VELatLong, VELatLongRectangle, VEShapeLayer */
-/*global Type, Sys, WFS */
+/*global dojo, GML StringUtils, Utility, XMLUtils, xmlns */
+/*global VELatLong, VELatLongRectangle, VEShape */
+/*global Type, Sys, AsyncDataProvider, WFS */
 
 Type.registerNamespace("WFS");
 
@@ -239,6 +239,11 @@ WFS.Capabilities.registerClass("WFS.Capabilities");
 // Global function WFS.getFeatureAsync
 
 WFS.getFeatureAsync = function (url, layers, bounds, onLoad, onError) {
+
+    //HACK: as of RC1, ArcGIS Server's interpretation of BBOX is broken,
+    // but we can work around it by always asking for everything
+    bounds = [ -180, -90, 180, 90 ];
+    
     return dojo.xhrGet({ 
         url: url +
              "REQUEST=GetFeature" +
@@ -306,147 +311,95 @@ WFS.getCapabilitiesSync = function (url) {
   };
 
 // ----------------------------------------------------------------------------
-// WFS.Layer class
+// Setup additional properties for shapes
 
-WFS.Layer = function (url) {
-    var capabilities = WFS.getCapabilitiesSync(url);
-    var map = null;
-    var shapeLayer = new VEShapeLayer();
-    var currentRequest = null;
-    var currentBounds = null;
-    var parser = new GML.Parser();
-    var instance = this;
+VEShape.prototype.WFSRecord = null;
+
+// ----------------------------------------------------------------------------
+// WFS.DataProvider class
+
+WFS.DataProvider = function (url) {
     
-    function updateShapeLayer () {
-      if (map === null) {
-        return;
-      }
-      if (currentRequest !== null) {
-        currentRequest.cancel();
-        currentRequest = null;
-      }
-      shapeLayer.DeleteAllShapes();
-      var layers = [];
-      for (var i = 0; i < capabilities.featureTypes.length; i += 1) {
-        if (capabilities.featureTypes[i].visible) {
-          layers.push(capabilities.featureTypes[i].name);
-        }
-      }
-      if (layers.length > 0) {
-        instance.onBeginLoading();
-        var mapBounds = map.GetMapView();
-        /*
-           As of beta1, ArcGIS Server 9.3's WFS implementation does not handle BBOX
-           correctly, so we have to work around.
-        
-        currentBounds = new VELatLongRectangle(new VELatLong(mapBounds.TopLeftLatLong.Latitude + mapBounds.GetHeight(),
-                                                             mapBounds.TopLeftLatLong.Longitude - mapBounds.GetWidth()),
-                                               new VELatLong(mapBounds.BottomRightLatLong.Latitude - mapBounds.GetHeight(),
-                                                             mapBounds.BottomRightLatLong.Longitude + mapBounds.GetWidth()));
-        */
-        currentBounds = new VELatLongRectangle(new VELatLong(90, -180), new VELatLong(-90, 180));
-        currentRequest = WFS.getFeatureAsync(capabilities.getFeatureUrl,
-                                             layers,
-                                             [ currentBounds.TopLeftLatLong.Longitude,
-                                               currentBounds.BottomRightLatLong.Latitude,
-                                               currentBounds.BottomRightLatLong.Longitude,
-                                               currentBounds.TopLeftLatLong.Latitude ],
-                                             function (response, ioArgs) {
-                                                 var records = parser.parseGML(response);
-                                                 for (var i = 0; i < records.length; i += 1) {
-                                                   var record = records[i];
-                                                   var description = instance.generateDescription(record.attributes);
-                                                   for (var j = 0; j < record.shapes.length; j += 1) {
-                                                     var shape = record.shapes[j];
-                                                     if (instance.customIcon) {
-                                                       shape.SetCustomIcon(instance.customIcon);
-                                                     }
-                                                     shape.SetTitle("Student Observation");
-                                                     shape.SetDescription(description);
-                                                     shapeLayer.AddShape(shape);
-                                                   }
-                                                 }
-                                                 currentRequest = null;
-                                                 instance.onFinishLoading();
-                                                 return response;
-                                               },
-                                             function (response, ioArgs) {
-                                                 console.error("HTTP status code: ", ioArgs.xhr.status);
-                                                 currentRequest = null;
-                                                 instance.onFinishLoading();
-                                                 return response;
-                                               });
-      } 
-    }
-    
+    this.capabilities = WFS.getCapabilitiesSync(url);
+    this.parser = new GML.Parser();
     this.customIcon = null;
-    this.generateDescription = function (gmlRecord) { 
-        return ""; 
+    
+    this.GetMinimumZoomLevel = function () { 
+        return 0; 
       };
-    this.addToMap = function (m) {
-        map = m;
-        m.AddShapeLayer(shapeLayer);
-        m.AttachEvent("onendpan", this.onPan);
-        m.AttachEvent("onendzoom", this.onZoom);
-        updateShapeLayer();
-      };
-    this.onPan = function (event) {
-        if ((!currentBounds) || (!currentBounds.Contains(map.GetMapView()))) {
-          updateShapeLayer();
+    
+    this.GetRecords = function (bounds, zoom, OnSuccess, OnFailure) {
+        var layers = [];
+        for (var i = 0; i < this.capabilities.featureTypes.length; i += 1) {
+          if (this.capabilities.featureTypes[i].visible) {
+            layers.push(this.capabilities.featureTypes[i].name);
+          }
         }
-      };
-    this.onZoom = function (event) {
-        if ((!currentBounds) || (!currentBounds.Contains(map.GetMapView()))) {
-          updateShapeLayer();
-        }
-      };
-    this.onBeginLoading = function () { };
-    this.onFinishLoading = function () { };
-    this.isVisible = function () { 
-        return shapeLayer.IsVisible();
-      };
-    this.setVisible = function (newVisible) {
-        if (newVisible) {
-          shapeLayer.Show();
+        if (layers.length > 0) {
+          WFS.getFeatureAsync(this.capabilities.getFeatureUrl,
+                              layers,
+                              [ bounds.TopLeftLatLong.Longitude,
+                                bounds.BottomRightLatLong.Latitude,
+                                bounds.BottomRightLatLong.Longitude,
+                                bounds.TopLeftLatLong.Latitude ],
+                              Function.createDelegate(this, function (response, ioArgs) {
+                                  var result = this.parser.parseGML(response);
+                                  OnSuccess.call(this, result);
+                                }),
+                              Utility.OnFailed);
         } else {
-          shapeLayer.Hide();
+          OnSuccess.call(this, []);
         }
       };
-    this.getTransactionUrl = function () {
-        return capabilities.transactionUrl;
-      };
-    this.featureTypeCount = function () {
-        return capabilities.featureTypes.length;
-      };
-    this.getFeatureTypeName = function (index) {
-        return capabilities.featureTypes[index].name;
-      };
-    this.isFeatureTypeVisible = function (index) {
-        return capabilities.featureTypes[index].visible;
-      };
-    this.setFeatureTypeVisible = function (index, newVisible) {
-        var oldVisible = capabilities.featureTypes[index].visible;
-        if (newVisible !== oldVisible) {
-          capabilities.featureTypes[index].visible = newVisible;
-          updateShapeLayer();
+    
+    this.CreateShape = function (record) { 
+        var shape = record.shapes[0];
+        if (this.customIcon) {
+          shape.SetCustomIcon(this.customIcon);
         }
+        shape.SetTitle("Student Observation");
+        shape.WFSRecord = record;
+        return shape;
       };
+    
+    this.OwnsShape = function (shape) { 
+        return shape.WFSRecord !== null;
+      };
+    
+    this.GetPopup = function (shape, divID, OnSuccess, OnFailure) {
+        var record = shape.WFSRecord;
+        var dom = document.createElement("div");
+        var result = "<table>";
+        result += "<tr>";
+        result += "<th style='border:1px outset white;font-weight:bold;padding:2px'>Attribute</th>";
+        result += "<th style='border:1px outset white;font-weight:bold;padding:2px'><b>Value</b></th>";
+        result += "</tr>";
+        for (var attrib in record.attributes) {
+          if (attrib !== "OBJECTID") {
+            result += "<tr>";
+            result += "<td style='border:1px outset white;padding:3px'>" + attrib + "</td>";
+            result += "<td style='border:1px outset white;padding:3px'>" + record.attributes[attrib] + "</td>";
+            result += "</tr>";
+          }
+        }
+        result += "</table>";
+        dom.innerHTML = result;
+        OnSuccess.call(this, shape.GetID(), "", "", dom);
+      };
+    
     this.getFeatureTypeDescription = function (index) {
-        if (capabilities.featureTypes[index].description) {
-          return capabilities.featureTypes[index].description;
+        if (this.capabilities.featureTypes[index].description) {
+          return this.capabilities.featureTypes[index].description;
         } else {
-          var result = WFS.describeFeatureTypeSync(capabilities.describeFeatureUrl,
-                                                   capabilities.featureTypes[index].name);
-          capabilities.featureTypes[index].description = result;
+          var result = WFS.describeFeatureTypeSync(this.capabilities.describeFeatureUrl,
+                                                   this.capabilities.featureTypes[index].name);
+          this.capabilities.featureTypes[index].description = result;
           return result;
         }
       };
-    this.addShape = function (veShape) {
-        shapeLayer.AddShape(veShape);
-      };
   };
 
-WFS.Layer.registerClass("WFS.Layer");
+WFS.DataProvider.registerClass('WFS.DataProvider', null, AsyncDataProvider);
 
 // ----------------------------------------------------------------------------
 // Global function wfsInsertAsync
