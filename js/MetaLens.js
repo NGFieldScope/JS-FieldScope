@@ -28,7 +28,7 @@ MetaLens.DataProvider = function (inService) {
         this.service.GetPoints(bboxString, zoom, OnSuccess, OnFailure);
       };
     
-    this.CreateShape = function (record) { 
+    this.CreateShapes = function (record) { 
         var loc = new VELatLong(record.Location.Lat, record.Location.Lon);
         //Create the shape
         var newShape = new VEShape(VEShapeType.Pushpin, loc);
@@ -47,7 +47,7 @@ MetaLens.DataProvider = function (inService) {
         } else {  
             newShape.SetCustomIcon("<div class='" + pinClass + "'></div>");                
         }                
-        return newShape;
+        return [newShape];
       };
     
     this.OwnsShape = function (shape) { 

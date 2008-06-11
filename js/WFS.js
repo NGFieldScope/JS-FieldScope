@@ -352,14 +352,18 @@ WFS.DataProvider = function (url) {
         }
       };
     
-    this.CreateShape = function (record) { 
-        var shape = record.shapes[0];
-        if (this.customIcon) {
-          shape.SetCustomIcon(this.customIcon);
+    this.CreateShapes = function (record) { 
+        var result = [];
+        for (var i = 0; i < record.shapes.length; i += 1) {
+          var shape = record.shapes[i];
+          if (this.customIcon) {
+            shape.SetCustomIcon(this.customIcon);
+          }
+          shape.SetTitle("Student Observation");
+          shape.WFSRecord = record;
+          result.push(shape);
         }
-        shape.SetTitle("Student Observation");
-        shape.WFSRecord = record;
-        return shape;
+        return result;
       };
     
     this.OwnsShape = function (shape) { 

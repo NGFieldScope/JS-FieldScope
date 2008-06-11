@@ -8,7 +8,7 @@
 AsyncDataProvider = function () {
     this.GetMinimumZoomLevel = function () { return 0; };
     this.GetRecords = function (bounds, zoom, OnSuccess, OnFailure) { };
-    this.CreateShape = function (record) { return null; };
+    this.CreateShapes = function (record) { return null; };
     this.OwnsShape = function (shape) { return false; };
     this.GetPopup = function (shape, divID, OnSuccess, OnFailure) { };
   };
@@ -61,14 +61,14 @@ AsyncLayer = function (inMap, inProvider) {
           this.veLayer.DeleteAllShapes();
           //clear existing pins
           this.veLayer.DeleteAllShapes();
-          //add new pins
+          //add new shapes
           for (var x = 0; x < newRecords.length; x += 1) {
             var record = newRecords[x];
-            var shape = this.provider.CreateShape(record);
-            newShapes.push(shape);       
-          }
-          // add new pins
-          this.veLayer.AddShape(newShapes);  
+            var shapes = this.provider.CreateShapes(record);
+            for (var y = 0; y < shapes.length; y += 1) {
+              this.veLayer.AddShape(shapes[y]);
+            }
+          } 
         }
         // fire finishloading event
         var handler = this.eventHandlers.getHandler("onfinishloading");
@@ -152,5 +152,6 @@ AsyncLayer = function (inMap, inProvider) {
   };
 
 AsyncLayer.registerClass('AsyncLayer');
+
 
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
