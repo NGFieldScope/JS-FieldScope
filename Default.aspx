@@ -40,6 +40,16 @@
         height: 20px;
         vertical-align: middle;
       }
+      .featureLabel {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: small;
+        font-face bold;
+        color: #FF0000;
+        text-align: center;
+        vertical-align: middle;
+        width: 100px;
+        cursor: pointer;
+      }
     </style>
     <script type="text/javascript" src="http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1"></script>
     <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/ve/?v=1"></script>
@@ -60,12 +70,14 @@
       var searchTool = null;
       var wfsLayer = null;
       var metaLensLayer = null;
+      var watershedsLayer = null;
+      var veLayerID = null;
       
       // Setup function
       dojo.addOnLoad(function() {
         
             map = new VEMap("mapDiv");
-            map.LoadMap(new VELatLong(38.05, -76.33), 10, VEMapStyle.Hybrid);
+            map.LoadMap(new VELatLong(38.05, -76.33), 11, VEMapStyle.Hybrid);
             map.SetMouseWheelZoomToCenter(false);
             map.SetDefaultInfoBoxStyles();
             
@@ -95,6 +107,7 @@
               });
             dijit.byId("metaLensCheckbox").setValue(metaLensLayer.isVisible());
             
+            
             // ArcGIS server url
             var arcServerUrl = "http://" + StringUtils.removePortNumber(location.host);
             
@@ -112,6 +125,19 @@
             dijit.byId("wfsCheckbox").setValue(wfsLayer.isVisible());
             
             
+            // Setup the watershed boundaries layer
+            var watershedDataProvider = new ArcGISServer.DataProvider(arcServerUrl + "/arcgis/rest/services/test/MapServer/0");
+            watershedDataProvider.lineColor = new VEColor(255, 255, 255, 0.75); 
+            watershedDataProvider.fillColor = new VEColor(255, 255, 255, 0.35);
+            watershedDataProvider.labelField = "Name";//"HUC8_Name";
+            watershedsLayer = new AsyncLayer(map, watershedDataProvider);
+            watershedsLayer.AttachEvent("onbeginloading", function (evt) {
+                dojo.byId("watershedsLoadingImg").style.visibility="visible";
+              });
+            watershedsLayer.AttachEvent("onfinishloading", function (evt) {
+                dojo.byId("watershedsLoadingImg").style.visibility="hidden";
+              });
+            dijit.byId("watershedsCheckbox").setValue(watershedsLayer.isVisible());
             
             // Setup the watershed boundaries layer
             /*
@@ -194,6 +220,10 @@
         metaLensLayer.setVisible(checkbox.checked);
       }
       
+      function onShowHideWatershedsLayerClick (checkbox) {
+        watershedsLayer.setVisible(checkbox.checked);
+      }
+      
       // Dispose of the map when page is unloaded
       function onUnload () {
         if (map) {
@@ -220,6 +250,7 @@
           <asp:ScriptReference Path="js/GML.js" />
           <asp:ScriptReference Path="js/WFS.js" />
           <asp:ScriptReference Path="js/MetaLens.js" />
+          <asp:ScriptReference Path="js/ArcGISServer.js" />
         </Scripts>
         <Services>
           <asp:ServiceReference Path="NGSDataService.asmx" />
@@ -229,7 +260,7 @@
         <div dojoType="dijit.layout.AccordionContainer" duration="200" style="width:200px;height:550px;float:left;overflow:hidden;" region="left">
           <div dojoType="dijit.layout.AccordionPane" id="obs" title="Submit Data" style="position:relative">
             <div id="wfsWorkingDiv" style="position:absolute;top:2px;right:2px;float:right;visibility:hidden">
-              <img src="images/loading.gif" width="24" height="24">
+              <img src="images/loading24.gif">
             </div>
             <div id="toolbar1" dojoType="dijit.Toolbar" style="margin: 2px;border-top:1px solid LightGray;">
               <button dojoType="dijit.form.ToggleButton" onclick="onDrawingToolClick(this, null)" name="tool" id="hand" iconClass="handIcon" showLabel="false" checked="true">Navigate</button>
@@ -242,7 +273,7 @@
           </div>
           <div dojoType="dijit.layout.AccordionPane" title="Find a Location" onSelected="onDrawingToolClick(dojo.byId('hand'), null);" style="position:relative">
             <div id="searchWorkingDiv" style="position:absolute;top:2px;right:2px;float:right;visibility:hidden">
-              <img src="images/loading.gif" width="24" height="24">
+              <img src="images/loading24.gif">
             </div>
             <div style="margin: 4px;text-align:right">
               <input type="text" id="searchInput" style="width:98%;margin-bottom:4px" onkeydown="onSearchKey(event);">
@@ -254,6 +285,8 @@
             <div class="myList">
               <div class="header">Student Data:</div>
               
+            <!-- GIS layer controls -->
+            
               <div class="row">
                 <div style="float:left">
                   <input type="checkbox" name="layers" id="wfsCheckbox" value="layer1" dojoType="dijit.form.CheckBox" onclick="onShowHideWfsLayerClick(this);" />
@@ -263,7 +296,6 @@
                   <img id="wfsLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" />
                 </div>
               </div>
-              
               <div class="row">
                 <div style="float:left">
                   <input type="checkbox" name="layers" id="metaLensCheckbox" value="layer2" dojoType="dijit.form.CheckBox" onclick="onShowHideMetaLensLayerClick(this);" />
@@ -275,18 +307,25 @@
               </div>
             </div>
             
-            <!-- GIS layer controls go here -->
-            
             <div class="myList">
               <div class="header">Basemap:</div>
+              
+              
               <div class="row">
-                <input type="radio" name="basemap" value="VE" id="VE" dojoType="dijit.form.RadioButton" checked="checked">
+                <div style="float:left">
+                  <input type="checkbox" name="layers" id="watershedsCheckbox" value="layer3" dojoType="dijit.form.CheckBox" onclick="onShowHideWatershedsLayerClick(this);" />
+                  <label for="layer3">Watershed Boundaries</label>
+                </div>
+                <div style="float:right">
+                  <img id="watershedsLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" />
+                </div>
+              </div>
+              
+              <div class="row">
+                <input type="checkbox" name="layers" value="VE" id="VE" dojoType="dijit.form.CheckBox" checked="checked" disabled="disabled" />
                 <label for="VE">Virtual Earth</label>
               </div>
-              <div class="row">
-                <input type="radio" name="basemap" value="NGS" id="NGS" dojoType="dijit.form.RadioButton" disabled="disabled">
-                <label for="NGS">National Geographic Map</label>
-              </div>
+              
             </div>
           </div>
           <div dojoType="dijit.layout.AccordionPane" title="Analyze Data" onSelected="onDrawingToolClick(dojo.byId('hand'), null);">
