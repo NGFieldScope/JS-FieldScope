@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>Chesapeake Bay Maping Tool Demo, Version 1.4</title>
+    <title>Chesapeake Bay Maping Tool Demo, Version 1.5</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -106,7 +106,7 @@
                 dojo.byId("metaLensLoadingImg").style.visibility="hidden";
               });
             dijit.byId("metaLensCheckbox").setValue(metaLensLayer.isVisible());
-            
+            metaLensLayer.LoadLayer();
             
             // ArcGIS server url
             var arcServerUrl = "http://" + StringUtils.removePortNumber(location.host);
@@ -123,13 +123,17 @@
                 dojo.byId("wfsLoadingImg").style.visibility="hidden";
               });
             dijit.byId("wfsCheckbox").setValue(wfsLayer.isVisible());
-            
+            wfsLayer.LoadLayer();
             
             // Setup the watershed boundaries layer
+            /*
+            var watershedDataProvider = new ArcGISServer.DataProvider(arcServerUrl + "/arcgis/rest/services/cb_watersheds/MapServer/0");
+            watershedDataProvider.labelField = "HUC8_Name";
+            */
             var watershedDataProvider = new ArcGISServer.DataProvider(arcServerUrl + "/arcgis/rest/services/test/MapServer/0");
+            watershedDataProvider.labelField = "Name";
             watershedDataProvider.lineColor = new VEColor(255, 255, 255, 0.75); 
             watershedDataProvider.fillColor = new VEColor(255, 255, 255, 0.35);
-            watershedDataProvider.labelField = "Name";//"HUC8_Name";
             watershedsLayer = new AsyncLayer(map, watershedDataProvider);
             watershedsLayer.AttachEvent("onbeginloading", function (evt) {
                 dojo.byId("watershedsLoadingImg").style.visibility="visible";
@@ -138,6 +142,7 @@
                 dojo.byId("watershedsLoadingImg").style.visibility="hidden";
               });
             dijit.byId("watershedsCheckbox").setValue(watershedsLayer.isVisible());
+            watershedsLayer.LoadLayer();
             
             // Setup the watershed boundaries layer
             /*

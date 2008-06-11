@@ -147,8 +147,10 @@ AsyncLayer = function (inMap, inProvider) {
     this.map.AttachEvent("onmouseover", this.PinHoverDelegate);
     this.map.AttachEvent("onclick", this.PinHoverDelegate);
     
-    // get the data for the initial view
-    this.RefreshDataDelegate();
+    this.LoadLayer = function () {
+        // get the data for the initial view
+        this.RefreshDataDelegate();
+      };
   };
 
 AsyncLayer.registerClass('AsyncLayer');
