@@ -328,7 +328,7 @@ WFS.DataProvider = function (url) {
         return 0; 
       };
     
-    this.GetRecords = function (bounds, zoom, OnSuccess, OnFailure) {
+    this.GetRecords = function (bounds, width, height, OnSuccess, OnFailure) {
         var layers = [];
         for (var i = 0; i < this.capabilities.featureTypes.length; i += 1) {
           if (this.capabilities.featureTypes[i].visible) {

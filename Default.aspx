@@ -43,7 +43,7 @@
       .featureLabel {
         font-family: Arial, Helvetica, sans-serif;
         font-size: small;
-        font-face bold;
+        font-weight bold;
         color: #FF0000;
         text-align: center;
         vertical-align: middle;
@@ -80,6 +80,7 @@
             map.LoadMap(new VELatLong(38.05, -76.33), 11, VEMapStyle.Hybrid);
             map.SetMouseWheelZoomToCenter(false);
             map.SetDefaultInfoBoxStyles();
+            map.EnableShapeDisplayThreshold(false);
             
             // Setup the drawing tool
             drawingTool = new VEExtras.DrawingTool(map);
@@ -98,7 +99,7 @@
               };
             
             // Setup the MetaLens layer
-            metaLensLayer = new AsyncLayer(map, new MetaLens.DataProvider(NGSDataService));
+            metaLensLayer = new AsyncLayer(map, new MetaLens.DataProvider(MetaLensService));
             metaLensLayer.AttachEvent("onbeginloading", function (evt) {
                 dojo.byId("metaLensLoadingImg").style.visibility="visible";
               });
@@ -112,7 +113,7 @@
             var arcServerUrl = "http://" + StringUtils.removePortNumber(location.host);
             
             // Setup the WFS layer
-            var wfsDataProvider = new WFS.DataProvider(arcServerUrl + "/arcgis/services/cbobs1/GeoDataServer/WFSServer");
+            var wfsDataProvider = new WFS.DataProvider(arcServerUrl + "/arcgis/services/cb_observations/GeoDataServer/WFSServer");
             wfsDataProvider.capabilities.featureTypes[0].visible = true;
             wfsDataProvider.customIcon = 'images/beaker.gif';
             wfsLayer = new AsyncLayer(map, wfsDataProvider);
@@ -126,12 +127,8 @@
             wfsLayer.LoadLayer();
             
             // Setup the watershed boundaries layer
-            /*
             var watershedDataProvider = new ArcGISServer.DataProvider(arcServerUrl + "/arcgis/rest/services/cb_watersheds/MapServer/0");
             watershedDataProvider.labelField = "HUC8_Name";
-            */
-            var watershedDataProvider = new ArcGISServer.DataProvider(arcServerUrl + "/arcgis/rest/services/test/MapServer/0");
-            watershedDataProvider.labelField = "Name";
             watershedDataProvider.lineColor = new VEColor(255, 255, 255, 0.75); 
             watershedDataProvider.fillColor = new VEColor(255, 255, 255, 0.35);
             watershedsLayer = new AsyncLayer(map, watershedDataProvider);
@@ -144,11 +141,11 @@
             dijit.byId("watershedsCheckbox").setValue(watershedsLayer.isVisible());
             watershedsLayer.LoadLayer();
             
-            // Setup the watershed boundaries layer
+            // Setup the surface permeability layer
             /*
             var agisve_services = new ESRI.ArcGIS.VE.ArcGISLayerFactory();
-            agisve_services.CreateLayer(arcServerUrl + "/arcgis/rest/services/cbhuc8/MapServer", 
-                                        "HUC_8", 
+            agisve_services.CreateLayer(arcServerUrl + "/arcgis/rest/services/cb_permeability/MapServer", 
+                                        "Permeability", 
                                         function (tileSourceSpec, resourceInfo) {
                                             tileSourceSpec.Opacity=0.5;
                                             map.AddTileLayer(tileSourceSpec, true);
@@ -258,7 +255,7 @@
           <asp:ScriptReference Path="js/ArcGISServer.js" />
         </Scripts>
         <Services>
-          <asp:ServiceReference Path="NGSDataService.asmx" />
+          <asp:ServiceReference Path="MetaLensService.asmx" />
         </Services>
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" style="width:950px; height:550px">

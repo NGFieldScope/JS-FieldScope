@@ -18,7 +18,7 @@ ArcGISServer.DataProvider = function (inUrl) {
         return 0; 
       };
     
-    this.GetRecords = function (bounds, zoom, OnSuccess, OnFailure) { 
+    this.GetRecords = function (bounds, width, height, OnSuccess, OnFailure) { 
         var top = bounds.TopLeftLatLong.Latitude;
         var left = bounds.TopLeftLatLong.Longitude;
         var bottom = bounds.BottomRightLatLong.Latitude;

@@ -7,7 +7,7 @@
 /*global AsyncDataProvider */
 AsyncDataProvider = function () {
     this.GetMinimumZoomLevel = function () { return 0; };
-    this.GetRecords = function (bounds, zoom, OnSuccess, OnFailure) { };
+    this.GetRecords = function (bounds, width, height, OnSuccess, OnFailure) { };
     this.CreateShapes = function (record) { return null; };
     this.OwnsShape = function (shape) { return false; };
     this.GetPopup = function (shape, divID, OnSuccess, OnFailure) { };
@@ -97,8 +97,11 @@ AsyncLayer = function (inMap, inProvider) {
         // fire beginloading event
         var handler = this.eventHandlers.getHandler("onbeginloading");
         if (handler) { handler.call(this, Sys.EventArgs.Empty); }
+        //CAUTION: undocumented VE internals
+        var width = this.map.mapelement.clientWidth;
+        var height = this.map.mapelement.clientHeight;
         // call webservice
-        this.provider.GetRecords(bounds, zoom, this.OnGetDataSucceededDelegate, Utility.OnFailed);
+        this.provider.GetRecords(bounds, width, height, this.OnGetDataSucceededDelegate, Utility.OnFailed);
       });
     
     this.map.AttachEvent("onchangeview", this.RefreshDataDelegate);
