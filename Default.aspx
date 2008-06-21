@@ -130,7 +130,7 @@
             var watershedDataProvider = new ArcGISServer.DataProvider(arcServerUrl + "/arcgis/rest/services/cb_watersheds/MapServer/0");
             watershedDataProvider.labelField = "HUC8_Name";
             watershedDataProvider.lineColor = new VEColor(255, 255, 255, 0.75); 
-            watershedDataProvider.fillColor = new VEColor(255, 255, 255, 0.35);
+            watershedDataProvider.fillColor = new VEColor(255, 255, 255, 0.0);
             watershedsLayer = new AsyncLayer(map, watershedDataProvider);
             watershedsLayer.AttachEvent("onbeginloading", function (evt) {
                 dojo.byId("watershedsLoadingImg").style.visibility="visible";
@@ -142,7 +142,7 @@
             watershedsLayer.LoadLayer();
             
             // Setup the surface permeability layer
-            /*
+            
             var agisve_services = new ESRI.ArcGIS.VE.ArcGISLayerFactory();
             agisve_services.CreateLayer(arcServerUrl + "/arcgis/rest/services/cb_permeability/MapServer", 
                                         "Permeability", 
@@ -150,7 +150,7 @@
                                             tileSourceSpec.Opacity=0.5;
                                             map.AddTileLayer(tileSourceSpec, true);
                                           });
-            */
+            
         });
       
       // Click handler for "tool" buttons
