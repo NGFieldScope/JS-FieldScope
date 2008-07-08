@@ -20,15 +20,16 @@ namespace MetaLens {
         public readonly double Latitude;
         public readonly double Longitude;
 
-        public AssetLocation (XmlReader reader) {
-            //NOTE: this depends on the order of elements in the response. That could be
-            // a problem in the future.
-            reader.ReadToFollowing("id");
-            this.AssetID = reader.ReadElementContentAsString();
-            reader.ReadToFollowing("Longitude");
-            this.Longitude = reader.ReadElementContentAsDouble();
-            //reader.ReadToFollowing("Latitude");
-            this.Latitude = reader.ReadElementContentAsDouble();
+        public AssetLocation (XmlNode root) {
+            foreach (XmlNode n in root) {
+                if (n.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase)) {
+                    this.AssetID = n.InnerText.TrimStart('0');
+                } else if (n.LocalName.Equals("Longitude", StringComparison.OrdinalIgnoreCase)) {
+                    this.Longitude = Double.Parse(n.InnerText);
+                } else if (n.LocalName.Equals("Latitude", StringComparison.OrdinalIgnoreCase)) {
+                    this.Latitude = Double.Parse(n.InnerText);
+                }
+            }
         }
     }
 
@@ -43,25 +44,25 @@ namespace MetaLens {
         private string _copyright;
         private string _type;
 
-        public AssetDescription (XmlReader reader) {
-            //NOTE: this depends on the order of elements in the response. That could be
-            // a problem in the future.
-            reader.ReadToFollowing("id");
-            _assetid = reader.ReadElementContentAsString();
-            reader.ReadToNextSibling("Longitude");
-            _longitude = reader.ReadElementContentAsDouble();
-            //reader.ReadToNextSibling("Latitude");
-            _latitude = reader.ReadElementContentAsDouble();
-            reader.ReadToNextSibling("Name");
-            _name = reader.ReadElementContentAsString();
-            //reader.ReadToNextSibling("Caption");
-            _caption = reader.ReadElementContentAsString();
-            //reader.ReadToNextSibling("Description");
-            _description = reader.ReadElementContentAsString();
-            if (reader.ReadToNextSibling("Copyright")) {
-                _copyright = reader.ReadElementContentAsString();
-                reader.ReadToNextSibling("PrimaryType");
-                _type = reader.ReadElementContentAsString();
+        public AssetDescription (XmlNode root) {
+            foreach (XmlNode n in root) {
+                if (n.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase)) {
+                    _assetid = n.InnerText.TrimStart('0');
+                } else if (n.LocalName.Equals("Longitude", StringComparison.OrdinalIgnoreCase)) {
+                    _longitude = Double.Parse(n.InnerText);
+                } else if (n.LocalName.Equals("Latitude", StringComparison.OrdinalIgnoreCase)) {
+                    _latitude = Double.Parse(n.InnerText);
+                } else if (n.LocalName.Equals("Name", StringComparison.OrdinalIgnoreCase)) {
+                    _name = n.InnerText;
+                } else if (n.LocalName.Equals("Caption", StringComparison.OrdinalIgnoreCase)) {
+                    _caption = n.InnerText;
+                } else if (n.LocalName.Equals("Description", StringComparison.OrdinalIgnoreCase)) {
+                    _description = n.InnerText;
+                } else if (n.LocalName.Equals("Copyright", StringComparison.OrdinalIgnoreCase)) {
+                    _copyright = n.InnerText;
+                } else if (n.LocalName.Equals("PrimaryType", StringComparison.OrdinalIgnoreCase)) {
+                    _type = n.InnerText;
+                }
             }
         }
 
@@ -131,12 +132,16 @@ namespace MetaLens {
 
     public class Service {
 
-        private const double CLUSTER_SIZE = 32;
+        private readonly string _url;
 
-        public static List<Pin> GetPoints (double left, double right, double bottom, double top, double width, double height) {
+        public Service (string url) {
+            _url = url;
+        }
+
+        public List<Pin> GetPoints (double left, double right, double bottom, double top, double width, double height) {
             HttpWebResponse resp = null;
             try {
-                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create("http://focus.metalens.org/assets.cpx");
+                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(_url + "/assets.cpx");
                 queryRequest.Method = "POST";
                 queryRequest.ContentType = "text/xml";
                 queryRequest.CookieContainer = new CookieContainer();
@@ -169,14 +174,17 @@ namespace MetaLens {
                 responseSettings.IgnoreWhitespace = true;
                 responseSettings.IgnoreComments = true;
                 XmlReader responseReader = XmlReader.Create(resp.GetResponseStream(), responseSettings);
+                XmlDocument doc = new XmlDocument();
 
                 LinkedList<AssetLocation> assets = new LinkedList<AssetLocation>();
-                while (responseReader.ReadToFollowing("asset")) {
-                    assets.AddLast(new AssetLocation(responseReader));
+                if (responseReader.ReadToFollowing("asset")) {
+                    while (responseReader.Name.Equals("asset", StringComparison.OrdinalIgnoreCase)) {
+                        assets.AddLast(new AssetLocation(doc.ReadNode(responseReader)));
+                    }
                 }
 
-                int rows = (int)(width / CLUSTER_SIZE);
-                int columns = (int)(height / CLUSTER_SIZE);
+                int rows = (int)(width / 24);
+                int columns = (int)(height / 24);
                 double cellWidth = (right - left) / columns;
                 double cellHeight = (top - bottom) / rows;
                 Dictionary<Point, LinkedList<AssetLocation>> clusters = new Dictionary<Point, LinkedList<AssetLocation>>();
@@ -200,6 +208,7 @@ namespace MetaLens {
                     result.Add(new Pin(cluster));
                 }
                 return result;
+
             } finally {
                 if (resp != null) {
                     resp.Close();
@@ -208,11 +217,11 @@ namespace MetaLens {
             }
         }
 
-        public static AssetDescription GetDescription (string assetId) {
+        public AssetDescription GetDescription (string assetId) {
             HttpWebResponse resp = null;
             try {
                 // Login into the host using the server's configured authentication scheme
-                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create("http://focus.metalens.org/assets/" + assetId + ".cpx");
+                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(_url + "/assets/" + assetId.PadLeft(32, '0') + ".cpx");
                 queryRequest.Method = "GET";
                 queryRequest.ContentType = "text/xml";
                 resp = (HttpWebResponse)queryRequest.GetResponse();
@@ -221,8 +230,9 @@ namespace MetaLens {
                 responseSettings.IgnoreWhitespace = true;
                 responseSettings.IgnoreComments = true;
                 XmlReader responseReader = XmlReader.Create(resp.GetResponseStream(), responseSettings);
+                XmlDocument doc = new XmlDocument();
                 if (responseReader.ReadToFollowing("asset")) {
-                    return new AssetDescription(responseReader);
+                    return new AssetDescription(doc.ReadNode(responseReader));
                 } else {
                     return null;
                 }

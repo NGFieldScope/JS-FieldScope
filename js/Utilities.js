@@ -66,6 +66,13 @@ StringUtils = {
         result.push(string.substr(i+1));
       }
       return result;
+    },
+  
+  padLeft: function (str, len, pad) {
+      if (len + 1 >= str.length) {
+        str = new Array(len + 1 - str.length).join(pad) + str;
+      }
+      return str;
     }
 };
 
