@@ -21,7 +21,8 @@ FieldScope.WFS.DataEntryProvider = function (layer, url) {
         for (var x = 0; x < fields.length; x += 1) {
           if (fields[x].type === "esriFieldTypeGeometry") {
             this.geometryName = fields[x].name;
-          } else if (fields[x].type !== "esriFieldTypeOID") {
+          } else if ((fields[x].type !== "esriFieldTypeOID") &&
+                     (!fields[x].name.startsWith("gml_"))) {
             result += '<tr><td align="right" style="font-weight:bold">';
             result += fields[x].alias;
             result += ':</td><td>';
@@ -54,7 +55,6 @@ FieldScope.WFS.DataEntryProvider = function (layer, url) {
               }
             }
             this.onFinishLoadingHandler = Function.createDelegate(this, function (event) {
-                console.log("got onfinishloading");
                 map.closeInfoWindow();
                 this.layer.DetachEvent("onfinishloading", this.onFinishLoadingHandler);
               });
@@ -67,7 +67,6 @@ FieldScope.WFS.DataEntryProvider = function (layer, url) {
                 { Latitude: point.lat(), Longitude: point.lng() },
                 data,
                 Function.createDelegate(this, function (result) {
-                    console.log("got onsuccess");
                     this.layer.ReloadLayer();
                   }),
                 function (result) {

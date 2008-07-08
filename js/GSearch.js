@@ -60,7 +60,6 @@ FieldScope.GSearch = function (inMap, inResultsDivId) {
         if ((!response) || (response.Status.code !== 200) || (response.Placemark.length === 0)) {
           resultsDiv.innerHTML = "Address not found.";
         } else {
-          console.log(response.Placemark.length);
           var heading = document.createElement("p");
           heading.style.fontWeight = "bold";
           heading.style.margin = "0px";

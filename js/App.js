@@ -1,6 +1,7 @@
 /*global FieldScope, esri, Sys, Type $get */
-/*global GBrowserIsCompatible GMap2 GEvent GLatLng GLargeMapControl GMapType GMarker G_HYBRID_MAP G_SATELLITE_MAP */
-/*global dijit MetaLensService */
+/*global GBrowserIsCompatible GMap2  GLargeMapControl G_HYBRID_MAP G_SATELLITE_MAP */
+/*global GEvent GIcon GLatLng GMapType GMarker GPoint GSize */
+/*global dijit MetaLensService StringUtils */
 
 Type.registerNamespace("FieldScope");
 
@@ -164,19 +165,20 @@ FieldScope.App = function (mapId,
     // Here is where we actually do the setup, now that our methods have all been defined
     //
     if (GBrowserIsCompatible()) {
+      var urlPrefix = "http://" + StringUtils.removePortNumber(location.host);
+    
       var mapDiv = $get(this.elementIds.map);
       this.map = new GMap2(mapDiv);
       this.map.setCenter(new GLatLng(39.04, -77.06), 10);
       this.map.addControl(new GLargeMapControl());
       this.map.setMapType(G_SATELLITE_MAP);
       this.map.enableScrollWheelZoom();
-      
-      //this.mapExtension = new esri.arcgis.gmaps.MapExtension(this.map);
+      this.mapExtension = new esri.arcgis.gmaps.MapExtension(this.map);
       
       this.searchTool = new FieldScope.GSearch(this.map, this.elementIds.searchResults);
       
       // Impervious surfaces layer
-      var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer("http://localhost/ArcGIS/rest/services/cb_permeability/MapServer",
+      var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
                                                              {opacity: 0.35},
                                                              Function.createDelegate(this, function (layer) {
                                                                  this.layers.permeability = layer;
@@ -184,9 +186,11 @@ FieldScope.App = function (mapId,
                                                                }));
       
       // Watershed boundaries layer
-      var watershedsProvider = new FieldScope.ArcGISServer.GDataProvider("http://localhost/ArcGIS/rest/services/cb_watersheds/MapServer/0");
+      var watershedsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0");
       watershedsProvider.fillStyle = {color: "#0000FF", opacity: 0.1};
       watershedsProvider.lineStyle = {color: "#0000FF", opacity: 0.75, weight: 2};
+      watershedsProvider.queryfields = [ "HUC4_NAME", "HUC8_Name" ];
+      watershedsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Subregion:<td><td>{HUC4_NAME}</td></tr><tr><td style="font-weight:bold">Subbasin:<td><td>{HUC8_Name}</td></tr></table>';
       this.layers.watersheds = new FieldScope.GAsyncLayer(this.map, watershedsProvider);
       this.layers.watersheds.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
           $get(this.elementIds.watershedsLoading).style.visibility="visible";
@@ -208,7 +212,7 @@ FieldScope.App = function (mapId,
       this.layers.metaLens.LoadLayer();
       
       // Student observations layer
-      var observationsProvider = new FieldScope.ArcGISServer.GDataProvider("http://geode1/ArcGIS/rest/services/cb_observations/MapServer/0");
+      var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_observations/MapServer/0");
       observationsProvider.icon = new GIcon(null, "images/beaker.gif");
       observationsProvider.icon.shadow = "images/beaker-shadow.png";
       observationsProvider.icon.iconSize = new GSize(24, 24);
@@ -216,6 +220,8 @@ FieldScope.App = function (mapId,
       observationsProvider.icon.iconAnchor = new GPoint(12, 24);
       observationsProvider.icon.infoWindowAnchor = new GPoint(8, 2);
       observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
+      observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHORUS" ];
+      observationsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Temperature:<td><td>{TEMPERATURE}</td></tr><tr><td style="font-weight:bold">Salinity:<td><td>{SALINITY}</td></tr><tr><td style="font-weight:bold">Turbidity:<td><td>{TURBIDITY}</td></tr><tr><td style="font-weight:bold">Oxygen:<td><td>{OXYGEN}</td></tr><tr><td style="font-weight:bold">Nitrogen:<td><td>{NITROGEN}</td></tr><tr><td style="font-weight:bold">Phosphorus:<td><td>{PHOSPHORUS}</td></tr></table>';
       this.layers.observations = new FieldScope.GAsyncLayer(this.map, observationsProvider);
       this.layers.observations.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
           $get(this.elementIds.observationsLoading).style.visibility="visible";
@@ -225,8 +231,7 @@ FieldScope.App = function (mapId,
         }));
       this.layers.observations.LoadLayer();
       
-      
-      this.dataEntryTools.observations = new FieldScope.WFS.DataEntryProvider(this.layers.observations, "http://geode1/arcgis/services/cb_data_2/GeoDataServer/WFSServer");
+      this.dataEntryTools.observations = new FieldScope.WFS.DataEntryProvider(this.layers.observations, urlPrefix + "/arcgis/services/cb_data_2/GeoDataServer/WFSServer");
       this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens);
       
     } else {

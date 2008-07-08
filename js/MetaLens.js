@@ -23,7 +23,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
     this.loadingHTML = '<img src="images/loading24.gif" />Loading...';
     
     function OnFailure (error) {
-      console.log(error);
+      console.error(error);
     }
     
     this.UpdateInfoWindow = function (html) {
@@ -32,12 +32,22 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
           parent.innerHTML = html;
           var thumbnail = $get("FieldScope.MetaLens.Media");
           if (thumbnail) {
-            var resizeListener = GEvent.addDomListener(thumbnail, "load", Function.createDelegate(this, function (e) {
+            /*
+            var resizeListener = null;
+            resizeListener = GEvent.addDomListener(thumbnail, "load", Function.createDelegate(this, function (e) {
                 // Run this once and then remove the listener, or
                 // you'll end up in an infinite loop on IE6.
                 this.map.getExtInfoWindow().resize();
                 GEvent.removeListener(resizeListener);
               }));
+            */
+            thumbnail.onload = Function.createDelegate(this, function (e) {
+                // Run this once and then remove the listener, or
+                // you'll end up in an infinite loop on IE6.
+                var infoWindow = this.map.getExtInfoWindow();
+                window.setTimeout(function () { infoWindow.resize(); }, 0);
+                thumbnail.onload = null;
+              });
           }
           var prevButton = $get("FieldScope.MetaLens.PrevButton");
           if (prevButton) {
@@ -84,12 +94,12 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
         } else if (data.Type === "audio") {
           
           //TODO: use media player
-          result += '<div id="FieldScope.MetaLens.Media"></div>';
+          result += '<img id="FieldScope.MetaLens.Media" alt="audio" />';
           
         } else if (data.Type === "video") {
         
           //TODO: use media player
-          result += '<div id="FieldScope.MetaLens.Media"></div>';
+          result += '<img id="FieldScope.MetaLens.Media" alt="video" />';
         
         }
         result += '</td><td style="vertical-align:top;width:100%"><div style="font-size:8pt;max-height:150px;overflow:auto">';
@@ -135,6 +145,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
                 this.loadingHTML,
                 {beakOffset: 3, paddingX: 10, paddingY: 10}
               );
+            this.map.getExtInfoWindow().FieldScopeMarker = marker;
             this.LoadInfoWindow(marker);
           }));
         return marker;
@@ -142,13 +153,16 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
     
     this.QuerySuccessCallback = function (records, callback) {
         var overlays = [];
+        var marker;
         for (var x = 0; x < records.length; x += 1) {
-          overlays.push(this.MakeMarker(records[x]));
+          marker = this.MakeMarker(records[x]);
+          this.map.addOverlay(marker);
+          overlays.push(marker);
         }
         callback.call(this, overlays);
       };
     
-    this.GetOverlays = function (bounds, size, OnSuccess, OnFailure) { 
+    this.AddOverlays = function (bounds, size, OnSuccess, OnFailure) { 
         this.service.GetPoints(bounds.getSouthWest().lng(),
                                bounds.getNorthEast().lng(),
                                bounds.getSouthWest().lat(),
@@ -162,7 +176,9 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
       };
     
     GEvent.addDomListener(this.map, "extinfowindowclose", Function.createDelegate(this, function() {
-        this.marker = null;
+        if (this.map.getExtInfoWindow().FieldScopeMarker === this.marker) {
+          this.marker = null;
+        }
       }));
   };
 

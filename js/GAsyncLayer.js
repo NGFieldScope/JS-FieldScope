@@ -7,7 +7,7 @@ Type.registerNamespace("FieldScope");
 // GAsyncDataProvider class
 
 FieldScope.GAsyncDataProvider = function () {
-    this.GetOverlays = function (bounds, size, OnSuccess, OnFailure) { };
+    this.AddOverlays = function (bounds, size, OnSuccess, OnFailure) { };
     this.IsClustered = false;
   };
 
@@ -61,48 +61,35 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
         this.eventHandlers.removeHandler(evt, handler);
       };
     
-    this.OnGetDataSucceededDelegate = Function.createDelegate(this, function (newOverlays) {
-        if (newOverlays !== null) {
-          // clear existing overlays
-          if (this.visible) {
-            for (var x = 0; x < this.overlays.length; x += 1) {
-              this.map.removeOverlay(this.overlays[x]);
-            }
-          }
+    this.OnAddOverlaysSucceededDelegate = Function.createDelegate(this, function (newOverlays) {
+        if (newOverlays) {
           this.overlays = newOverlays;
-          //add new shapes
-          if (this.visible) {
-            for (var y = 0; y < this.overlays.length; y += 1) {
-              this.map.addOverlay(this.overlays[y]);
-            }
-          } 
         }
         // fire finishloading event
         var handler = this.eventHandlers.getHandler("onfinishloading");
         if (handler) { handler.call(this, Sys.EventArgs.Empty); }
       });
     
-    this.OnGetDataFailedDelegate = Function.createDelegate(this, function (error) {
+    this.OnAddOverlaysFailedDelegate = Function.createDelegate(this, function (error) {
         // fire finishloading event
         var handler = this.eventHandlers.getHandler("onfinishloading");
         if (handler) { handler.call(this, Sys.EventArgs.Empty); }
-        // remove outdated overlays
-        for (var x = 0; x < this.overlays.length; x += 1) {
-          this.map.removeOverlay(this.overlays[x]);
-        }
         // display the error
-        var stackTrace = error.get_stackTrace();
-        var message = error.get_message();
-        var statusCode = error.get_statusCode();
-        var exceptionType = error.get_exceptionType();
-        var timedout = error.get_timedOut();
-        var RsltElem = 
-            "Stack Trace: " +  stackTrace + "<br/>" +
-            "Service Error: " + message + "<br/>" +
-            "Status Code: " + statusCode + "<br/>" +
-            "Exception Type: " + exceptionType + "<br/>" +
-            "Timedout: " + timedout;
-        alert(RsltElem);
+        console.error(error);
+      });
+    
+    this.AddOverlaysDelegate = Function.createDelegate(this, function () {
+        // clear existing overlays
+        if (this.visible) {
+          for (var x = 0; x < this.overlays.length; x += 1) {
+            this.map.removeOverlay(this.overlays[x]);
+          }
+        }
+        this.overlays = [];
+        this.provider.AddOverlays(this.currentbounds, 
+                                  this.map.getSize(), 
+                                  this.OnAddOverlaysSucceededDelegate, 
+                                  this.OnAddOverlaysFailedDelegate);
       });
     
     this.RefreshDataDelegate = Function.createDelegate(this, function () {
@@ -123,11 +110,9 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
             // fire beginloading event
             var handler = this.eventHandlers.getHandler("onbeginloading");
             if (handler) { handler.call(this, Sys.EventArgs.Empty); }
-            // call data provider
-            this.provider.GetOverlays(this.currentbounds, 
-                                      this.map.getSize(), 
-                                      this.OnGetDataSucceededDelegate, 
-                                      this.OnGetDataFailedDelegate);
+            // Call data provider. Why do this with setTimeout? 
+            // It seems to keep IE6 from deadlocking
+            window.setTimeout(this.AddOverlaysDelegate, 0);
           }
         } else {
           this.overlays = [];
