@@ -14,25 +14,25 @@ FieldScope.GSearch = function (inMap, setResultsCallback) {
     this.geocoder = new GClientGeocoder();
     this.overlays = [];
     
-    this.AttachEvent = function (evt, handler) {
+    this.AttachEvent = Function.createDelegate(this, function (evt, handler) {
         if ((evt === "onbeginsearch") || (evt === "onfinishsearch")) {
           this.eventHandlers.addHandler(evt, handler);
         } else {
           throw "Unsupported event: " + evt;
         }
-      };
+      });
     
-    this.DetachEvent = function (evt, handler) {
+    this.DetachEvent = Function.createDelegate(this, function (evt, handler) {
         this.eventHandlers.removeHandler(evt, handler);
-      };
+      });
     
-    this.DoSearch = function (text) {
+    this.DoSearch = Function.createDelegate(this, function (text) {
         this.ClearSearchResults();
         var handler = this.eventHandlers.getHandler("onbeginsearch");
         if (handler) { handler.call(this, Sys.EventArgs.Empty); }
         this.geocoder.setViewport(this.map.getBounds());
         this.geocoder.getLocations(text, this.SearchCallbackDelegate);
-      };
+      });
     
     this.MakePlacemark = function (place) {
         var point = new GLatLng(place.Point.coordinates[1],
@@ -41,8 +41,8 @@ FieldScope.GSearch = function (inMap, setResultsCallback) {
         var row = document.createElement("tr");
         var cell = document.createElement("td");
         var anchor = document.createElement("a");
-        anchor.innerText = place.address;
         anchor.setAttribute("href", 'javascript: void(0)');
+        anchor.appendChild(document.createTextNode(place.address));
         cell.appendChild(anchor);
         row.appendChild(cell);
         var delegate = Function.createDelegate(this, function () {
@@ -85,13 +85,13 @@ FieldScope.GSearch = function (inMap, setResultsCallback) {
         this.SetResults(result);
       });
     
-    this.ClearSearchResults = function () {
+    this.ClearSearchResults = Function.createDelegate(this, function () {
         for (var x = 0; x < this.overlays.length; x += 1) {
           this.map.removeOverlay(this.overlays[x]);
         }
         this.overlays = [];
         this.SetResults(null);
-      };
+      });
   };
 
 FieldScope.GSearch.registerClass("FieldScope.GSearch");

@@ -15,9 +15,10 @@
         height: 16px;
       }
     </style>
+  <!-- Mystery key: "ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRT-pF1m860BUFn_yE2HNV-20QsRKhTNLIH1MmOKXzcbTWUjmZ0Js2oTig" -->                                                                 
+  
   <!-- development version scripts -->
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQ_5rwwWZl7ALhyiRg47ubM-rTOnRSsVfG-QI3g0i2S9uGQsVLtI_DRLg" type="text/javascript"></script>
-    <!-- Mystery key: "ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRT-pF1m860BUFn_yE2HNV-20QsRKhTNLIH1MmOKXzcbTWUjmZ0Js2oTig" -->                                                                 
     <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
     <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:true, usePlainJson:true"></script>
@@ -56,8 +57,10 @@
                                              resultsDiv.innerHTML = "";
                                              if (searchResults) {
                                                resultsDiv.appendChild(searchResults);
+                                               console.log("showing");
                                                resultsDiv.style.visibility="visible";
                                              } else {
+                                               console.log("hiding");
                                                resultsDiv.style.visibility="hidden";
                                              }
                                            });

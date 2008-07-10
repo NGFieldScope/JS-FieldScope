@@ -97,7 +97,11 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
         } else if (/* return */ event.keyCode === 0x0D) {
           event.cancelBubble = true;
           event.returnValue = false;
-          this.OnSearchClick();
+          if (event.preventDefault) {
+            event.preventDefault();
+          }
+          this.searchTool.DoSearch(this.GetSearchText());
+          return false;
         }
       });
     
