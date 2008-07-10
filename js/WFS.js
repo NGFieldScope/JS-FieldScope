@@ -57,8 +57,10 @@ FieldScope.WFS.DataEntryProvider = function (layer, url) {
             this.onFinishLoadingHandler = Function.createDelegate(this, function (event) {
                 map.closeInfoWindow();
                 this.layer.DetachEvent("onfinishloading", this.onFinishLoadingHandler);
+                this.onFinishLoadingHandler = null;
               });
             this.layer.AttachEvent("onfinishloading", this.onFinishLoadingHandler);
+            this.layer.SetVisible(true);
             $get("FieldScope.WFS.DataEntryDiv").innerHTML = '<img src="images/loading24.gif" />Saving...';
             WFSService.InsertPoint(
                 this.url, 
