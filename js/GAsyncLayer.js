@@ -32,20 +32,20 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
     
     this.SetVisible = function (newVisible) {
         if (newVisible !== this.visible) {
+          this.visible = newVisible;
           if (newVisible) {
             if (this.overlays.length > 0) {
               for (var x = 0; x < this.overlays.length; x += 1) {
                 this.map.addOverlay(this.overlays[x]);
               }
             } else {
-              this.LoadLayer();
+              this.ReloadLayer();
             }
           } else {
             for (var y = 0; y < this.overlays.length; y += 1) {
               this.map.removeOverlay(this.overlays[y]);
             }
           }
-          this.visible = newVisible;
         }
       };
     

@@ -47,27 +47,107 @@
       // Global variables
       application = null;
       dojo.addOnLoad(function () {
-          application = new FieldScope.App("mapDiv",
-                                           "searchInput",
-                                           "searchResultsDiv",
-                                           "watershedsLoadingImg",
-                                           "metaLensLoadingImg",
-                                           "observationsLoadingImg");
+          application = new FieldScope.App($get("FieldScope.Div.Map"),
+                                           function () {
+                                             return $get("FieldScope.Input.SearchText").value;
+                                           },
+                                           function (searchResults) {
+                                             var resultsDiv = $get("FieldScope.Div.SearchResults");
+                                             resultsDiv.innerHTML = "";
+                                             if (searchResults) {
+                                               resultsDiv.appendChild(searchResults);
+                                               resultsDiv.style.visibility="visible";
+                                             } else {
+                                               resultsDiv.style.visibility="hidden";
+                                             }
+                                           });
+          
+          // Build a button for each of the application's data entry tools
+          var toolTable = document.createElement("tbody");
+          var toolButtons = [];
+          $get("FieldScope.Table.Tools").appendChild(toolTable);
+          for (var toolName in application.dataEntryTools) {
+            var tool = application.dataEntryTools[toolName];
+            if (tool) {
+              var id = "FieldScope.Button.Tool[" + toolName + "]";
+              var row = document.createElement("tr");
+              toolTable.appendChild(row);
+              var cell1 = document.createElement("td");
+              row.appendChild(cell1);
+              var button = document.createElement("div");
+              cell1.appendChild(button);
+              var widget = new dijit.form.ToggleButton({ id : id, iconClass : "dijitRadioIcon" }, button);
+              widget.setAttribute("checked", tool == application.dataEntry.currentTool);
+              var input = $get(id);
+              input.FieldScopeTool = tool;
+              input.FieldScopeWidget = widget;
+              input.appendChild(document.createTextNode(tool.name));
+              $addHandler(input, "click", Function.createDelegate(this, function (evt) {
+                  application.SetDataEntryTool(evt.target.FieldScopeTool);
+                  window.setTimeout(UpdateDataEntryButtons, 0);
+                }));
+              toolButtons.push(input);
+            }
+          }
+          
+          // Build a set of controls for each of the application's data layers
+          var layerTable = document.createElement("tbody");
+          $get("FieldScope.Table.Layers").appendChild(layerTable);
+          for (var layerName in application.layers) {
+            var layer = application.layers[layerName];
+            if (layer) {
+              var id = "FieldScope.Checkbox.Layer[" + layerName + "]";
+              var row = document.createElement("tr");
+              layerTable.appendChild(row);
+              var cell0 = document.createElement("td");
+              row.appendChild(cell0);
+              cell0.align = "center";
+              cell0.innerHTML = layer.iconHTML;
+              var cell1 = document.createElement("td");
+              row.appendChild(cell1);
+              var button = document.createElement("div");
+              cell1.appendChild(button);
+              var widget = new dijit.form.CheckBox({ id : id }, button);
+              widget.setAttribute("checked", layer.IsVisible());
+              var input = $get(id);
+              input.FieldScopeLayer = layer;
+              $addHandler(input, "click", function (evt) {
+                  evt.target.FieldScopeLayer.SetVisible(evt.target.checked);
+                });
+              var label = document.createElement("label");
+              cell1.appendChild(label);
+              label.htmlFor = id;
+              label.appendChild(document.createTextNode(layer.name));
+              var cell2 = document.createElement("td");
+              row.appendChild(cell2);
+              var img = document.createElement("img");
+              cell2.appendChild(img);
+              img.id = id + ".LoadingImg";
+              img.src = "images/loading16.gif";
+              img.alt = "Loading...";
+              img.style.visibility = "hidden";
+              layer.loadingIndicator = img;
+            }
+          }
         });
       
       function UpdateDataEntryButtons () {
-        var tool = application.dataEntry.currentTool;
-        dijit.byId("addPointButton").setAttribute("checked",tool  === application.dataEntryTools.observations);
-        dijit.byId("addPhotoButton").setAttribute("checked", tool === application.dataEntryTools.photos);
-        dijit.byId("stopDataEntryButton").setAttribute("checked", tool === application.dataEntryTools.none);
+        var currentTool = application.dataEntry.currentTool;
+        for (var toolName in application.dataEntryTools) {
+          var tool = application.dataEntryTools[toolName];
+          if (tool) {
+            dijit.byId("FieldScope.Button.Tool[" + toolName + "]").setAttribute("checked", currentTool === tool);
+          }
+        }
       }
       
       function OnSelectPane (pane) {
-        if (application && (pane.id !== "FieldScope.SubmitDataPane")) {
+        if (application && (pane.id !== "FieldScope.Pane.SubmitData")) {
           application.SetDataEntryTool(application.dataEntryTools.none); 
           UpdateDataEntryButtons();
         }
       }
+      
     </script>
   </head>
   <body class="tundra">
@@ -89,111 +169,27 @@
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" style="width:950px; height:550px">
         <div dojoType="dijit.layout.AccordionContainer" duration="200" style="width:200px;height:550px;float:left;overflow:hidden;" region="left">
-          <div dojoType="dijit.layout.AccordionPane" 
-               id="FieldScope.SubmitDataPane" 
-               title="Submit Data or Photos"
-               onSelected="OnSelectPane(this);">
-            <table style="width:98%">
-              <tr>
-                <td>
-                  <button dojoType="dijit.form.ToggleButton" 
-                          onclick="application.SetDataEntryTool(application.dataEntryTools.observations); UpdateDataEntryButtons();"
-                          id="addPointButton"
-                          iconClass="dijitRadioIcon">
-                    Place Observation
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <button dojoType="dijit.form.ToggleButton" 
-                          onclick="application.SetDataEntryTool(application.dataEntryTools.photos); UpdateDataEntryButtons();"  
-                          id="addPhotoButton" 
-                          iconClass="dijitRadioIcon">
-                    Place Photo
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <button dojoType="dijit.form.ToggleButton" 
-                          onclick="application.SetDataEntryTool(application.dataEntryTools.none); UpdateDataEntryButtons();" 
-                          id="stopDataEntryButton" 
-                          checked="checked"
-                          iconClass ="dijitRadioIcon">
-                    Data Entry Off
-                  </button>
-                </td>
-              </tr>
-            </table>
+          <div dojoType="dijit.layout.AccordionPane" id="FieldScope.Pane.SubmitData" title="Submit Data or Photos" onSelected="OnSelectPane(this);">
+            <table style="width:98%" id="FieldScope.Table.Tools"></table>
           </div>
-          <div dojoType="dijit.layout.AccordionPane" 
-               id="FieldScope.FindLocationPane" 
-               title="Find a Location"
-               onSelected="OnSelectPane(this);">
+          <div dojoType="dijit.layout.AccordionPane" id="FieldScope.Pane.FindLocation" title="Find a Location" onSelected="OnSelectPane(this);">
             <div style="margin:2px">
-              <input type="text" id="searchInput" style="width:98%;margin-bottom:2px" onkeydown="application.OnSearchKey(event);" />
-              <input type="button" id="searchButton" value="Search" onclick="application.OnSearchClick(event)" />
-              <div id="searchResultsDiv" style="width:98%;text-align:left;visibility:hidden"></div>
+              <input type="text" id="FieldScope.Input.SearchText" style="width:98%;margin-bottom:2px" onkeydown="application.OnSearchKey(event);" />
+              <input type="button" value="Search" onclick="application.OnSearchClick(event);" />
+              <div id="FieldScope.Div.SearchResults" style="width:98%;text-align:left;visibility:hidden"></div>
             </div>
           </div>
-          <div dojoType="dijit.layout.AccordionPane" 
-               id="FieldScope.LayersPane" 
-               title="Explore Data Layers" 
-               selected="true"
-               onSelected="OnSelectPane(this);">
-            <table style="width:100%">
-              <tr>
-                <td>
-                  <input type="checkbox" name="layer0" checked="checked" dojoType="dijit.form.CheckBox" onclick="application.SetLayerVisible(0, this.checked);" />
-                  <label for="layer0">Student Observations</label>
-                </td>
-                <td><img id="observationsLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" /></td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="checkbox" name="layer1" checked="checked" dojoType="dijit.form.CheckBox" onclick="application.SetLayerVisible(1, this.checked);" />
-                  <label for="layer1">Photo Locations</label>
-                </td>
-                <td><img id="metaLensLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" /></td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="checkbox" name="layer2" checked="checked" dojoType="dijit.form.CheckBox" onclick="application.SetLayerVisible(2, this.checked);" />
-                  <label for="layer2">Watershed Boundaries</label>
-                </td>
-                <td><img id="watershedsLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" /></td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="checkbox" name="layer3" checked="checked" dojoType="dijit.form.CheckBox" onclick="application.SetLayerVisible(3, this.checked);" />
-                  <label for="layer3">Impervious Surfaces</label>
-                </td>
-                <td><img id="permeabilityLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" /></td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="checkbox" name="layer4" dojoType="dijit.form.CheckBox" onclick="application.SetLayerVisible(4, this.checked);" />
-                  <label for="layer4">Streets & Places</label>
-                </td>
-                <td><img id="placesLoadingImg" src="images/loading16.gif" style="visibility:hidden" alt="Loading" /></td>
-              </tr>
-            </table>
+          <div dojoType="dijit.layout.AccordionPane" id="FieldScope.Pane.Layers" title="Explore Data Layers" selected="true" onSelected="OnSelectPane(this);">
+            <table style="width:98%" id="FieldScope.Table.Layers"> </table>
           </div>
-          <div dojoType="dijit.layout.AccordionPane" 
-               id="FieldScope.AnalysisPane" 
-               title="Analyze Data"
-               onSelected="OnSelectPane(this);">
+          <div dojoType="dijit.layout.AccordionPane" id="FieldScope.Pane.Analysis" title="Analyze Data" onSelected="OnSelectPane(this);">
             Analysis tools go here
           </div>
-          <div dojoType="dijit.layout.AccordionPane" 
-               id="FieldScope.GraphingPane" 
-               title="Graphing Tool"
-               onSelected="OnSelectPane(this);">
+          <div dojoType="dijit.layout.AccordionPane" id="FieldScope.Pane.Graphing" title="Graphing Tool" onSelected="OnSelectPane(this);">
             Graphing tools go here
           </div>
         </div>
-        <div id="mapDiv" dojoType="dijit.layout.ContentPane" style="border:1px inset gray;width:750px;height:548px" region="center">
+        <div id="FieldScope.Div.Map" dojoType="dijit.layout.ContentPane" style="border:1px inset gray;width:750px;height:548px" region="center">
           Map Goes Here
         </div>
       </div>

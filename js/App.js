@@ -17,27 +17,46 @@ FieldScope.DataEntryProvider = function () {
 FieldScope.DataEntryProvider.registerInterface('FieldScope.DataEntryProvider');
 
 // ----------------------------------------------------------------------------
+// AsyncLayerController class
+
+FieldScope.AsyncLayerController = function (layer, name, iconHTML) {
+    this.asyncLayer = layer;
+    this.name = name;
+    this.IsVisible = Function.createDelegate(this, function () {
+        return this.asyncLayer.IsVisible();
+      });
+    this.SetVisible = Function.createDelegate(this, function (visible) {
+        this.asyncLayer.SetVisible(visible);
+      });
+    this.loadingIndicator = null;
+    this.asyncLayer.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
+        if (this.loadingIndicator) {
+          this.loadingIndicator.style.visibility="visible";
+        }
+      }));
+    this.asyncLayer.AttachEvent("onfinishloading", Function.createDelegate(this, function (evt) {
+        if (this.loadingIndicator) {
+          this.loadingIndicator.style.visibility="hidden";
+        }
+      }));
+    this.asyncLayer.SetVisible(false);
+    this.iconHTML = iconHTML;
+  };
+
+FieldScope.AsyncLayerController.registerClass('FieldScope.AsyncLayerController');
+
+// ----------------------------------------------------------------------------
 // Application class
 
-FieldScope.App = function (mapId, 
-                           searchInputId,
-                           searchResultsId,
-                           watershedsLoadingId,
-                           metaLensLoadingId,
-                           observationsLoadingId) {
-    
-    this.elementIds = { map : mapId,
-                        searchInput : searchInputId,
-                        searchResults : searchResultsId,
-                        watershedsLoading : watershedsLoadingId,
-                        metaLensLoading : metaLensLoadingId,
-                        observationsLoading : observationsLoadingId };
+FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
     
     this.map = null;
     this.mapTypes = null;
     this.mapExtension = null;
     
     this.searchTool = null;
+    this.GetSearchText = getSearchTextFn;
+    this.SetSearchResults = setSearchResultsFn;
     
     this.dataEntryTools = { 
         observations : null, 
@@ -50,63 +69,23 @@ FieldScope.App = function (mapId,
         marker : null
       };
     this.layers = {
-        permeability : null,
-        watersheds : null,
-        metaLens : null,
-        observations : null
+        observations : { },
+        metaLens : { },
+        watersheds : { },
+        nutrients : { },
+        permeability : { },
+        streets : { }
       };
-    this.layersVisible = {
-        permeability : true,
-        places : false
-      };
-    
-    this.SetupMapTypes = Function.createDelegate(this, function () {
-        this.mapTypes = [ G_SATELLITE_MAP,
-                          G_HYBRID_MAP,
-                          new GMapType([G_SATELLITE_MAP.getTileLayers()[0], this.layers.permeability],
-                                       G_SATELLITE_MAP.getProjection(), 
-                                       "Satellite with Permeability", 
-                                       {errorMessage:"No data available"}),
-                          new GMapType([G_HYBRID_MAP.getTileLayers()[0], this.layers.permeability, G_HYBRID_MAP.getTileLayers()[1]],
-                                       G_HYBRID_MAP.getProjection(),
-                                       "Hybrid with Permeability", 
-                                       {errorMessage:"No data available"}) ];
-        this.UpdateMapType();
-      });
     
     this.UpdateMapType = Function.createDelegate(this, function () {
-        var typeIndex = 0;
-        if (this.layersVisible.places) {
-          typeIndex += 1;
+        var tileLayers = [ G_SATELLITE_MAP.getTileLayers()[0] ];
+        if (this.layers.permeability.visible) {
+          tileLayers.push(this.layers.permeability.tileLayer);
         }
-        if (this.layersVisible.permeability) {
-          typeIndex += 2;
+        if (this.layers.streets.visible) {
+          tileLayers.push(this.layers.streets.tileLayer);
         }
-        this.map.setMapType(this.mapTypes[typeIndex]);
-      });
-    
-    this.SetLayerVisible = Function.createDelegate(this, function (index, visible) {
-        switch (index) {
-          case 0:
-            this.layers.observations.SetVisible(visible);
-            break;
-          case 1:
-            this.layers.metaLens.SetVisible(visible);
-            break;
-          case 2:
-            this.layers.watersheds.SetVisible(visible);
-            break;
-          case 3:
-            this.layersVisible.permeability = visible;
-            // use setTimeout so the checkbox updates immediately
-            window.setTimeout(this.UpdateMapType, 0);
-            break;
-          case 4:
-            this.layersVisible.places = visible;
-            // use setTimeout so the checkbox updates immediately
-            window.setTimeout(this.UpdateMapType, 0);
-            break;
-        }
+        this.map.setMapType(new GMapType(tileLayers, G_SATELLITE_MAP.getProjection(), "Custom", {errorMessage:"No data available"}));
       });
     
     this.OnSearchKey = Function.createDelegate(this, function (event) {
@@ -123,21 +102,21 @@ FieldScope.App = function (mapId,
       });
     
     this.OnSearchClick = Function.createDelegate(this, function (event) {
-        this.searchTool.DoSearch($get("searchInput").value);
+        this.searchTool.DoSearch(this.GetSearchText());
       });
     
     this.SetDataEntryTool = function (newTool) {
         if (newTool !== this.dataEntry.currentTool) {
-          if (this.dataEntry.currentTool !== null) {
+          if (this.dataEntry.currentTool !== this.dataEntryTools.none) {
             GEvent.removeListener(this.dataEntry.eventListener);
             this.dataEntry.eventListener = null;
-            this.dataEntry.currentTool = null;
+            this.dataEntry.currentTool = this.dataEntryTools.none;
             if (this.dataEntry.marker) {
               this.map.removeOverlay(this.dataEntry.marker);
               this.dataEntry.marker = null;
             }
           }
-          if (newTool !== null) {
+          if (newTool !== this.dataEntryTools.none) {
             this.map.disableDragging();
             this.layers.watersheds.SetVisible(false);
             this.dataEntry.eventListener = GEvent.addListener(this.map, "click", Function.createDelegate(this, function (overlay, loc) {
@@ -167,7 +146,6 @@ FieldScope.App = function (mapId,
     if (GBrowserIsCompatible()) {
       var urlPrefix = "http://" + StringUtils.removePortNumber(location.host);
     
-      var mapDiv = $get(this.elementIds.map);
       this.map = new GMap2(mapDiv);
       this.map.setCenter(new GLatLng(39.04, -77.06), 10);
       this.map.addControl(new GLargeMapControl());
@@ -175,15 +153,47 @@ FieldScope.App = function (mapId,
       this.map.enableScrollWheelZoom();
       this.mapExtension = new esri.arcgis.gmaps.MapExtension(this.map);
       
-      this.searchTool = new FieldScope.GSearch(this.map, this.elementIds.searchResults);
+      this.searchTool = new FieldScope.GSearch(this.map, this.SetSearchResults);
       
       // Impervious surfaces layer
+      this.layers.permeability = {
+          name : "Impervious Surfaces",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.permeability.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.permeability.visible = visible;
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : null,
+          iconHTML : ""
+        };
       var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
                                                              {opacity: 0.35},
                                                              Function.createDelegate(this, function (layer) {
-                                                                 this.layers.permeability = layer;
-                                                                 this.SetupMapTypes();
+                                                                 this.layers.permeability.tileLayer = layer;
+                                                                 this.UpdateMapType();
                                                                }));
+      
+      // Streets & places layer
+      this.layers.streets = {
+          name : "Streets & Places",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.streets.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.streets.visible = visible;
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : G_HYBRID_MAP.getTileLayers()[1],
+          iconHTML : ""
+        };
       
       // Watershed boundaries layer
       var watershedsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0");
@@ -191,25 +201,34 @@ FieldScope.App = function (mapId,
       watershedsProvider.lineStyle = {color: "#0000FF", opacity: 0.75, weight: 2};
       watershedsProvider.queryfields = [ "HUC4_NAME", "HUC8_Name" ];
       watershedsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Subregion:<td><td>{HUC4_NAME}</td></tr><tr><td style="font-weight:bold">Subbasin:<td><td>{HUC8_Name}</td></tr></table>';
-      this.layers.watersheds = new FieldScope.GAsyncLayer(this.map, watershedsProvider);
-      this.layers.watersheds.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
-          $get(this.elementIds.watershedsLoading).style.visibility="visible";
-        }));
-      this.layers.watersheds.AttachEvent("onfinishloading", Function.createDelegate(this, function (evt) {
-          $get(this.elementIds.watershedsLoading).style.visibility="hidden";
-        }));
-      this.layers.watersheds.LoadLayer();
+      this.layers.watersheds = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, watershedsProvider),
+                                                                   "Watershed Boundaries",
+                                                                   '<div style="max-width:10px;max-height:12px;border:2px solid #0000FF;opacity:0.75;filter:alpha(opacity=75)"><div style="width:10px;height:12px;background-color:#0000FF;opacity:0.1;filter:alpha(opacity=10)"></div></div>');
+      
+      // Nutrients & Sediment layer
+      var nutrientsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_nutrients/MapServer/3");
+      nutrientsProvider.fillStyle = {color: "#00FF00", opacity: 0.1};
+      nutrientsProvider.lineStyle = {color: "#00FF00", opacity: 0.75, weight: 2};
+      nutrientsProvider.queryfields = [ "TRIB_BASIN", 
+                                        "AG_TP_PER", "FOR_TP_PER", "MIX_TP_PER", "URB_TP_PER", "DEP_TP_PER", "PNT_TP_PER",
+                                        "AG_TN_PER", "FOR_TN_PER", "MIX_TN_PER", "URB_TN_PER", "DEP_TN_PER", "PNT_TN_PER",
+                                        "AG_SD_PER", "FOR_SD_PER", "MIX_SD_PER", "URB_SD_PER" ];
+      nutrientsProvider.infoWindow = 
+        '<table>'+
+        '<tr><td style="font-weight:bold">Basin:</td><td>{TRIB_BASIN}</td></tr>' +
+        '<tr><td style="font-weight:bold">Phosphorous:</td><td><img src="http://chart.apis.google.com/chart?cht=p&chs=220x75&chd=t:{AG_TP_PER},{FOR_TP_PER},{MIX_TP_PER},{URB_TP_PER},{DEP_TP_PER},{PNT_TP_PER}&chl=Agriculture|Forest|Mixed%20Use|Urban|Atmosphere|Point%20Source&chco=E1E298,35824D,BCBCE6,FAAB9F,AACFC9,B2B2B2" width="220" height="75" alt="chart missing" /></td></tr>'+
+        '<tr><td style="font-weight:bold">Nitrogen:</td><td><img src="http://chart.apis.google.com/chart?cht=p&chs=220x75&chd=t:{AG_TN_PER},{FOR_TN_PER},{MIX_TN_PER},{URB_TN_PER},{DEP_TN_PER},{PNT_TN_PER}&chl=Agriculture|Forest|Mixed%20Use|Urban|Atmosphere|Point%20Source&chco=E1E298,35824D,BCBCE6,FAAB9F,AACFC9,B2B2B2" width="220" height="75" alt="chart missing" /></td></tr>'+
+        '<tr><td style="font-weight:bold">Sediment:</td><td><img src="http://chart.apis.google.com/chart?cht=p&chs=220x75&chd=t:{AG_SD_PER},{FOR_SD_PER},{MIX_SD_PER},{URB_SD_PER}&chl=Agriculture|Forest|Mixed%20Use|Urban&chco=E1E298,35824D,BCBCE6,FAAB9F" width="220" height="75" alt="chart missing" /></td></tr>'+
+        '</table>';
+      this.layers.nutrients = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, nutrientsProvider),
+                                                                  "Nutrients & Sediment",
+                                                                  '<div style="max-width:10px;max-height:12px;border:2px solid #00FF00;opacity:0.75;filter:alpha(opacity=75)"><div style="width:10px;height:12px;background-color:#00FF00;opacity:0.1;filter:alpha(opacity=10)"></div></div>');
       
       // MetaLens layer
       var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService);
-      this.layers.metaLens = new FieldScope.GAsyncLayer(this.map, metaLensProvider);
-      this.layers.metaLens.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
-          $get(this.elementIds.metaLensLoading).style.visibility="visible";
-        }));
-      this.layers.metaLens.AttachEvent("onfinishloading", Function.createDelegate(this, function (evt) {
-          $get(this.elementIds.metaLensLoading).style.visibility="hidden";
-        }));
-      this.layers.metaLens.LoadLayer();
+      this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
+                                                                 "Photo Locations",
+                                                                 '<img src="images/pin.png" style="height:16px" />');
       
       // Student observations layer
       var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_observations/MapServer/0");
@@ -222,20 +241,20 @@ FieldScope.App = function (mapId,
       observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
       observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHORUS" ];
       observationsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Temperature:<td><td>{TEMPERATURE}</td></tr><tr><td style="font-weight:bold">Salinity:<td><td>{SALINITY}</td></tr><tr><td style="font-weight:bold">Turbidity:<td><td>{TURBIDITY}</td></tr><tr><td style="font-weight:bold">Oxygen:<td><td>{OXYGEN}</td></tr><tr><td style="font-weight:bold">Nitrogen:<td><td>{NITROGEN}</td></tr><tr><td style="font-weight:bold">Phosphorus:<td><td>{PHOSPHORUS}</td></tr></table>';
-      this.layers.observations = new FieldScope.GAsyncLayer(this.map, observationsProvider);
-      this.layers.observations.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
-          $get(this.elementIds.observationsLoading).style.visibility="visible";
-        }));
-      this.layers.observations.AttachEvent("onfinishloading", Function.createDelegate(this, function (evt) {
-          $get(this.elementIds.observationsLoading).style.visibility="hidden";
-        }));
-      this.layers.observations.LoadLayer();
+      this.layers.observations = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, observationsProvider),
+                                                                     "Student Observations",
+                                                                     '<img src="images/beaker.gif" style="height:16px" />');
       
-      this.dataEntryTools.observations = new FieldScope.WFS.DataEntryProvider(this.layers.observations, urlPrefix + "/arcgis/services/cb_data_2/GeoDataServer/WFSServer");
-      this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens);
+      this.dataEntryTools.observations = new FieldScope.WFS.DataEntryProvider(this.layers.observations.asyncLayer, 
+                                                                              urlPrefix + "/arcgis/services/cb_data_2/GeoDataServer/WFSServer");
+      this.dataEntryTools.observations.name = "Place Observation";
+      this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens.asyncLayer);
+      this.dataEntryTools.photos.name = "Place Photo";
+      this.dataEntryTools.none = { name : "Data Entry Off" };
+      this.dataEntry.currentTool = this.dataEntryTools.none;
       
     } else {
-      $get(this.elementIds.map).innerHTML = "Sorry, your browser is not compatable with Google Maps";
+      mapDiv.innerHTML = "Sorry, your browser is not compatable with Google Maps";
     }
   };
 

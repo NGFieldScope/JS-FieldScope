@@ -16,20 +16,23 @@ FieldScope.ArcGISServer.GDataProvider = function (mapExt, inUrl) {
     this.infoWindow = null;
     
     this.description = { };
-    dojo.xhrGet({ 
-        url: inUrl + "?f=json",
-        handleAs: "json",
-        load: Function.createDelegate(this, function (response, ioArgs) {
-            this.description = response;
-            return response;
-          }),
-        error: function (response, ioArgs) {
-            console.error(response);
-            return response;
-          },
-        sync: true
-     });
-    
+    try {
+      dojo.xhrGet({ 
+          url: inUrl + "?f=json",
+          handleAs: "json",
+          load: Function.createDelegate(this, function (response, ioArgs) {
+              this.description = response;
+              return response;
+            }),
+          error: function (response, ioArgs) {
+              console.error(response);
+              return response;
+            },
+          sync: true
+        });
+    } catch (e) {
+      console.error(e);
+    }
     this.QueryCallback = function (fset, OnSuccess, OnFailure) {
         try {
           var overlays = [];

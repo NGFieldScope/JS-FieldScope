@@ -94,12 +94,12 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
         } else if (data.Type === "audio") {
           
           //TODO: use media player
-          result += '<img id="FieldScope.MetaLens.Media" alt="audio" />';
+          result += '<img id="FieldScope.MetaLens.Media" src="images/missing.gif" alt="audio" />';
           
         } else if (data.Type === "video") {
         
           //TODO: use media player
-          result += '<img id="FieldScope.MetaLens.Media" alt="video" />';
+          result += '<img id="FieldScope.MetaLens.Media" src="images/missing.gif" alt="video" />';
         
         }
         result += '</td><td style="vertical-align:top;width:100%"><div style="font-size:8pt;max-height:150px;overflow:auto">';
@@ -143,7 +143,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
                 this.map, 
                 "custom_info_window_red", 
                 this.loadingHTML,
-                {beakOffset: 3, paddingX: 10, paddingY: 10}
+                {beakOffset: 0, paddingX: 10, paddingY: 10}
               );
             this.map.getExtInfoWindow().FieldScopeMarker = marker;
             this.LoadInfoWindow(marker);
