@@ -26,11 +26,11 @@ namespace WFS {
 
     public class Service {
 
-        public String InsertPoint (String wfsUrl,
-                                   String entryName,
-                                   String geometryName,
+        public string InsertPoint (string wfsUrl,
+                                   string entryName,
+                                   string geometryName,
                                    LatLng point,
-                                   Dictionary<String, String> values) {
+                                   Dictionary<string, string> values) {
             HttpWebResponse resp = null;
             try {
                 HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(wfsUrl);
@@ -53,10 +53,10 @@ namespace WFS {
                 request.WriteStartElement(geometryName, wfsUrl);
                 request.WriteStartElement("Point", "http://www.opengis.net/gml");
                 request.WriteAttributeString("gid", "1");
-                request.WriteElementString("pos", "http://www.opengis.net/gml", String.Format("{0} {1}", point.Latitude, point.Longitude));
+                request.WriteElementString("pos", "http://www.opengis.net/gml", string.Format("{0} {1}", point.Latitude, point.Longitude));
                 request.WriteEndElement(); // Point
                 request.WriteEndElement(); // geometryName
-                foreach (String key in values.Keys) {
+                foreach (string key in values.Keys) {
                     request.WriteElementString(key, wfsUrl, values[key]);
                 }
                 request.WriteEndElement(); // entryName
@@ -70,13 +70,14 @@ namespace WFS {
 
                 resp = (HttpWebResponse)queryRequest.GetResponse();
 
+                StringBuilder result = new StringBuilder();
                 StreamReader str = new StreamReader(resp.GetResponseStream());
-                String line = str.ReadLine();
+                string line = str.ReadLine();
                 while (line != null) {
-                    Console.WriteLine(line);
+                    result.Append(line);
                     line = str.ReadLine();
                 }
-                return "";
+                return result.ToString();
             } finally {
                 if (resp != null) {
                     resp.Close();

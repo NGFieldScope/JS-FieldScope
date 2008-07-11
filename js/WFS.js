@@ -6,10 +6,11 @@ Type.registerNamespace("FieldScope.WFS");
 // ----------------------------------------------------------------------------
 // WFS.DataEntryProvider class
 
-FieldScope.WFS.DataEntryProvider = function (layer, url) {
+FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
     
     this.layer = layer;
     this.url = url;
+    this.entryName = entryName;
     this.geometryName = null;
     this.onFinishLoadingHandler = null;
     
@@ -21,8 +22,7 @@ FieldScope.WFS.DataEntryProvider = function (layer, url) {
         for (var x = 0; x < fields.length; x += 1) {
           if (fields[x].type === "esriFieldTypeGeometry") {
             this.geometryName = fields[x].name;
-          } else if ((fields[x].type !== "esriFieldTypeOID") &&
-                     (!fields[x].name.startsWith("gml_"))) {
+          } else {
             result += '<tr><td align="right" style="font-weight:bold">';
             result += fields[x].alias;
             result += ':</td><td>';
@@ -64,11 +64,12 @@ FieldScope.WFS.DataEntryProvider = function (layer, url) {
             $get("FieldScope.WFS.DataEntryDiv").innerHTML = '<img src="images/loading24.gif" />Saving...';
             WFSService.InsertPoint(
                 this.url, 
-                this.layer.provider.description.name,
+                this.entryName,
                 this.geometryName,
                 { Latitude: point.lat(), Longitude: point.lng() },
                 data,
                 Function.createDelegate(this, function (result) {
+                    console.log("result: " + result);
                     this.layer.ReloadLayer();
                   }),
                 function (result) {
