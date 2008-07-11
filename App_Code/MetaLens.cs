@@ -132,16 +132,10 @@ namespace MetaLens {
 
     public class Service {
 
-        private readonly string _url;
-
-        public Service (string url) {
-            _url = url;
-        }
-
-        public List<Pin> GetPoints (double left, double right, double bottom, double top, double width, double height) {
+        public static List<Pin> GetPoints (string url, double left, double right, double bottom, double top, double width, double height) {
             HttpWebResponse resp = null;
             try {
-                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(_url + "/assets.cpx");
+                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(url + "/assets.cpx");
                 queryRequest.Method = "POST";
                 queryRequest.ContentType = "text/xml";
                 queryRequest.CookieContainer = new CookieContainer();
@@ -217,11 +211,11 @@ namespace MetaLens {
             }
         }
 
-        public AssetDescription GetDescription (string assetId) {
+        public static AssetDescription GetDescription (string url, string assetId) {
             HttpWebResponse resp = null;
             try {
                 // Login into the host using the server's configured authentication scheme
-                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(_url + "/assets/" + assetId.PadLeft(32, '0') + ".cpx");
+                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(url + "/assets/" + assetId.PadLeft(32, '0') + ".cpx");
                 queryRequest.Method = "GET";
                 queryRequest.ContentType = "text/xml";
                 resp = (HttpWebResponse)queryRequest.GetResponse();

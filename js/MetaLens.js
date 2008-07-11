@@ -6,11 +6,12 @@ Type.registerNamespace("FieldScope.MetaLens");
 // ----------------------------------------------------------------------------
 // MetaLens.GDataProvider class
 
-FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
+FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
     
     this.IsClustered = true;
     this.map = inMap;
     this.service = inService;
+    this.url = inUrl;
     this.marker = null;
     this.icon = new GIcon(null, "images/pin.png");
     this.icon.shadow = "images/pin-shadow.png";
@@ -32,15 +33,6 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
           parent.innerHTML = html;
           var thumbnail = $get("FieldScope.MetaLens.Media");
           if (thumbnail) {
-            /*
-            var resizeListener = null;
-            resizeListener = GEvent.addDomListener(thumbnail, "load", Function.createDelegate(this, function (e) {
-                // Run this once and then remove the listener, or
-                // you'll end up in an infinite loop on IE6.
-                this.map.getExtInfoWindow().resize();
-                GEvent.removeListener(resizeListener);
-              }));
-            */
             thumbnail.onload = Function.createDelegate(this, function (e) {
                 // Run this once and then remove the listener, or
                 // you'll end up in an infinite loop on IE6.
@@ -75,12 +67,14 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
     
     this.LoadInfoWindow = function (marker) {
         this.marker = marker;
-        this.service.GetDescription(marker.MetaLensAssetIds[marker.MetaLensAssetIndex],
+        this.service.GetDescription(this.url,
+                                    marker.MetaLensAssetIds[marker.MetaLensAssetIndex],
                                     this.OnGetDescriptonSuccessDelegate,
                                     OnFailure);
       };
     
     this.CreateInfoWindowHTML = function (data) {
+        var assetId = StringUtils.padLeft(data.Id, 32, "0");
         var result = "<div>";
         if (data.Caption !== null) {
           result += '<div class="title" style="font-size:10pt">';
@@ -88,9 +82,10 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
           result += '</div>';
         }
         result += '<table style="width:100%"><tr><td>';
+        //TODO: open full-size image with link
+        //result += '<a href="'+this.url+'/assets/'+assetId+'/proxy/hires.cpx" target="_blank">';
         if (data.Type === "image") {
-          var assetId = StringUtils.padLeft(data.Id, 32, "0");
-          result += '<img id="FieldScope.MetaLens.Media" src="http://focus.metalens.org/assets/'+assetId+'/thumb/large.cpx">';
+          result += '<img id="FieldScope.MetaLens.Media" src="'+this.url+'/assets/'+assetId+'/thumb/large.cpx">';
         } else if (data.Type === "audio") {
           
           //TODO: use media player
@@ -102,6 +97,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
           result += '<img id="FieldScope.MetaLens.Media" src="images/missing.gif" alt="video" />';
         
         }
+        //result += '</a>';
         result += '</td><td style="vertical-align:top;width:100%"><div style="font-size:8pt;max-height:150px;overflow:auto">';
         if (data.Description !== null) {
           result += data.Description;
@@ -163,7 +159,8 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inService) {
       };
     
     this.AddOverlays = function (bounds, size, OnSuccess, OnFailure) { 
-        this.service.GetPoints(bounds.getSouthWest().lng(),
+        this.service.GetPoints(this.url,
+                               bounds.getSouthWest().lng(),
                                bounds.getNorthEast().lng(),
                                bounds.getSouthWest().lat(),
                                bounds.getNorthEast().lat(),
@@ -197,9 +194,9 @@ FieldScope.MetaLens.DataEntryProvider = function (layer) {
         result += 'Upload Photo To MetaLens:<br>';
         result += '<table>';
         result += '<tr><td>';
-        result += '<input type="file" accept="image/jpeg" />';
+        result += '<input type="file" accept="image/jpeg" style="font-size:8pt" />';
         result += '</td></tr>';
-        result += '<tr align="right"><td>';
+        result += '<tr><td align="right">';
         result += '<input type="button" id="FieldScope.MetaLens.CancelButton" value="Cancel" style="font-size:9pt" />';
         result += '</td></tr>';
         result += '</table></div>';
