@@ -37,7 +37,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
                 // Run this once and then remove the listener, or
                 // you'll end up in an infinite loop on IE6.
                 var infoWindow = this.map.getExtInfoWindow();
-                window.setTimeout(function () { infoWindow.resize(); }, 0);
+                window.setTimeout(function () { infoWindow.resize(); }, 100);
                 thumbnail.onload = null;
               });
           }
