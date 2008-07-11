@@ -86,6 +86,8 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
           tileLayers.push(this.layers.streets.tileLayer);
         }
         this.map.setMapType(new GMapType(tileLayers, G_SATELLITE_MAP.getProjection(), "Custom", {errorMessage:"No data available"}));
+        this.layers.permeability.loadingIndicator.style.visibility="hidden";
+        this.layers.streets.loadingIndicator.style.visibility="hidden";
       });
     
     this.OnSearchKey = Function.createDelegate(this, function (event) {
@@ -167,13 +169,14 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.permeability.visible = visible;
+              this.layers.permeability.loadingIndicator.style.visibility="visible";
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
           visible : false,
           tileLayer : null,
-          iconHTML : ""
+          iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />'
         };
       var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
                                                              {opacity: 0.35},
@@ -190,13 +193,14 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.streets.visible = visible;
+              this.layers.streets.loadingIndicator.style.visibility="visible";
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
           visible : false,
           tileLayer : G_HYBRID_MAP.getTileLayers()[1],
-          iconHTML : ""
+          iconHTML : '<img src="http://mt2.google.com/mt?n=404&v=apt.75&hl=en&x=292&y=391&zoom=7&s=Gal" style="height:16px" />'
         };
       
       // Watershed boundaries layer
@@ -229,7 +233,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
                                                                   '<div style="max-width:10px;max-height:12px;border:2px solid #00FF00;opacity:0.75;filter:alpha(opacity=75)"><div style="width:10px;height:12px;background-color:#00FF00;opacity:0.1;filter:alpha(opacity=10)"></div></div>');
       
       // MetaLens layer
-      var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService);
+      var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
       this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
                                                                  "Photo Locations",
                                                                  '<img src="images/pin.png" style="height:16px" />');
@@ -250,7 +254,8 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
                                                                      '<img src="images/beaker.gif" style="height:16px" />');
       
       this.dataEntryTools.observations = new FieldScope.WFS.DataEntryProvider(this.layers.observations.asyncLayer, 
-                                                                              urlPrefix + "/arcgis/services/cb_data_2/GeoDataServer/WFSServer");
+                                                                              urlPrefix + "/arcgis/services/cb_observations/GeoDataServer/WFSServer",
+                                                                              "cb_observations");
       this.dataEntryTools.observations.name = "Place Observation";
       this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens.asyncLayer);
       this.dataEntryTools.photos.name = "Place Photo";
