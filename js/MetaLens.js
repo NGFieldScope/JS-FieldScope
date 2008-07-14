@@ -28,7 +28,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
     }
     
     this.UpdateInfoWindow = function (html) {
-        var parent = $get("custom_info_window_red_contents");
+        var parent = $get("fieldscope_metalens_window_contents");
         if (parent) {
           parent.innerHTML = html;
           var thumbnail = $get("FieldScope.MetaLens.Media");
@@ -137,7 +137,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
         GEvent.addListener(marker, "click", Function.createDelegate(this, function () {
             marker.openExtInfoWindow(
                 this.map, 
-                "custom_info_window_red", 
+                "fieldscope_metalens_window", 
                 this.loadingHTML,
                 {beakOffset: 0, paddingX: 10, paddingY: 10}
               );

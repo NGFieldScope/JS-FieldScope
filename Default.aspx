@@ -6,8 +6,7 @@
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
-      @import "css/dts.css";
-      @import "css/redInfoWindow.css";
+      @import "css/MetaLensWindow.css";
       .addPointIcon {
         background-image: url(images/beaker.gif);
         background-repeat: no-repeat; 
