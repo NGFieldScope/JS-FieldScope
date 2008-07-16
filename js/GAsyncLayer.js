@@ -62,6 +62,14 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
       };
     
     this.OnAddOverlaysSucceededDelegate = Function.createDelegate(this, function (newOverlays) {
+        // remove overlays again, in case some overlays got added 
+        // asynchronously after our asynchronous process started.
+        if (this.overlays) {
+          for (var x = 0; x < this.overlays.length; x += 1) {
+            this.map.removeOverlay(this.overlays[x]);
+          }
+        }
+        // save the new overlays
         if (newOverlays) {
           this.overlays = newOverlays;
         }
