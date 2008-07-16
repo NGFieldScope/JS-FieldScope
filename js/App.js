@@ -72,20 +72,25 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
         metaLens : { },
         watersheds : { },
         nutrients : { },
-        permeability : { },
-        streets : { }
+        streets : { },
+        landcover : { },
+        permeability : { }
       };
     
     this.UpdateMapType = Function.createDelegate(this, function () {
         var tileLayers = [ G_SATELLITE_MAP.getTileLayers()[0] ];
-        if (this.layers.permeability.visible) {
+        if (this.layers.permeability.tileLayer && this.layers.permeability.visible) {
           tileLayers.push(this.layers.permeability.tileLayer);
         }
-        if (this.layers.streets.visible) {
+        if (this.layers.landcover.tileLayer && this.layers.landcover.visible) {
+          tileLayers.push(this.layers.landcover.tileLayer);
+        }
+        if (this.layers.streets.tileLayer && this.layers.streets.visible) {
           tileLayers.push(this.layers.streets.tileLayer);
         }
         this.map.setMapType(new GMapType(tileLayers, G_SATELLITE_MAP.getProjection(), "Custom", {errorMessage:"No data available"}));
         this.layers.permeability.loadingIndicator.style.visibility="hidden";
+        this.layers.landcover.loadingIndicator.style.visibility="hidden";
         this.layers.streets.loadingIndicator.style.visibility="hidden";
       });
     
@@ -177,10 +182,34 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
           tileLayer : null,
           iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />'
         };
-      var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
+      var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
                                                              {opacity: 0.35},
                                                              Function.createDelegate(this, function (layer) {
                                                                  this.layers.permeability.tileLayer = layer;
+                                                                 this.UpdateMapType();
+                                                               }));
+      
+      // Land Cover layer
+      this.layers.landcover = {
+          name : "Land Cover",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.landcover.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.landcover.visible = visible;
+              this.layers.landcover.loadingIndicator.style.visibility="visible";
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : null,
+          iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />'
+        };
+      var dummy2 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
+                                                             {opacity: 0.45},
+                                                             Function.createDelegate(this, function (layer) {
+                                                                 this.layers.landcover.tileLayer = layer;
                                                                  this.UpdateMapType();
                                                                }));
       
