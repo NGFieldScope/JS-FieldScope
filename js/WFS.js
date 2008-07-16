@@ -14,7 +14,7 @@ FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
     this.geometryName = null;
     this.onFinishLoadingHandler = null;
     
-    this.GenerateForm = Function.createDelegate(this, function () {
+    this.GenerateForm = Function.createDelegate(this, function (marker) {
         var fields = this.layer.provider.description.fields;
         var result = '<div id="FieldScope.WFS.DataEntryDiv">';
         result += 'Enter Student Observation<br>';
@@ -31,8 +31,6 @@ FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
           }
         }
         result += '<tr><td colspan="2" align="right">';
-        result += '<input type="button" id="FieldScope.WFS.CancelButton" value="Cancel" style="font-size:9pt" />';
-        result += '&nbsp;&nbsp;';
         result += '<input type="button" id="FieldScope.WFS.SaveButton" value="Save" style="font-size:9pt" />';
         result += '</td></tr>';
         result += '</table></div>';
@@ -40,9 +38,6 @@ FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
       });
     
     this.ActivateForm = Function.createDelegate(this, function (map) {
-        $get("FieldScope.WFS.CancelButton").onclick = function () {
-            map.closeInfoWindow();
-          };
         $get("FieldScope.WFS.SaveButton").onclick = Function.createDelegate(this, function () {
             //alert("saving!");
             var point = map.getInfoWindow().getPoint();
