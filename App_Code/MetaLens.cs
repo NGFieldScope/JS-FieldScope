@@ -138,7 +138,6 @@ namespace MetaLens {
                 HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(url + "/assets.cpx");
                 queryRequest.Method = "POST";
                 queryRequest.ContentType = "text/xml";
-                queryRequest.CookieContainer = new CookieContainer();
 
                 XmlWriterSettings querySettings = new XmlWriterSettings();
                 querySettings.Encoding = Encoding.UTF8;
@@ -236,6 +235,99 @@ namespace MetaLens {
                     resp = null;
                 }
             }
+        }
+
+        public static string Login (string url, string username, string password) {
+            HttpWebResponse resp = null;
+            try {
+                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(url + "/Login.aspx");
+                queryRequest.Method = "POST";
+                queryRequest.ContentType = "text/xml";
+                queryRequest.CookieContainer = new CookieContainer();
+
+                XmlWriterSettings querySettings = new XmlWriterSettings();
+                querySettings.Encoding = Encoding.UTF8;
+                querySettings.Indent = false;
+                querySettings.CheckCharacters = false;
+
+                Stream requestStream = queryRequest.GetRequestStream();
+                XmlWriter buildRequest = XmlWriter.Create(requestStream, querySettings);
+                buildRequest.WriteStartDocument();
+                buildRequest.WriteStartElement("login");
+                buildRequest.WriteElementString("username", username);
+                buildRequest.WriteElementString("password", password);
+                buildRequest.WriteElementString("remember", "true");
+                buildRequest.WriteEndElement();
+                buildRequest.WriteEndDocument();
+                buildRequest.Close();
+                requestStream.Close();
+
+                resp = (HttpWebResponse)queryRequest.GetResponse();
+
+                Cookie c = resp.Cookies[".CPXAUTH"];
+                if (c != null) {
+                    return c.Value;
+                }
+                return null;
+            } finally {
+                if (resp != null) {
+                    resp.Close();
+                    resp = null;
+                }
+            }
+        }
+
+        public static string CheckLogin (string url, string cookie) {
+            HttpWebResponse resp = null;
+            try {
+                HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(url + "/checkLogin.ashx");
+                queryRequest.Method = "GET";
+                queryRequest.CookieContainer = new CookieContainer();
+                queryRequest.CookieContainer.Add(new Cookie(".CPXAUTH", cookie, "/", queryRequest.Address.Host));
+                resp = (HttpWebResponse)queryRequest.GetResponse();
+
+                XmlReaderSettings responseSettings = new XmlReaderSettings();
+                responseSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                responseSettings.IgnoreWhitespace = true;
+                responseSettings.IgnoreComments = true;
+                XmlReader responseReader = XmlReader.Create(resp.GetResponseStream(), responseSettings);
+                if (responseReader.ReadToFollowing("username")) {
+                    return responseReader.ReadElementContentAsString();
+                } else {
+                    return "";
+                }
+            } finally {
+                if (resp != null) {
+                    resp.Close();
+                    resp = null;
+                }
+            }
+        }
+
+        public static string PostAsset (string url,
+                                        string cookie,
+                                        Stream input,
+                                        string latitude,
+                                        string longitude,
+                                        string name,
+                                        string caption,
+                                        string description) {
+            //everything except upload file and url can be left blank if needed
+            norvanco.http.MultipartForm mp = new norvanco.http.MultipartForm(url + "/assets/new.cpx");
+            //mp.setFilename(@"C:\Documents and Settings\Russell\My Documents\Visual Studio 2008\Projects\DotNetTestHarness\DotNetTestHarness\output.txt");
+            mp.setField("Filename", name);
+            mp.setField(".CPXAUTH", cookie);
+            mp.setField("action", "upload");
+            mp.setField("last", "true");
+            mp.setField("acaption", caption);
+            mp.setField("adesc", description);
+            mp.setField("alat", latitude);
+            mp.setField("alon", longitude);
+            mp.setField("arights", "public");
+            CookieContainer cookies = new CookieContainer();
+            cookies.Add(new Cookie(".CPXAUTH", cookie, "/", mp.RequestUri.Host));
+            mp.sendFile(name, input, cookies);
+            return mp.ResponseText.ToString();
         }
     }
 }

@@ -1,4 +1,4 @@
-/*global FieldScope Sys Type StringUtils $get */
+/*global FieldScope Sys Type $get $addHandler */
 /*global GIcon GSize GPoint GMarker GLatLng GEvent G_DEFAULT_ICON */
 
 Type.registerNamespace("FieldScope.MetaLens");
@@ -74,7 +74,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
       };
     
     this.CreateInfoWindowHTML = function (data) {
-        var assetId = StringUtils.padLeft(data.Id, 32, "0");
+        var assetId = FieldScope.StringUtils.padLeft(data.Id, 32, "0");
         var result = "<div>";
         if (data.Caption !== null) {
           result += '<div class="title" style="font-size:10pt">';
@@ -82,8 +82,8 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
           result += '</div>';
         }
         result += '<table style="width:100%"><tr><td>';
-        //TODO: open full-size image with link
-        //result += '<a href="'+this.url+'/assets/'+assetId+'/proxy/hires.cpx" target="_blank">';
+        
+        result += '<a href="MetaLensDisplayAsset.aspx?server='+encodeURIComponent(this.url)+'&asset='+encodeURIComponent(assetId)+'" target="_blank">';
         if (data.Type === "image") {
           result += '<img id="FieldScope.MetaLens.Media" src="'+this.url+'/assets/'+assetId+'/thumb/large.cpx">';
         } else if (data.Type === "audio") {
@@ -97,7 +97,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
           result += '<img id="FieldScope.MetaLens.Media" src="images/missing.gif" alt="video" />';
         
         }
-        //result += '</a>';
+        result += '</a>';
         result += '</td><td style="vertical-align:top;width:100%"><div style="font-size:8pt;max-height:150px;overflow:auto">';
         if (data.Description !== null) {
           result += data.Description;
@@ -185,28 +185,41 @@ FieldScope.MetaLens.GDataProvider.registerClass('FieldScope.MetaLens.GDataProvid
 // MetaLens.DataEntryProvider class
 
 
-FieldScope.MetaLens.DataEntryProvider = function (layer) {
+FieldScope.MetaLens.DataEntryProvider = function (layer, url) {
     
     this.layer = layer;
+    this.url = url;
     
-    this.GenerateForm = Function.createDelegate(this, function () {
+    this.GenerateForm = Function.createDelegate(this, function (marker) {
+        var location = marker.getLatLng();
         var result = '<div id="FieldScope.MetaLens.DataEntryDiv">';
-        result += 'Upload Photo To MetaLens:<br>';
-        result += '<table>';
-        result += '<tr><td>';
-        result += '<input type="file" accept="image/jpeg" style="font-size:8pt" />';
-        result += '</td></tr>';
-        result += '<tr><td align="right">';
-        result += '<input type="button" id="FieldScope.MetaLens.CancelButton" value="Cancel" style="font-size:9pt" />';
-        result += '</td></tr>';
-        result += '</table></div>';
+        result += '<iframe id="FieldScope.MetaLens.DataEntryFrame"';
+        result +=        ' name="FieldScope.MetaLens.DataEntryFrame"';
+        result +=        ' src="MetaLensUpload.aspx?';
+        result +=              'server='+encodeURIComponent(this.url)+'&';
+        result +=              'lat='+encodeURIComponent(location.lat().toString())+'&';
+        result +=              'lon='+encodeURIComponent(location.lng().toString())+'"';
+        result +=        ' width="350"';
+        result +=        ' height="230"';
+        result +=        ' frameborder="0">';
+        result += '</iframe></div>';
         return result;
       });
     
     this.ActivateForm = Function.createDelegate(this, function (map) {
-        $get("FieldScope.MetaLens.CancelButton").onclick = function () {
+        var iframe = $get("FieldScope.MetaLens.DataEntryFrame");
+        var layer = this.layer;
+        var UploadComplete = function () {
             map.closeInfoWindow();
+            window.setTimeout(function() { layer.ReloadLayer() }, 2500);
           };
+        $addHandler(iframe, "load", function (event) {
+            var doc = iframe.contentWindow || iframe.contentDocument;
+            if (doc.document) {
+              doc = doc.document;
+            }
+            doc.FieldScopeMetaLensUploadComplete = UploadComplete;
+          });
       });
     
     this.MarkerIcon = new GIcon(null, "images/pin.png");

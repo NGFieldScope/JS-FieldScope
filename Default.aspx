@@ -56,10 +56,8 @@
                                              resultsDiv.innerHTML = "";
                                              if (searchResults) {
                                                resultsDiv.appendChild(searchResults);
-                                               console.log("showing");
                                                resultsDiv.style.visibility="visible";
                                              } else {
-                                               console.log("hiding");
                                                resultsDiv.style.visibility="hidden";
                                              }
                                            });
@@ -153,7 +151,7 @@
     </script>
   </head>
   <body class="tundra">
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" method="post" enctype="multipart/form-data">
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Release">
         <Scripts>
           <asp:ScriptReference Path="js/GAsyncLayer.js" />

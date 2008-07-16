@@ -1,7 +1,6 @@
-/*global FieldScope, esri, Sys, Type $get */
+/*global FieldScope, esri, Sys, Type $get MetaLensService */
 /*global GBrowserIsCompatible GMap2  GLargeMapControl G_HYBRID_MAP G_SATELLITE_MAP */
 /*global GEvent GIcon GLatLng GMapType GMarker GPoint GSize */
-/*global dijit MetaLensService StringUtils */
 
 Type.registerNamespace("FieldScope");
 
@@ -9,7 +8,7 @@ Type.registerNamespace("FieldScope");
 // DataEntryProvider class
 
 FieldScope.DataEntryProvider = function () {
-    this.GenerateForm = function () { };
+    this.GenerateForm = function (marker) { };
     this.ActivateForm = function (map) { };
     this.MarkerIcon = null;
   };
@@ -136,7 +135,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
                   GEvent.addListener(this.dataEntry.marker, "infowindowopen", Function.createDelegate(this, function () {
                       this.dataEntry.currentTool.ActivateForm(this.map);
                     }));
-                  this.dataEntry.marker.openInfoWindow(this.dataEntry.currentTool.GenerateForm());
+                  this.dataEntry.marker.openInfoWindow(this.dataEntry.currentTool.GenerateForm(this.dataEntry.marker));
                 }
               }));
             this.dataEntry.currentTool = newTool;
@@ -150,7 +149,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
     // Here is where we actually do the setup, now that our methods have all been defined
     //
     if (GBrowserIsCompatible()) {
-      var urlPrefix = "http://" + StringUtils.removePortNumber(location.host);
+      var urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
     
       this.map = new GMap2(mapDiv);
       this.map.setCenter(new GLatLng(39.04, -77.06), 10);
@@ -257,7 +256,8 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
                                                                               urlPrefix + "/arcgis/services/cb_observations/GeoDataServer/WFSServer",
                                                                               "cb_observations");
       this.dataEntryTools.observations.name = "Place Observation";
-      this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens.asyncLayer);
+      this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens.asyncLayer,
+                                                                             "http://focus.metalens.org");
       this.dataEntryTools.photos.name = "Place Photo";
       this.dataEntryTools.none = { name : "Data Entry Off" };
       this.dataEntry.currentTool = this.dataEntryTools.none;
@@ -269,5 +269,5 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
 
 FieldScope.App.registerClass('FieldScope.App');
 
-
+// ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
