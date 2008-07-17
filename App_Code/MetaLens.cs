@@ -44,6 +44,15 @@ namespace MetaLens {
         private string _copyright;
         private string _type;
 
+        public string Id { get { return _assetid; } }
+        public double Latitude { get { return _latitude; } }
+        public double Longitude { get { return _longitude; } }
+        public string Name { get { return _name; } }
+        public string Caption { get { return _caption; } }
+        public string Description { get { return _description; } }
+        public string Copyright { get { return _copyright; } }
+        public string Type { get { return _type; } }
+
         public AssetDescription (XmlNode root) {
             foreach (XmlNode n in root) {
                 if (n.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase)) {
@@ -66,22 +75,6 @@ namespace MetaLens {
             }
         }
 
-        public string Id { get { return _assetid; } }
-
-        public double Latitude { get { return _latitude; } }
-
-        public double Longitude { get { return _longitude; } }
-
-        public string Name { get { return _name; } }
-
-        public string Caption { get { return _caption; } }
-
-        public string Description { get { return _description; } }
-
-        public string Copyright { get { return _copyright; } }
-
-        public string Type { get { return _type; } }
-
         public override string ToString () {
             return string.Format("{{Id:{0},Latitude:{1},Longitude:{2},Name:{3},Caption:{4},Description:{5},Copyright:{6},Type:{7}}}",
                                  _assetid, _latitude, _longitude, _name, _caption, _description, _copyright, _type);
@@ -93,6 +86,10 @@ namespace MetaLens {
         private string[] _assetids;
         private double _latitude;
         private double _longitude;
+
+        public string[] AssetIds { get { return _assetids; } }
+        public double Latitude { get { return _latitude; } }
+        public double Longitude { get { return _longitude; } }
 
         public Pin (LinkedList<AssetLocation> assets) {
             int count = assets.Count();
@@ -108,12 +105,6 @@ namespace MetaLens {
             _latitude /= (double)count;
             _longitude /= (double)count;
         }
-
-        public string[] AssetIds { get { return _assetids; } }
-
-        public double Latitude { get { return _latitude; } }
-
-        public double Longitude { get { return _longitude; } }
 
         public override string ToString () {
             StringBuilder result = new StringBuilder();
