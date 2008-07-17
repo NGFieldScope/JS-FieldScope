@@ -69,6 +69,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       };
     this.layers = {
         observations : { },
+        cbibs : { },
         metaLens : { },
         watersheds : { },
         nutrients : { },
@@ -157,7 +158,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       var urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
     
       this.map = new GMap2(mapDiv);
-      this.map.setCenter(new GLatLng(39.04, -77.06), 10);
+      this.map.setCenter(new GLatLng(38.039, -76.025), 9);
       this.map.addControl(new GLargeMapControl());
       this.map.setMapType(G_SATELLITE_MAP);
       this.map.enableScrollWheelZoom();
@@ -265,6 +266,12 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
                                                                  "Photo Locations",
                                                                  '<img src="images/pin.png" style="height:16px" />');
+      
+      // CBIBS layer
+      var cbibsProvider = new FieldScope.CBIBS.GDataProvider(this.map, CBIBSService);
+      this.layers.cbibs = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, cbibsProvider),
+                                                              "CBIBS",
+                                                              '<img src="images/buoy.png" style="height:16px" />');
       
       // Student observations layer
       var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_observations/MapServer/0");

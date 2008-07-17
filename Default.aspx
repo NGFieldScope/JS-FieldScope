@@ -154,15 +154,17 @@
     <form id="form1" runat="server" method="post" enctype="multipart/form-data">
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Release">
         <Scripts>
+          <asp:ScriptReference Path="js/Utilities.js" />
           <asp:ScriptReference Path="js/GAsyncLayer.js" />
           <asp:ScriptReference Path="js/ArcGisServer.js" />
           <asp:ScriptReference Path="js/MetaLens.js" />
           <asp:ScriptReference Path="js/WFS.js" />
+          <asp:ScriptReference Path="js/CBIBS.js" />
           <asp:ScriptReference Path="js/GSearch.js" />
-          <asp:ScriptReference Path="js/Utilities.js" />
           <asp:ScriptReference Path="js/App.js" />
         </Scripts>
         <Services>
+          <asp:ServiceReference Path="CBIBSService.asmx" />
           <asp:ServiceReference Path="MetaLensService.asmx" />
           <asp:ServiceReference Path="WFSService.asmx" />
         </Services>
