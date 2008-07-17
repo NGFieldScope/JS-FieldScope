@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Web.Script.Services;
 using System.Web.Services;
 
-[WebService(Namespace = "http://geode1/arcgis/services/cb_data_2/GeoDataServer")]
+[WebService(Namespace = "http://geode1.sesp.northwestern.edu/WFS")]
 [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
 [ScriptService]
 public class WFSService : System.Web.Services.WebService {

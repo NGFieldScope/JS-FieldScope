@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Web.Script.Services;
 using System.Web.Services;
 
-[WebService(Namespace = "http://focus.metalens.org/dataservice")]
+[WebService(Namespace = "http://geode1.sesp.northwestern.edu/MetaLens")]
 [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
 [ScriptService]
 public class MetaLensService : System.Web.Services.WebService {
