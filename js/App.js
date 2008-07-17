@@ -1,4 +1,4 @@
-/*global FieldScope, esri, Sys, Type $get MetaLensService */
+/*global FieldScope, esri, Sys, Type $get CBIBSService MetaLensService */
 /*global GBrowserIsCompatible GMap2  GLargeMapControl G_HYBRID_MAP G_SATELLITE_MAP */
 /*global GEvent GIcon GLatLng GMapType GMarker GPoint GSize */
 
