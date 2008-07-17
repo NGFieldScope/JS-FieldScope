@@ -34,10 +34,18 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
           var thumbnail = $get("FieldScope.MetaLens.Media");
           if (thumbnail) {
             thumbnail.onload = Function.createDelegate(this, function (e) {
+                var infoWindow = this.map.getExtInfoWindow();
+                // Force Safari to layout the page before we try to resize 
+                // the window. Safari normally fires the load event before
+                // images are loaded, but it won't be able to tell us the
+                // offset width until our image is finished loading. See
+                // http://ajaxian.com/archives/safari-3-onload-firing-and-bad-timing and
+                // http://www.howtocreate.co.uk/safaribenchmarks.html
+                var dummy = document.body.offsetWidth;
+                // resize the info window, now that we know how big the image is
+                infoWindow.resize();
                 // Run this once and then remove the listener, or
                 // you'll end up in an infinite loop on IE6.
-                var infoWindow = this.map.getExtInfoWindow();
-                window.setTimeout(function () { infoWindow.resize(); }, 300);
                 thumbnail.onload = null;
               });
           }
