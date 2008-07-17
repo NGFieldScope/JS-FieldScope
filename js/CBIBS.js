@@ -1,4 +1,4 @@
-/*global FieldScope Sys Type GIcon GLatLng GMarker GPoint GSize G_DEFAULT_ICON */
+/*global FieldScope Sys Type GEvent GIcon GLatLng GMarker GPoint GSize G_DEFAULT_ICON */
 
 Type.registerNamespace("FieldScope.CBIBS");
 
@@ -47,14 +47,14 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           result += measurements[x].Time.getMonth()+1;
           result += '-';
           result += measurements[x].Time.getDate();
-          result += ' '
+          result += ' ';
           result += measurements[x].Time.getHours();
-          result += ':'
+          result += ':';
           if (measurements[x].Time.getMinutes() < 10) {
             result += '0';
           }
           result += measurements[x].Time.getMinutes();
-          result += ':'
+          result += ':';
           if (measurements[x].Time.getSeconds() < 10) {
             result += '0';
           }
@@ -104,6 +104,11 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
                                                this.QuerySuccessCallback(measurements, OnSuccess);
                                              }),
                                            OnFailure);
+      };
+    
+    this.TriggersRefresh = function (oldState, newState) {
+        // refresh every ten minutes
+        return (newState.time.milliseconds - oldState.time.milliseconds) > 600000;
       };
   };
 

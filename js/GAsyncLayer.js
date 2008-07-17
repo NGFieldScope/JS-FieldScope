@@ -4,11 +4,29 @@
 Type.registerNamespace("FieldScope");
 
 // ----------------------------------------------------------------------------
+// GAsyncDataState class
+
+FieldScope.GAsyncDataState = function (map) {
+    this.mapBounds = map.getBounds();
+    var size = this.mapBounds.toSpan();
+    var sw = this.mapBounds.getSouthWest();
+    var ne = this.mapBounds.getNorthEast();
+    this.dataBounds = new GLatLngBounds(new GLatLng(sw.lat() - (size.lat() / 2.0),
+                                                    sw.lng() - (size.lng() / 2.0)),
+                                        new GLatLng(ne.lat() + (size.lat() / 2.0),
+                                                    ne.lng() + (size.lng() / 2.0)));
+    this.zoom = map.getZoom();
+    this.time = new Date();
+  };
+
+FieldScope.GAsyncDataState.registerClass('FieldScope.GAsyncDataState');
+
+// ----------------------------------------------------------------------------
 // GAsyncDataProvider class
 
 FieldScope.GAsyncDataProvider = function () {
     this.AddOverlays = function (bounds, size, OnSuccess, OnFailure) { };
-    this.IsClustered = false;
+    this.TriggersRefresh = function (oldState, newState) { };
   };
 
 FieldScope.GAsyncDataProvider.registerInterface('FieldScope.GAsyncDataProvider');
@@ -22,8 +40,7 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
     this.provider = inProvider;
     this.overlays = [];
     this.visible = true;
-    this.currentbounds = null;
-    this.currentzoom = 0;
+    this.currentState = null;
     this.eventHandlers = new Sys.EventHandlerList();
     
     this.IsVisible = function () { 
@@ -94,27 +111,19 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
           }
         }
         this.overlays = [];
-        this.provider.AddOverlays(this.currentbounds, 
-                                  this.map.getSize(), 
-                                  this.OnAddOverlaysSucceededDelegate, 
-                                  this.OnAddOverlaysFailedDelegate);
+        if (this.currentState && this.currentState.dataBounds) {
+          this.provider.AddOverlays(this.currentState.dataBounds, 
+                                    this.map.getSize(), 
+                                    this.OnAddOverlaysSucceededDelegate, 
+                                    this.OnAddOverlaysFailedDelegate);
+        }
       });
     
     this.RefreshDataDelegate = Function.createDelegate(this, function () {
         if (this.visible) {
-          var bounds = this.map.getBounds();
-          var zoom = this.map.getZoom();
-          if ((this.currentbounds === null) || 
-              (!this.currentbounds.containsBounds(bounds)) ||
-              (this.provider.IsClustered && (zoom !== this.currentzoom))) {
-            var size = bounds.toSpan();
-            var sw = bounds.getSouthWest();
-            var ne = bounds.getNorthEast();
-            this.currentbounds = new GLatLngBounds(new GLatLng(sw.lat() - (size.lat() / 2.0),
-                                                               sw.lng() - (size.lng() / 2.0)),
-                                                   new GLatLng(ne.lat() + (size.lat() / 2.0),
-                                                               ne.lng() + (size.lng() / 2.0)));
-            this.currentzoom = zoom;
+          var newState = new FieldScope.GAsyncDataState(this.map);
+          if ((!this.currentState) || this.provider.TriggersRefresh(this.currentState, newState)) {
+            this.currentState = newState;
             // fire beginloading event
             var handler = this.eventHandlers.getHandler("onbeginloading");
             if (handler) { handler.call(this, Sys.EventArgs.Empty); }
@@ -124,7 +133,7 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
           }
         } else {
           this.overlays = [];
-          this.currentbounds = null;
+          this.currentState = null;
         }
       });
     

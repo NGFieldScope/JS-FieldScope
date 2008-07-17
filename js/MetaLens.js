@@ -8,7 +8,6 @@ Type.registerNamespace("FieldScope.MetaLens");
 
 FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
     
-    this.IsClustered = true;
     this.map = inMap;
     this.service = inService;
     this.url = inUrl;
@@ -180,6 +179,11 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
                                OnFailure);
       };
     
+    this.TriggersRefresh = function (oldState, newState) {
+        return (!oldState.dataBounds.containsBounds(newState.mapBounds)) ||
+               (oldState.zoom !== newState.zoom);
+      };
+    
     GEvent.addDomListener(this.map, "extinfowindowclose", Function.createDelegate(this, function() {
         if (this.map.getExtInfoWindow().FieldScopeMarker === this.marker) {
           this.marker = null;
@@ -219,7 +223,7 @@ FieldScope.MetaLens.DataEntryProvider = function (layer, url) {
         var layer = this.layer;
         var UploadComplete = function () {
             map.closeInfoWindow();
-            window.setTimeout(function() { layer.ReloadLayer() }, 2500);
+            window.setTimeout(function() { layer.ReloadLayer(); }, 2500);
           };
         $addHandler(iframe, "load", function (event) {
             var doc = iframe.contentWindow || iframe.contentDocument;

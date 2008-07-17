@@ -73,6 +73,10 @@ FieldScope.ArcGISServer.GDataProvider = function (mapExt, inUrl) {
             this.QueryCallback(fset, OnSuccess, OnFailure);
           }));
       };
+    
+    this.TriggersRefresh = function (oldState, newState) {
+        return (!oldState.dataBounds.containsBounds(newState.mapBounds));
+      };
   };
 
 FieldScope.ArcGISServer.GDataProvider.registerClass('FieldScope.ArcGISServer.GDataProvider', null, FieldScope.GAsyncDataProvider);
