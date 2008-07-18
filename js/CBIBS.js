@@ -19,51 +19,61 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
     this.icon.infoShadowAnchor = new GPoint(22, 22);
     
     this.CreateInfoWindowHTML = function (platform, measurements) {
-        var result = "<div>";
-        result += '<table>';
-        result += '<tr style="font-weight:bold;font-size:8pt">';
-        result += '<td colspan="4">';
-        result += 'Current Readings At Buoy: "';
-        result += platform.Name;
-        result += '"</td>';
-        result += '</tr>';
-        result += '<tr style="font-weight:bold;font-size:8pt">';
-        result += '<td>Measurement</td>';
-        result += '<td>Value</td>';
-        result += '<td>Units</td>';
-        result += '<td>Time</td>';
-        result += '</tr>';
+        var tab1 = "<div>";
+        tab1 += '<table>';
+        tab1 += '<tr style="font-weight:bold;font-size:8pt">';
+        tab1 += '<td colspan="4">';
+        tab1 += 'Current Readings At Buoy: "';
+        tab1 += platform.Name;
+        tab1 += '"</td>';
+        tab1 += '</tr>';
+        tab1 += '<tr style="font-weight:bold;font-size:8pt">';
+        tab1 += '<td>Measurement</td>';
+        tab1 += '<td>Value</td>';
+        tab1 += '<td>Units</td>';
+        tab1 += '<td>Time</td>';
+        tab1 += '</tr>';
         for (var x = 0; x < measurements.length; x += 1) {
-          result += '<tr style="font-size:8pt">';
-          result += '<td>';
-          result += measurements[x].Name;
-          result += '</td><td>';
-          result += measurements[x].Value;
-          result += '</td><td>';
-          result += measurements[x].Units;
-          result += '</td><td>';
-          result += measurements[x].Time.getFullYear();
-          result += '-';
-          result += measurements[x].Time.getMonth()+1;
-          result += '-';
-          result += measurements[x].Time.getDate();
-          result += ' ';
-          result += measurements[x].Time.getHours();
-          result += ':';
+          tab1 += '<tr style="font-size:8pt">';
+          tab1 += '<td>';
+          tab1 += measurements[x].Name;
+          tab1 += '</td><td>';
+          tab1 += measurements[x].Value;
+          tab1 += '</td><td>';
+          tab1 += measurements[x].Units;
+          tab1 += '</td><td>';
+          tab1 += measurements[x].Time.getFullYear();
+          tab1 += '-';
+          tab1 += measurements[x].Time.getMonth()+1;
+          tab1 += '-';
+          tab1 += measurements[x].Time.getDate();
+          tab1 += ' ';
+          tab1 += measurements[x].Time.getHours();
+          tab1 += ':';
           if (measurements[x].Time.getMinutes() < 10) {
-            result += '0';
+            tab1 += '0';
           }
-          result += measurements[x].Time.getMinutes();
-          result += ':';
+          tab1 += measurements[x].Time.getMinutes();
+          tab1 += ':';
           if (measurements[x].Time.getSeconds() < 10) {
-            result += '0';
+            tab1 += '0';
           }
-          result += measurements[x].Time.getSeconds();
-          result += '</td>';
-          result += '</tr>';
+          tab1 += measurements[x].Time.getSeconds();
+          tab1 += '</td>';
+          tab1 += '</tr>';
         }
-        result += '</table></div>';
-        return result;
+        tab1 += '</table></div>';
+        
+        var tab2 = '<div>';
+        tab2 +=      '<iframe id="FieldScope.CBIBS.GraphFrame"';
+        tab2 +=        ' name="FieldScope.CBIBS.GraphFrame"';
+        tab2 +=        ' src="CBIBSGraph.aspx?';
+        tab2 +=              'platform='+encodeURIComponent(platform.Id)+'"';
+        tab2 +=        ' width="400"';
+        tab2 +=        ' height="380"';
+        tab2 +=        ' frameborder="0">';
+        tab2 += '</iframe></div>';
+        return [ new GInfoWindowTab("Current", tab1),  new GInfoWindowTab("Graphs", tab2) ];
       };
     
     this.CreateMarker = function (reading) {
@@ -82,7 +92,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         var marker = new GMarker(new GLatLng(lat, lng), this.icon);
         //marker.CBIBSMeasurements = measurements;
         GEvent.addListener(marker, "click", Function.createDelegate(this, function () {
-            marker.openInfoWindow(this.CreateInfoWindowHTML(reading.Platform, measurements));
+            marker.openInfoWindowTabsHtml(this.CreateInfoWindowHTML(reading.Platform, measurements));
           }));
         return marker;
       };

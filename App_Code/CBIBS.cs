@@ -98,6 +98,17 @@ namespace CBIBS {
         public string[] units;
     }
 
+    public struct ValueSet {
+        public string[] time;
+        public double[] value;
+    }
+
+    public struct QueryResponse {
+        public string measurement;
+        public string units;
+        public ValueSet values;
+    }
+
     [XmlRpcUrl("http://devmw.buoybay.org/studs/studs_cdrh/xmlrpc_cdrh/server.php")]
     public interface IBuoyProxy : IXmlRpcProxy {
 
@@ -115,20 +126,21 @@ namespace CBIBS {
 
         [XmlRpcMethod("xmlrpc_cdrh.RetrieveCurrentReadings")]
         MeasurementList RetrieveCurrentReadings (string constellation, string platformId, string apiKey);
+
+        [XmlRpcMethod("xmlrpc_cdrh.QueryData")]
+        QueryResponse QueryData (string constellation, string platformId, string measurement, string beginDate, string endDate, string apiKey);
     }
 
     public class Service {
 
         private static IBuoyProxy proxy = XmlRpcProxyGen.Create<IBuoyProxy>();
-        
-        /* Logging for debug purposes
+        /*
         static Service () {
             RequestResponseLogger dumper = new RequestResponseLogger();
             dumper.Directory = @"C:\Documents and Settings\Russell\My Documents\xml-rpc-logs";
             dumper.Attach(proxy);
         }
         */
-
         public static void ListMethods () {
             try {
                 string[] methodNames = proxy.SystemListMethods();
@@ -193,6 +205,24 @@ namespace CBIBS {
             PlatformMeasurements[] result = new PlatformMeasurements[platforms.Length];
             for (int i = 0; i < platforms.Length; i += 1) {
                 result[i] = new PlatformMeasurements(platforms[i], RetrieveCurrentReadings(platforms[i]));
+            }
+            return result;
+        }
+
+        public static Measurement[] QueryData (Platform platform, string variable, DateTime begin, DateTime end) {
+            QueryResponse data = proxy.QueryData(platform.Constellation,
+                                                 platform.Id,
+                                                 variable,
+                                                 begin.ToUniversalTime().ToString(API.DateTimeFormat, DateTimeFormatInfo.InvariantInfo),
+                                                 end.ToUniversalTime().ToString(API.DateTimeFormat, DateTimeFormatInfo.InvariantInfo),
+                                                 API.Key);
+            int count = Math.Min(data.values.time.Length, data.values.value.Length);
+            Measurement[] result = new Measurement[count];
+            for (int i = 0; i < count; i += 1) {
+                result[i] = new Measurement(data.measurement,
+                                            data.values.value[i],
+                                            data.units,
+                                            data.values.time[i]);
             }
             return result;
         }

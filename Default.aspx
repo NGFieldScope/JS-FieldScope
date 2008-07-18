@@ -169,8 +169,8 @@
           <asp:ServiceReference Path="WFSService.asmx" />
         </Services>
       </asp:ScriptManager>
-      <div dojoType="dijit.layout.BorderContainer" style="width:950px; height:550px">
-        <div dojoType="dijit.layout.AccordionContainer" duration="200" style="width:200px;height:550px;float:left;overflow:hidden;" region="left">
+      <div dojoType="dijit.layout.BorderContainer" style="width:950px; height:600px">
+        <div dojoType="dijit.layout.AccordionContainer" duration="200" style="width:200px;height:600px;float:left;overflow:hidden;" region="left">
           <div dojoType="dijit.layout.AccordionPane" id="FieldScope.Pane.SubmitData" title="Submit Data or Photos" onSelected="OnSelectPane(this);">
             <table style="width:98%" id="FieldScope.Table.Tools"></table>
           </div>
@@ -191,7 +191,7 @@
             Graphing tools go here
           </div>
         </div>
-        <div id="FieldScope.Div.Map" dojoType="dijit.layout.ContentPane" style="border:1px inset gray;width:750px;height:548px" region="center">
+        <div id="FieldScope.Div.Map" dojoType="dijit.layout.ContentPane" style="border:1px inset gray;width:750px;height:598px" region="center">
           Map Goes Here
         </div>
       </div>
