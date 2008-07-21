@@ -3,7 +3,8 @@
 cls
 
 if "%1"=="" (
-    for %%f in (..\js\*.js) do call :_jslint %%f
+    for %%f in (..\js\*.js) do call :_jslint %%f    
+    for %%f in (..\Default.aspx) do call :_jslint %%f
 ) else (
     call :_jslint ..\js\%1.js
 )
