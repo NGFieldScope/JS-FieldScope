@@ -176,7 +176,7 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:30%;margin-top:8px">
+               style="height:200px;margin-top:8px">
             Find a Location:
             <div style="margin:2px">
               <input type="text" id="FieldScope.Input.SearchText" style="width:98%;margin-bottom:2px" onkeydown="application.OnSearchKey(event);" />
@@ -186,7 +186,7 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="bottom"
-               style="height:70%;margin-top:8px"
+               style="height:364px;margin-top:8px"
                splitter="true">
             Explore Data Layers:
             <table style="width:98%" id="FieldScope.Table.Layers"> </table>

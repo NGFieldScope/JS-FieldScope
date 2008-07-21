@@ -67,6 +67,9 @@ FieldScope.GSearch = function (inMap, setResultsCallback) {
           heading.style.margin = "0px";
           heading.appendChild(document.createTextNode("Search Results:"));
           result.appendChild(heading);
+          var tableDiv = document.createElement("div");
+          tableDiv.style.maxHeight = "85px";
+          tableDiv.style.overflow = "auto";
           var table = document.createElement("table");
           table.style.width = "100%";
           table.style.fontSize = "smaller";
@@ -77,7 +80,8 @@ FieldScope.GSearch = function (inMap, setResultsCallback) {
             this.overlays.push(pm.Overlay);
           }
           table.appendChild(tbody);
-          result.appendChild(table);
+          tableDiv.appendChild(table);
+          result.appendChild(tableDiv);
           for (var z = 0; z < this.overlays.length; z += 1) {
             this.map.addOverlay(this.overlays[z]);
           }
