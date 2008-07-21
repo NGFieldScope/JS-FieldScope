@@ -1,0 +1,23 @@
+﻿.addObservationIcon {
+  background-image: url(../images/beaker24.gif);
+  background-repeat: no-repeat; 
+  background-position: center;
+  width: 24px;
+  height: 24px;
+}
+
+.addPhotoIcon {
+  background-image: url(../images/pin24.gif);
+  background-repeat: no-repeat; 
+  background-position: center;
+  width: 24px;
+  height: 24px;
+}
+
+.handIcon {
+  background-image: url(../images/hand24.gif);
+  background-repeat: no-repeat; 
+  background-position: center;
+  width: 24px;
+  height: 24px;
+}
