@@ -27,5 +27,20 @@ FieldScope.StringUtils = {
     }
 };
 
+FieldScope.DomUtils = {
+
+  show : function (dom) {
+      if (dom) {
+        dom.style.visibility="visible";
+      }
+    },
+    
+  hide: function (dom) {
+      if (dom) {
+        dom.style.visibility="hidden";
+      }
+    }
+};
+
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

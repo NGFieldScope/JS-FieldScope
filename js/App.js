@@ -30,12 +30,12 @@ FieldScope.AsyncLayerController = function (layer, name, iconHTML) {
     this.loadingIndicator = null;
     this.asyncLayer.AttachEvent("onbeginloading", Function.createDelegate(this, function (evt) {
         if (this.loadingIndicator) {
-          this.loadingIndicator.style.visibility="visible";
+          FieldScope.DomUtils.show(this.loadingIndicator);
         }
       }));
     this.asyncLayer.AttachEvent("onfinishloading", Function.createDelegate(this, function (evt) {
         if (this.loadingIndicator) {
-          this.loadingIndicator.style.visibility="hidden";
+          FieldScope.DomUtils.hide(this.loadingIndicator);
         }
       }));
     this.asyncLayer.SetVisible(false);
@@ -58,9 +58,9 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
     this.SetSearchResults = setSearchResultsFn;
     
     this.dataEntryTools = { 
+        none: null,
         observations : null, 
-        photos : null, 
-        none: null 
+        photos : null
       };
     this.dataEntry = {
         currentTool : null,
@@ -89,10 +89,13 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
         if (this.layers.streets.tileLayer && this.layers.streets.visible) {
           tileLayers.push(this.layers.streets.tileLayer);
         }
-        this.map.setMapType(new GMapType(tileLayers, G_SATELLITE_MAP.getProjection(), "Custom", {errorMessage:"No data available"}));
-        this.layers.permeability.loadingIndicator.style.visibility="hidden";
-        this.layers.landcover.loadingIndicator.style.visibility="hidden";
-        this.layers.streets.loadingIndicator.style.visibility="hidden";
+        this.map.setMapType(new GMapType(tileLayers, 
+                                         G_SATELLITE_MAP.getProjection(), 
+                                         "FieldScope",
+                                         {errorMessage:"No data available"}));
+        FieldScope.DomUtils.hide(this.layers.permeability.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.landcover.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
       });
     
     this.OnSearchKey = Function.createDelegate(this, function (event) {
@@ -141,7 +144,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
                   GEvent.addListener(this.dataEntry.marker, "infowindowopen", Function.createDelegate(this, function () {
                       this.dataEntry.currentTool.ActivateForm(this.map);
                     }));
-                  this.dataEntry.marker.openInfoWindow(this.dataEntry.currentTool.GenerateForm(this.dataEntry.marker));
+                  this.dataEntry.marker.openInfoWindowHtml(this.dataEntry.currentTool.GenerateForm(this.dataEntry.marker));
                 }
               }));
             this.dataEntry.currentTool = newTool;
@@ -155,12 +158,12 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
     // Here is where we actually do the setup, now that our methods have all been defined
     //
     if (GBrowserIsCompatible()) {
+        try {
       var urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
-    
+      
       this.map = new GMap2(mapDiv);
-      this.map.setCenter(new GLatLng(38.039, -76.025), 9);
+      this.map.setCenter(new GLatLng(38.039, -76.025), 9, G_SATELLITE_MAP);
       this.map.addControl(new GLargeMapControl());
-      this.map.setMapType(G_SATELLITE_MAP);
       this.map.enableScrollWheelZoom();
       this.mapExtension = new esri.arcgis.gmaps.MapExtension(this.map);
       
@@ -174,7 +177,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.permeability.visible = visible;
-              this.layers.permeability.loadingIndicator.style.visibility="visible";
+              FieldScope.DomUtils.show(this.layers.permeability.loadingIndicator);
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
             }),
@@ -183,12 +186,18 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
           tileLayer : null,
           iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />'
         };
-      var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
-                                                             {opacity: 0.35},
-                                                             Function.createDelegate(this, function (layer) {
-                                                                 this.layers.permeability.tileLayer = layer;
-                                                                 this.UpdateMapType();
-                                                               }));
+      // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+      // constructor again before the first one is finished causes IE6 to hang
+      
+      window.setTimeout(Function.createDelegate(this, function () {
+          var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
+                                                                 {opacity: 0.35},
+                                                                 Function.createDelegate(this, function (layer) {
+                                                                     this.layers.permeability.tileLayer = layer;
+                                                                     this.UpdateMapType();
+                                                                   }));
+        }), 0);
+      
       
       // Land Cover layer
       this.layers.landcover = {
@@ -198,7 +207,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.landcover.visible = visible;
-              this.layers.landcover.loadingIndicator.style.visibility="visible";
+              FieldScope.DomUtils.show(this.layers.landcover.loadingIndicator);
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
             }),
@@ -207,12 +216,16 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
           tileLayer : null,
           iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />'
         };
-      var dummy2 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
-                                                             {opacity: 0.45},
-                                                             Function.createDelegate(this, function (layer) {
-                                                                 this.layers.landcover.tileLayer = layer;
-                                                                 this.UpdateMapType();
-                                                               }));
+      // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+      // constructor again before the first one is finished causes IE6 to hang
+      window.setTimeout(Function.createDelegate(this, function () {
+          var dummy2 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
+                                                                 {opacity: 0.45},
+                                                                 Function.createDelegate(this, function (layer) {
+                                                                     this.layers.landcover.tileLayer = layer;
+                                                                     this.UpdateMapType();
+                                                                   }));
+        }), 0);
       
       // Streets & places layer
       this.layers.streets = {
@@ -222,7 +235,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.streets.visible = visible;
-              this.layers.streets.loadingIndicator.style.visibility="visible";
+              FieldScope.DomUtils.show(this.layers.streets.loadingIndicator);
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
             }),
@@ -292,12 +305,18 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
                                                                               urlPrefix + "/arcgis/services/cb_observations/GeoDataServer/WFSServer",
                                                                               "cb_observations");
       this.dataEntryTools.observations.name = "Place Observation";
+      this.dataEntryTools.observations.iconClass = "addObservationIcon";
+      
       this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens.asyncLayer,
                                                                              "http://focus.metalens.org");
       this.dataEntryTools.photos.name = "Place Photo";
-      this.dataEntryTools.none = { name : "Data Entry Off" };
+      this.dataEntryTools.photos.iconClass = "addPhotoIcon";
+      
+      this.dataEntryTools.none = { name : "Data Entry Off", iconClass : "handIcon" };
+      
       this.dataEntry.currentTool = this.dataEntryTools.none;
       
+        } catch (e) { console.error(e); }
     } else {
       mapDiv.innerHTML = "Sorry, your browser is not compatable with Google Maps";
     }

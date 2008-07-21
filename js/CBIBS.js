@@ -1,4 +1,4 @@
-/*global FieldScope Sys Type GEvent GIcon GLatLng GMarker GPoint GSize G_DEFAULT_ICON */
+/*global FieldScope Sys Type GEvent GIcon GInfoWindowTab GLatLng GMarker GPoint GSize G_DEFAULT_ICON */
 
 Type.registerNamespace("FieldScope.CBIBS");
 
@@ -70,9 +70,10 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         tab2 +=        ' src="CBIBSGraph.aspx?';
         tab2 +=              'platform='+encodeURIComponent(platform.Id)+'"';
         tab2 +=        ' width="400"';
-        tab2 +=        ' height="380"';
+        tab2 +=        ' height="365"';
         tab2 +=        ' frameborder="0">';
-        tab2 += '</iframe></div>';
+        tab2 +=      '</iframe>';
+        tab2 +=     '</div>';
         return [ new GInfoWindowTab("Current", tab1),  new GInfoWindowTab("Graphs", tab2) ];
       };
     
