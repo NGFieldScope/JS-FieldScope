@@ -312,7 +312,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       this.dataEntryTools.photos.name = "Place Photo";
       this.dataEntryTools.photos.iconClass = "addPhotoIcon";
       
-      this.dataEntryTools.none = { name : "Data Entry Off", iconClass : "handIcon" };
+      this.dataEntryTools.none = { name : "Navigate Map", iconClass : "handIcon" };
       
       this.dataEntry.currentTool = this.dataEntryTools.none;
       
