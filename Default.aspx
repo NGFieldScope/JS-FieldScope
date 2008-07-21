@@ -17,18 +17,18 @@
     <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:true, usePlainJson:true"></script>
   -->
-  <!-- test version scripts -->
+  <!-- test version scripts 
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRRj6ZVR02exo3LqN0xouiCenXozOhRg0Oiyt6y6h2mDm3nqmdrdLjxlwg" type="text/javascript"></script>
     <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
     <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:true, usePlainJson:true"></script>
-  
-  <!-- release version scripts 
+  -->
+  <!-- release version scripts -->
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQ_5rwwWZl7ALhyiRg47ubM-rTOnRSsVfG-QI3g0i2S9uGQsVLtI_DRLg" type="text/javascript"></script>
     <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
     <script src="js/extinfowindow/extinfowindow_packed.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js" djConfig="parseOnLoad:true, usePlainJson:true"></script>
-  -->
+  
     <script type="text/javascript">
       /*globals dojo dijit $addHandler $get FieldScope application toolButtons */
       dojo.require("dijit.layout.SplitContainer");
@@ -169,7 +169,7 @@
              region="left">
           <div dojoType="dijit.layout.ContentPane" 
                region="top"
-               style="height:40px;border-bottom:thin ridge #111">
+               style="height:36px;border-bottom-style:ridge">
             <div id="FieldScope.Div.Toolbar" dojoType="dijit.Toolbar">
               Mouse:
             </div>
