@@ -58,18 +58,30 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         marker : null
       };
     this.layers = {
-        observations : { },
-        cbibs : { },
-        metaLens : { },
-        watersheds : { },
-        nutrients : { },
+        // Google Tile layers
+        terrain : { },
+        satellite : { },
         streets : { },
+        // ArcGIS Tile layers
         landcover : { },
-        permeability : { }
+        permeability : { },
+        // Async point layers
+        metaLens : { },
+        cbibs : { },
+        observations : { },
+        // Async polygon layers
+        watersheds : { },
+        nutrients : { }
       };
     
     this.UpdateMapType = Function.createDelegate(this, function () {
-        var tileLayers = [ G_SATELLITE_MAP.getTileLayers()[0] ];
+        var tileLayers = [ ];
+        if (this.layers.terrain.tileLayer && this.layers.terrain.visible) {
+          tileLayers.push(this.layers.terrain.tileLayer);
+        }
+        if (this.layers.satellite.tileLayer && this.layers.satellite.visible) {
+          tileLayers.push(this.layers.satellite.tileLayer);
+        }
         if (this.layers.permeability.tileLayer && this.layers.permeability.visible) {
           tileLayers.push(this.layers.permeability.tileLayer);
         }
@@ -82,7 +94,11 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         this.map.setMapType(new GMapType(tileLayers, 
                                          G_SATELLITE_MAP.getProjection(), 
                                          "FieldScope",
-                                         {errorMessage:"No data available"}));
+                                         { errorMessage:"No data available",
+                                           maxResolution : 17,
+                                           minResolution : 6 }));
+        FieldScope.DomUtils.hide(this.layers.terrain.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.satellite.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.permeability.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.landcover.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
@@ -158,6 +174,63 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       
       this.searchTool = new FieldScope.GSearch(this.map, this.SetSearchResults);
       
+      // Terrain layer
+      this.layers.terrain = {
+          name : "Terrain",
+          id : "FieldScope.Layer[terrain]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.terrain.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.terrain.visible = visible;
+              FieldScope.DomUtils.show(this.layers.terrain.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : G_PHYSICAL_MAP.getTileLayers()[0],
+          iconHTML : '<img src="images/terrain.jpg" style="height:16px" />'
+        };
+      
+      // Satellite layer
+      this.layers.satellite = {
+          name : "Satellite",
+          id : "FieldScope.Layer[satellite]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.satellite.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.satellite.visible = visible;
+              FieldScope.DomUtils.show(this.layers.satellite.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : true,
+          tileLayer : G_HYBRID_MAP.getTileLayers()[0],
+          iconHTML : '<img src="images/satellite.jpg" style="height:16px" />'
+        };
+      
+      // Streets layer
+      this.layers.streets = {
+          name : "Streets & Places",
+          id : "FieldScope.Layer[streets]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.streets.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.streets.visible = visible;
+              FieldScope.DomUtils.show(this.layers.streets.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : G_HYBRID_MAP.getTileLayers()[1],
+          iconHTML : '<img src="http://mt2.google.com/mt?n=404&v=apt.75&hl=en&x=292&y=391&zoom=7&s=Gal" style="height:16px" />'
+        };
+      
       // Impervious surfaces layer
       this.layers.permeability = {
           name : "Impervious Surfaces",
@@ -177,18 +250,16 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
           iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />'
         };
-      // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
-      // constructor again before the first one is finished causes IE6 to hang
-      
       window.setTimeout(Function.createDelegate(this, function () {
+          // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+          // constructor again before the first one is finished causes IE6 to hang
           var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
-                                                                 {opacity: 0.45},
+                                                                 { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
                                                                      this.UpdateMapType();
                                                                    }));
         }), 0);
-      
       
       // Land Cover layer
       this.layers.landcover = {
@@ -209,35 +280,47 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
           iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(urlPrefix + '/ArcGIS/services/cb_landcover/MapServer')+'" />'
         };
-      // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
-      // constructor again before the first one is finished causes IE6 to hang
       window.setTimeout(Function.createDelegate(this, function () {
+          // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+          // constructor again before the first one is finished causes IE6 to hang
           var dummy2 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
-                                                                 {opacity: 0.45},
+                                                                 { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.landcover.tileLayer = layer;
                                                                      this.UpdateMapType();
                                                                    }));
         }), 0);
       
-      // Streets & places layer
-      this.layers.streets = {
-          name : "Streets & Places",
-          id : "FieldScope.Layer[streets]",
-          IsVisible : Function.createDelegate(this, function () {
-              return this.layers.streets.visible;
-            }),
-          SetVisible : Function.createDelegate(this, function (visible) {
-              this.layers.streets.visible = visible;
-              FieldScope.DomUtils.show(this.layers.streets.loadingIndicator);
-              // use setTimeout so the checkbox updates immediately
-              window.setTimeout(this.UpdateMapType, 0);
-            }),
-          loadingIndicator : null,
-          visible : false,
-          tileLayer : G_HYBRID_MAP.getTileLayers()[1],
-          iconHTML : '<img src="http://mt2.google.com/mt?n=404&v=apt.75&hl=en&x=292&y=391&zoom=7&s=Gal" style="height:16px" />'
-        };
+      // MetaLens layer
+      var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
+      this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
+                                                                 "Photo Locations",
+                                                                 "FieldScope.Layer[metaLens]",
+                                                                 '<img src="images/pin.png" style="height:16px" />');
+      
+      // CBIBS layer
+      var cbibsProvider = new FieldScope.CBIBS.GDataProvider(this.map, CBIBSService);
+      this.layers.cbibs = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, cbibsProvider),
+                                                              "CBIBS",
+                                                              "FieldScope.Layer[cbibs]",
+                                                              '<img src="images/buoy.png" style="height:16px" />');
+      
+      // Student observations layer
+      var observationsUrl = urlPrefix + "/ArcGIS/rest/services/cb_observations/MapServer/0";
+      var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, observationsUrl);
+      observationsProvider.icon = new GIcon(null, "images/beaker.gif");
+      observationsProvider.icon.shadow = "images/beaker-shadow.png";
+      observationsProvider.icon.iconSize = new GSize(24, 24);
+      observationsProvider.icon.shadowSize = new GSize(36, 24);
+      observationsProvider.icon.iconAnchor = new GPoint(12, 24);
+      observationsProvider.icon.infoWindowAnchor = new GPoint(8, 2);
+      observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
+      observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHORUS" ];
+      observationsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Temperature:<td><td>{TEMPERATURE}</td></tr><tr><td style="font-weight:bold">Salinity:<td><td>{SALINITY}</td></tr><tr><td style="font-weight:bold">Turbidity:<td><td>{TURBIDITY}</td></tr><tr><td style="font-weight:bold">Oxygen:<td><td>{OXYGEN}</td></tr><tr><td style="font-weight:bold">Nitrogen:<td><td>{NITROGEN}</td></tr><tr><td style="font-weight:bold">Phosphorus:<td><td>{PHOSPHORUS}</td></tr></table>';
+      this.layers.observations = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, observationsProvider),
+                                                                     "Student Observations",
+                                                                     "FieldScope.Layer[observations]",
+                                                                     '<img src="images/beaker.gif" style="height:16px" />');
       
       // Watershed boundaries layer
       var watershedsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0");
@@ -270,35 +353,6 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                   "FieldScope.Layer[nutrients]",
                                                                   '<div style="max-width:10px;max-height:12px;border:2px solid #00FF00;opacity:0.75;filter:alpha(opacity=75)"><div style="width:10px;height:12px;background-color:#00FF00;opacity:0.1;filter:alpha(opacity=10)"></div></div>');
       
-      // MetaLens layer
-      var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
-      this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
-                                                                 "Photo Locations",
-                                                                 "FieldScope.Layer[metaLens]",
-                                                                 '<img src="images/pin.png" style="height:16px" />');
-      
-      // CBIBS layer
-      var cbibsProvider = new FieldScope.CBIBS.GDataProvider(this.map, CBIBSService);
-      this.layers.cbibs = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, cbibsProvider),
-                                                              "CBIBS",
-                                                              "FieldScope.Layer[cbibs]",
-                                                              '<img src="images/buoy.png" style="height:16px" />');
-      
-      // Student observations layer
-      var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, urlPrefix + "/ArcGIS/rest/services/cb_observations/MapServer/0");
-      observationsProvider.icon = new GIcon(null, "images/beaker.gif");
-      observationsProvider.icon.shadow = "images/beaker-shadow.png";
-      observationsProvider.icon.iconSize = new GSize(24, 24);
-      observationsProvider.icon.shadowSize = new GSize(36, 24);
-      observationsProvider.icon.iconAnchor = new GPoint(12, 24);
-      observationsProvider.icon.infoWindowAnchor = new GPoint(8, 2);
-      observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
-      observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHORUS" ];
-      observationsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Temperature:<td><td>{TEMPERATURE}</td></tr><tr><td style="font-weight:bold">Salinity:<td><td>{SALINITY}</td></tr><tr><td style="font-weight:bold">Turbidity:<td><td>{TURBIDITY}</td></tr><tr><td style="font-weight:bold">Oxygen:<td><td>{OXYGEN}</td></tr><tr><td style="font-weight:bold">Nitrogen:<td><td>{NITROGEN}</td></tr><tr><td style="font-weight:bold">Phosphorus:<td><td>{PHOSPHORUS}</td></tr></table>';
-      this.layers.observations = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, observationsProvider),
-                                                                     "Student Observations",
-                                                                     "FieldScope.Layer[observations]",
-                                                                     '<img src="images/beaker.gif" style="height:16px" />');
       
       // 
       // The layerTree determines how the layers are presented to the user
@@ -315,7 +369,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
             this.layers.permeability,
             this.layers.nutrients ],
           [ "Basemap",
-            this.layers.streets ]
+            this.layers.streets,
+            this.layers.satellite,
+            this.layers.terrain ]
         ];
       
       //

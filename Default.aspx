@@ -155,9 +155,9 @@
       
       function WireLayerControls (layer) {
         layer.loadingIndicator = $get(layer.id + ".Loading");
-        var checkbox = $get(layer.id + ".Checkbox");
-        checkbox.setAttribute("checked", layer.IsVisible());
-        $addHandler(checkbox, "click", function (evt) {
+        var checkboxId = layer.id + ".Checkbox";
+        dijit.byId(checkboxId).setAttribute("checked", layer.IsVisible());
+        $addHandler($get(checkboxId), "click", function (evt) {
             layer.SetVisible(evt.target.checked);
           });
       }
