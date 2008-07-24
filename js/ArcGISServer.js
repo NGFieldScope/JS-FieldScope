@@ -78,8 +78,9 @@ FieldScope.ArcGISServer.GDataProvider = function (mapExt, inUrl) {
         return (!oldState.dataBounds.containsBounds(newState.mapBounds));
       };
   };
-
+try {
 FieldScope.ArcGISServer.GDataProvider.registerClass('FieldScope.ArcGISServer.GDataProvider', null, FieldScope.GAsyncDataProvider);
+} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

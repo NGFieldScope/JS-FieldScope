@@ -77,7 +77,9 @@ FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
     this.MarkerIcon = this.layer.provider.icon;
   };
 
+try {
 FieldScope.WFS.DataEntryProvider.registerClass('FieldScope.WFS.DataEntryProvider', null, FieldScope.DataEntryProvider);
+} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

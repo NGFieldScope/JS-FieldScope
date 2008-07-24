@@ -28,16 +28,33 @@ FieldScope.StringUtils = {
 };
 
 FieldScope.DomUtils = {
-
+  
+  visible : function (dom) {
+      if (dom) {
+        return dom.style.display !== "none";
+      }
+      return false;
+    },
+  
   show : function (dom) {
       if (dom) {
-        dom.style.visibility="visible";
+        dom.style.display = "";
       }
     },
     
   hide: function (dom) {
       if (dom) {
-        dom.style.visibility="hidden";
+        dom.style.display = "none";
+      }
+    },
+  
+  toggleDisplay : function (dom) {
+      if (dom) {
+        if (dom.style.display === "none") {
+          dom.style.display = "";
+        } else {
+          dom.style.display = "none";
+        }
       }
     }
 };

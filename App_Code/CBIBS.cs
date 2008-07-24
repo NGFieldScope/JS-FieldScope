@@ -109,7 +109,7 @@ namespace CBIBS {
         public ValueSet values;
     }
 
-    [XmlRpcUrl("http://devmw.buoybay.org/studs/studs_cdrh/xmlrpc_cdrh/server.php")]
+    [XmlRpcUrl("http://mw.buoybay.org/studs/studs_cdrh/xmlrpc_cdrh/server.php")]
     public interface IBuoyProxy : IXmlRpcProxy {
 
         [XmlRpcMethod("xmlrpc_cdrh.Test")]

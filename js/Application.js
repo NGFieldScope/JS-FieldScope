@@ -5,22 +5,12 @@
 Type.registerNamespace("FieldScope");
 
 // ----------------------------------------------------------------------------
-// DataEntryProvider class
-
-FieldScope.DataEntryProvider = function () {
-    this.GenerateForm = function (marker) { };
-    this.ActivateForm = function (map) { };
-    this.MarkerIcon = null;
-  };
-
-FieldScope.DataEntryProvider.registerInterface('FieldScope.DataEntryProvider');
-
-// ----------------------------------------------------------------------------
 // AsyncLayerController class
 
-FieldScope.AsyncLayerController = function (layer, name, iconHTML) {
+FieldScope.AsyncLayerController = function (layer, name, id, iconHTML) {
     this.asyncLayer = layer;
     this.name = name;
+    this.id = id;
     this.IsVisible = Function.createDelegate(this, function () {
         return this.asyncLayer.IsVisible();
       });
@@ -47,7 +37,7 @@ FieldScope.AsyncLayerController.registerClass('FieldScope.AsyncLayerController')
 // ----------------------------------------------------------------------------
 // Application class
 
-FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
+FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
     
     this.map = null;
     this.mapTypes = null;
@@ -158,7 +148,6 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
     // Here is where we actually do the setup, now that our methods have all been defined
     //
     if (GBrowserIsCompatible()) {
-        try {
       var urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
       
       this.map = new GMap2(mapDiv);
@@ -172,6 +161,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       // Impervious surfaces layer
       this.layers.permeability = {
           name : "Impervious Surfaces",
+          id : "FieldScope.Layer[permeability]",
           IsVisible : Function.createDelegate(this, function () {
               return this.layers.permeability.visible;
             }),
@@ -184,14 +174,15 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
           loadingIndicator : null,
           visible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />'
+          iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />'
         };
       // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
       // constructor again before the first one is finished causes IE6 to hang
       
       window.setTimeout(Function.createDelegate(this, function () {
           var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
-                                                                 {opacity: 0.35},
+                                                                 {opacity: 0.45},
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
                                                                      this.UpdateMapType();
@@ -202,6 +193,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       // Land Cover layer
       this.layers.landcover = {
           name : "Land Cover",
+          id : "FieldScope.Layer[landcover]",
           IsVisible : Function.createDelegate(this, function () {
               return this.layers.landcover.visible;
             }),
@@ -214,7 +206,8 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
           loadingIndicator : null,
           visible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />'
+          iconHTML : '<img src="'+urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(urlPrefix + '/ArcGIS/services/cb_landcover/MapServer')+'" />'
         };
       // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
       // constructor again before the first one is finished causes IE6 to hang
@@ -230,6 +223,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       // Streets & places layer
       this.layers.streets = {
           name : "Streets & Places",
+          id : "FieldScope.Layer[streets]",
           IsVisible : Function.createDelegate(this, function () {
               return this.layers.streets.visible;
             }),
@@ -253,6 +247,7 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       watershedsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Subregion:<td><td>{HUC4_NAME}</td></tr><tr><td style="font-weight:bold">Subbasin:<td><td>{HUC8_Name}</td></tr></table>';
       this.layers.watersheds = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, watershedsProvider),
                                                                    "Watershed Boundaries",
+                                                                   "FieldScope.Layer[watersheds]",
                                                                    '<div style="max-width:10px;max-height:12px;border:2px solid #0000FF;opacity:0.75;filter:alpha(opacity=75)"><div style="width:10px;height:12px;background-color:#0000FF;opacity:0.1;filter:alpha(opacity=10)"></div></div>');
       
       // Nutrients & Sediment layer
@@ -272,18 +267,21 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
         '</table>';
       this.layers.nutrients = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, nutrientsProvider),
                                                                   "Nutrients & Sediment",
+                                                                  "FieldScope.Layer[nutrients]",
                                                                   '<div style="max-width:10px;max-height:12px;border:2px solid #00FF00;opacity:0.75;filter:alpha(opacity=75)"><div style="width:10px;height:12px;background-color:#00FF00;opacity:0.1;filter:alpha(opacity=10)"></div></div>');
       
       // MetaLens layer
       var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
       this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
                                                                  "Photo Locations",
+                                                                 "FieldScope.Layer[metaLens]",
                                                                  '<img src="images/pin.png" style="height:16px" />');
       
       // CBIBS layer
       var cbibsProvider = new FieldScope.CBIBS.GDataProvider(this.map, CBIBSService);
       this.layers.cbibs = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, cbibsProvider),
                                                               "CBIBS",
+                                                              "FieldScope.Layer[cbibs]",
                                                               '<img src="images/buoy.png" style="height:16px" />');
       
       // Student observations layer
@@ -299,30 +297,62 @@ FieldScope.App = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
       observationsProvider.infoWindow = '<table><tr><td style="font-weight:bold">Temperature:<td><td>{TEMPERATURE}</td></tr><tr><td style="font-weight:bold">Salinity:<td><td>{SALINITY}</td></tr><tr><td style="font-weight:bold">Turbidity:<td><td>{TURBIDITY}</td></tr><tr><td style="font-weight:bold">Oxygen:<td><td>{OXYGEN}</td></tr><tr><td style="font-weight:bold">Nitrogen:<td><td>{NITROGEN}</td></tr><tr><td style="font-weight:bold">Phosphorus:<td><td>{PHOSPHORUS}</td></tr></table>';
       this.layers.observations = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, observationsProvider),
                                                                      "Student Observations",
+                                                                     "FieldScope.Layer[observations]",
                                                                      '<img src="images/beaker.gif" style="height:16px" />');
+      
+      // 
+      // The layerTree determines how the layers are presented to the user
+      //
+      this.layerTree = [ 
+          null,
+          this.layers.observations,
+          this.layers.metaLens,
+          this.layers.cbibs,
+          [ "Watershed",
+            this.layers.watersheds ],
+          [ "Land Use",
+            this.layers.landcover,
+            this.layers.permeability,
+            this.layers.nutrients ],
+          [ "Basemap",
+            this.layers.streets ]
+        ];
+      
+      //
+      // End layer setup, begin data entry tool setup
+      //
       
       this.dataEntryTools.observations = new FieldScope.WFS.DataEntryProvider(this.layers.observations.asyncLayer, 
                                                                               urlPrefix + "/arcgis/services/cb_observations/GeoDataServer/WFSServer",
                                                                               "cb_observations");
       this.dataEntryTools.observations.name = "Place Observation";
+      this.dataEntryTools.observations.id = "FieldScope.Tool[observations]";
       this.dataEntryTools.observations.iconClass = "addObservationIcon";
       
       this.dataEntryTools.photos = new FieldScope.MetaLens.DataEntryProvider(this.layers.metaLens.asyncLayer,
                                                                              "http://focus.metalens.org");
       this.dataEntryTools.photos.name = "Place Photo";
+      this.dataEntryTools.photos.id = "FieldScope.Tool[photos]";
       this.dataEntryTools.photos.iconClass = "addPhotoIcon";
       
-      this.dataEntryTools.none = { name : "Navigate Map", iconClass : "handIcon" };
+      this.dataEntryTools.none = { 
+          name : "Navigate Map",
+          id : "FieldScope.Tool[none]", 
+          iconClass : "handIcon" 
+        };
       
       this.dataEntry.currentTool = this.dataEntryTools.none;
       
-        } catch (e) { console.error(e); }
+      //
+      // End layer setup, begin data entry tool setup
+      //
+      
     } else {
       mapDiv.innerHTML = "Sorry, your browser is not compatable with Google Maps";
     }
   };
 
-FieldScope.App.registerClass('FieldScope.App');
+FieldScope.Application.registerClass('FieldScope.Application');
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

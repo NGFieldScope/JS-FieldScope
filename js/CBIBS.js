@@ -123,7 +123,9 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
       };
   };
 
+try {
 FieldScope.CBIBS.GDataProvider.registerClass('FieldScope.CBIBS.GDataProvider', null, FieldScope.GAsyncDataProvider);
+} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

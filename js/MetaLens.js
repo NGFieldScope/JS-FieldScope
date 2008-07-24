@@ -191,7 +191,9 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
       }));
   };
 
+try {
 FieldScope.MetaLens.GDataProvider.registerClass('FieldScope.MetaLens.GDataProvider', null, FieldScope.GAsyncDataProvider);
+} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 // MetaLens.DataEntryProvider class
@@ -243,7 +245,9 @@ FieldScope.MetaLens.DataEntryProvider = function (layer, url) {
     this.MarkerIcon.infoShadowAnchor = new GPoint(11, 8);
   };
 
+try {
 FieldScope.MetaLens.DataEntryProvider.registerClass('FieldScope.MetaLens.DataEntryProvider', null, FieldScope.DataEntryProvider);
+} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
