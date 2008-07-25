@@ -30,6 +30,7 @@
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js" djConfig="parseOnLoad:false, usePlainJson:true"></script>
   -->
     <script type="text/javascript">
+//<![CDATA[
       /*globals dojo dijit $addHandler $get FieldScope application */
       dojo.require("dijit.layout.SplitContainer");
       dojo.require("dijit.layout.ContentPane");
@@ -38,42 +39,40 @@
       dojo.require("dijit.form.CheckBox");
       dojo.require("dijit.Dialog");
       dojo.require("dijit.Tooltip");
+      dojo.require("heroic.PersistTooltip");
       dojo.require("dijit.Toolbar");
       dojo.require("dojo.parser");
       
       // globals
       application = null;
       
-      function UpdateToolButtons () {
-        var currentTool = application.dataEntry.currentTool;
-        for (var toolName in application.dataEntryTools) {
-          var tool = application.dataEntryTools[toolName];
-          if (tool) {
-            var toolButton = dijit.byId(tool.id + ".Button");
-            toolButton.setAttribute("checked", currentTool === tool);
-          }
+      function UpdateMouseModeButtons () {
+        for (var x = 0; x < application.mouseModeList.length; x += 1) {
+          var mode = application.mouseModeList[x];
+          var button = dijit.byId(mode.GetId() + ".Button");
+          button.setAttribute("checked", mode === application.currentMouseMode);
         }
       }
       
-      function MakeToolButtonHtml (tool) {
-        var buttonId = tool.id + ".Button";
+      function MakeMouseModeButtonHtml (mode) {
+        var buttonId = mode.GetId() + ".Button";
         var result = '<div dojoType="dijit.form.ToggleButton"';
         result +=        ' id="'+buttonId+'"';
-        result +=        ' iconClass="'+tool.iconClass+'"';
+        result +=        ' iconClass="'+mode.GetIconCssClass()+'"';
         result +=        ' showLabel="false">';
         result +=    '</div>';
         result +=    '<span dojoType="dijit.Tooltip"';
         result +=         ' connectId="'+buttonId+'">';
-        result +=      tool.name;
+        result +=      mode.GetName();
         result +=    '</span>';
         return result;
       }
       
-      function WireToolButton (tool) {
-        var button = $get(tool.id + ".Button");
+      function WireMouseModeButton (mode) {
+        var button = $get(mode.GetId() + ".Button");
         $addHandler(button, "click", function (evt) {
-            application.SetDataEntryTool(tool);
-            window.setTimeout(UpdateToolButtons, 0);
+            application.SetMouseMode(mode);
+            window.setTimeout(UpdateMouseModeButtons, 0);
           });
       }
       
@@ -120,7 +119,7 @@
             var loadingId = layer.id + ".Loading";
             var legendId = layer.id + ".Legend";
             result +=   '<tr>';
-            result +=     '<td align="center">'
+            result +=     '<td align="center">';
             result +=       layer.iconHTML;
             result +=     '</td>';
             result +=     '<td>';
@@ -136,7 +135,7 @@
             result +=       '<img id="'+loadingId+'" style="display:none" src="images/loading16.gif" alt="Loading..." />';
             if (layer.legendHTML) {
               result +=     '<img id="'+legendId+'" src="images/info16.png" />';
-              result +=     '<span dojoType="dijit.Tooltip"';
+              result +=     '<span dojoType="heroic.PersistTooltip"';
               result +=          ' connectId="'+legendId+'">';
               result +=       layer.legendHTML;
               result +=     '</span>';
@@ -181,13 +180,10 @@
               }
             );
             
-          // Build a button for each of the application's data entry tools
+          // Build a button for each of the application's mouse modes
           var toolbar = $get("FieldScope.Div.Toolbar");
-          for (var toolName in application.dataEntryTools) {
-            var tool = application.dataEntryTools[toolName];
-            if (tool) {
-              toolbar.innerHTML += MakeToolButtonHtml(tool);
-            }
+          for (var x = 0; x < application.mouseModeList.length; x += 1) {
+            toolbar.innerHTML += MakeMouseModeButtonHtml(application.mouseModeList[x]);
           }
           
           // Build a tree of controls for the application's data layers
@@ -199,18 +195,14 @@
           dojo.parser.parse();
           dijit.Tooltip.defaultPosition=['above', 'below'];
           
-          UpdateToolButtons();
+          UpdateMouseModeButtons();
           
-          // Wire up the tool controls
-          for (var toolName in application.dataEntryTools) {
-            var tool = application.dataEntryTools[toolName];
-            if (tool) {
-              WireToolButton(tool);
-            }
+          // Wire up the mouse mode buttons
+          for (var y = 0; y < application.mouseModeList.length; y += 1) {
+            WireMouseModeButton(application.mouseModeList[y]);
           }
           
           // Wire up the layer controls
-          var layerControlsHtml = "<table>";
           for (var layerName in application.layers) {
             var layer = application.layers[layerName];
             if (layer) {
@@ -219,6 +211,7 @@
           }
           
         });
+//]]>
     </script>
   </head>
   <body class="tundra">
@@ -226,6 +219,7 @@
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Debug">
         <Scripts>
           <asp:ScriptReference Path="js/Utilities.js" />
+          <asp:ScriptReference Path="js/Mouse.js" />
           <asp:ScriptReference Path="js/GAsyncLayer.js" />
           <asp:ScriptReference Path="js/ArcGisServer.js" />
           <asp:ScriptReference Path="js/MetaLens.js" />
@@ -256,13 +250,13 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:364px;margin-top:8px">
+               style="height:384px;margin-top:8px">
             <span style="font-weight:bold">Chesapeake Bay:</span>
             <div style="width:100%;font-size:smaller" id="FieldScope.Layers.Controls"></div>
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="bottom"
-               style="height:200px;margin-top:8px"
+               style="height:175px;margin-top:8px"
                splitter="true">
             <span>Find a Location:</span>
             <div style="margin:2px">

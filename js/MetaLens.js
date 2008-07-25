@@ -3,6 +3,20 @@
 
 Type.registerNamespace("FieldScope.MetaLens");
 
+
+// ----------------------------------------------------------------------------
+// MetaLens icons
+
+FieldScope.MetaLens.icon = new GIcon(null, "images/pin.png");
+FieldScope.MetaLens.icon.shadow = "images/pin-shadow.png";
+FieldScope.MetaLens.icon.iconSize = new GSize(11, 16);
+FieldScope.MetaLens.icon.shadowSize = new GSize(23, 16);
+FieldScope.MetaLens.icon.iconAnchor = new GPoint(5, 7);
+FieldScope.MetaLens.icon.infoWindowAnchor = new GPoint(5, 0);
+FieldScope.MetaLens.icon.infoShadowAnchor = new GPoint(11, 8);
+
+FieldScope.MetaLens.icon_cl = new GIcon(FieldScope.MetaLens.icon, "images/pin-cl.png");
+
 // ----------------------------------------------------------------------------
 // MetaLens.GDataProvider class
 
@@ -12,14 +26,6 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
     this.service = inService;
     this.url = inUrl;
     this.marker = null;
-    this.icon = new GIcon(null, "images/pin.png");
-    this.icon.shadow = "images/pin-shadow.png";
-    this.icon.iconSize = new GSize(11, 16);
-    this.icon.shadowSize = new GSize(23, 16);
-    this.icon.iconAnchor = new GPoint(5, 7);
-    this.icon.infoWindowAnchor = new GPoint(5, 0);
-    this.icon.infoShadowAnchor = new GPoint(11, 8);
-    this.icon_cl = new GIcon(this.icon, "images/pin-cl.png");
     this.loadingHTML = '<img src="images/loading24.gif" />Loading...';
     
     function OnFailure (error) {
@@ -134,9 +140,9 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
       };
     
     this.MakeMarker = function (record) {
-        var icon = this.icon;
+        var icon = FieldScope.MetaLens.icon;
         if (record.AssetIds.length > 1) {
-          icon = this.icon_cl;
+          icon = FieldScope.MetaLens.icon_cl;
         }
         var marker = new GMarker(new GLatLng(record.Latitude, record.Longitude), icon);
         marker.MetaLensAssetIds = record.AssetIds;
@@ -196,16 +202,17 @@ FieldScope.MetaLens.GDataProvider.registerClass('FieldScope.MetaLens.GDataProvid
 } catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
-// MetaLens.DataEntryProvider class
+// MetaLens.MouseMode class
 
-
-FieldScope.MetaLens.DataEntryProvider = function (layer, url) {
+FieldScope.MetaLens.MouseMode = function (layer, url) {
     
     this.layer = layer;
     this.url = url;
+    this.eventListener = null;
+    this.marker = null;
     
-    this.GenerateForm = Function.createDelegate(this, function (marker) {
-        var location = marker.getLatLng();
+    this.GenerateForm = Function.createDelegate(this, function () {
+        var location = this.marker.getLatLng();
         var result = '<div id="FieldScope.MetaLens.DataEntryDiv">';
         result += '<iframe id="FieldScope.MetaLens.DataEntryFrame"';
         result +=        ' name="FieldScope.MetaLens.DataEntryFrame"';
@@ -220,7 +227,7 @@ FieldScope.MetaLens.DataEntryProvider = function (layer, url) {
         return result;
       });
     
-    this.ActivateForm = Function.createDelegate(this, function (map) {
+    this.WireForm = Function.createDelegate(this, function (map) {
         var iframe = $get("FieldScope.MetaLens.DataEntryFrame");
         var layer = this.layer;
         var UploadComplete = function () {
@@ -236,18 +243,50 @@ FieldScope.MetaLens.DataEntryProvider = function (layer, url) {
           });
       });
     
-    this.MarkerIcon = new GIcon(null, "images/pin.png");
-    this.MarkerIcon.shadow = "images/pin-shadow.png";
-    this.MarkerIcon.iconSize = new GSize(11, 16);
-    this.MarkerIcon.shadowSize = new GSize(23, 16);
-    this.MarkerIcon.iconAnchor = new GPoint(5, 7);
-    this.MarkerIcon.infoWindowAnchor = new GPoint(5, 0);
-    this.MarkerIcon.infoShadowAnchor = new GPoint(11, 8);
+    this.Activate = function (map) {
+        map.disableDragging();
+        this.eventListener = GEvent.addListener(map, "click", Function.createDelegate(this, function (overlay, loc, overlayLoc) {
+            loc = loc || overlayLoc;
+            if (loc && (this.marker === null)) {
+              this.marker = new GMarker(loc, FieldScope.MetaLens.icon);
+              map.addOverlay(this.marker);
+              GEvent.addListener(this.marker, "infowindowclose", Function.createDelegate(this, function () {
+                  map.removeOverlay(this.marker);
+                  this.marker = null;
+                }));
+              GEvent.addListener(this.marker, "infowindowopen", Function.createDelegate(this, function () {
+                  this.WireForm(map);
+                }));
+              this.marker.openInfoWindowHtml(this.GenerateForm());
+            }
+          }));
+      };
+    
+    this.Deactivate = function (map) {
+        if (this.eventListener) {
+          GEvent.removeListener(this.eventListener);
+          this.eventListener = null;
+        }
+        if (this.marker) {
+          map.removeOverlay(this.marker);
+          this.marker = null;
+        }
+      };
+    
+    this.GetName = function () { 
+        return "Place Photo";
+      };
+    
+    this.GetId = function () { 
+        return "FieldScope.Tool[photos]";
+      };
+    
+    this.GetIconCssClass = function () {
+        return "addPhotoIcon";
+      };
   };
 
-try {
-FieldScope.MetaLens.DataEntryProvider.registerClass('FieldScope.MetaLens.DataEntryProvider', null, FieldScope.DataEntryProvider);
-} catch (e) { console.error(e); }
+FieldScope.MetaLens.MouseMode.registerClass('FieldScope.MetaLens.MouseMode', null, FieldScope.MouseMode);
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

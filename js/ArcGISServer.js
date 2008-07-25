@@ -39,13 +39,15 @@ FieldScope.ArcGISServer.GDataProvider = function (mapExt, inUrl) {
           if (fset) {
             var overlayOptions = {
                 markerOptions : { 
-                    icon : this.icon
+                    icon : this.icon,
+                    clickable : (this.infoWindow !== null)
                   },
                 strokeColor : this.lineStyle.color,
                 strokeWeight : this.lineStyle.weight,
                 strokeOpacity : this.lineStyle.opacity,
                 fillColor : this.fillStyle.color,
-                fillOpacity : this.fillStyle.opacity
+                fillOpacity : this.fillStyle.opacity,
+                clickable : (this.infoWindow !== null)
               };
             var infoWindowOptions = {
                 content : this.infoWindow
@@ -78,9 +80,8 @@ FieldScope.ArcGISServer.GDataProvider = function (mapExt, inUrl) {
         return (!oldState.dataBounds.containsBounds(newState.mapBounds));
       };
   };
-try {
+
 FieldScope.ArcGISServer.GDataProvider.registerClass('FieldScope.ArcGISServer.GDataProvider', null, FieldScope.GAsyncDataProvider);
-} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

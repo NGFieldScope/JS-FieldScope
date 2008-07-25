@@ -155,15 +155,4 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
 FieldScope.GAsyncLayer.registerClass('FieldScope.GAsyncLayer');
 
 // ----------------------------------------------------------------------------
-// DataEntryProvider class
-
-FieldScope.DataEntryProvider = function () {
-    this.GenerateForm = function (marker) { };
-    this.ActivateForm = function (map) { };
-    this.MarkerIcon = null;
-  };
-
-FieldScope.DataEntryProvider.registerInterface('FieldScope.DataEntryProvider');
-
-// ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

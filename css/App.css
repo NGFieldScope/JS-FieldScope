@@ -1,4 +1,12 @@
-﻿.addObservationIcon {
+﻿.handIcon {
+  background-image: url(../images/hand24.gif);
+  background-repeat: no-repeat; 
+  background-position: center;
+  width: 24px;
+  height: 24px;
+}
+
+.addObservationIcon {
   background-image: url(../images/beaker24.gif);
   background-repeat: no-repeat; 
   background-position: center;
@@ -14,8 +22,9 @@
   height: 24px;
 }
 
-.handIcon {
-  background-image: url(../images/hand24.gif);
+.infoIcon {
+  background-image: url(../images/info24.png);
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/info24.png', sizingMethod='crop');
   background-repeat: no-repeat; 
   background-position: center;
   width: 24px;

@@ -1,17 +1,20 @@
 /*global FieldScope WFSService Sys Type $get */
-/*global GIcon GSize GPoint */
+/*global GEvent GIcon GMarker GSize GPoint */
 
 Type.registerNamespace("FieldScope.WFS");
 
 // ----------------------------------------------------------------------------
-// WFS.DataEntryProvider class
+// WFS.MouseMode class
 
-FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
+FieldScope.WFS.MouseMode = function (layer, url, entryName) {
     
     this.layer = layer;
+    this.icon = layer.provider.icon;
     this.url = url;
     this.entryName = entryName;
     this.geometryName = null;
+    this.marker = null;
+    this.onClickListener = null;
     this.onFinishLoadingHandler = null;
     
     this.GenerateForm = Function.createDelegate(this, function (marker) {
@@ -37,7 +40,7 @@ FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
         return result;
       });
     
-    this.ActivateForm = Function.createDelegate(this, function (map) {
+    this.WireForm = Function.createDelegate(this, function (map) {
         $get("FieldScope.WFS.SaveButton").onclick = Function.createDelegate(this, function () {
             //alert("saving!");
             var point = map.getInfoWindow().getPoint();
@@ -74,12 +77,50 @@ FieldScope.WFS.DataEntryProvider = function (layer, url, entryName) {
           });
       });
     
-    this.MarkerIcon = this.layer.provider.icon;
+    this.Activate = function (map) {
+        map.disableDragging();
+        this.onClickListener = GEvent.addListener(map, "click", Function.createDelegate(this, function (overlay, loc, overlayLoc) {
+            loc = loc || overlayLoc;
+            if (loc && (this.marker === null)) {
+              this.marker = new GMarker(loc, this.icon);
+              map.addOverlay(this.marker);
+              GEvent.addListener(this.marker, "infowindowclose", Function.createDelegate(this, function () {
+                  map.removeOverlay(this.marker);
+                  this.marker = null;
+                }));
+              GEvent.addListener(this.marker, "infowindowopen", Function.createDelegate(this, function () {
+                  this.WireForm(map);
+                }));
+              this.marker.openInfoWindowHtml(this.GenerateForm());
+            }
+          }));
+      };
+    
+    this.Deactivate = function (map) {
+        if (this.onClickListener) {
+          GEvent.removeListener(this.onClickListener);
+          this.onClickListener = null;
+        }
+        if (this.marker) {
+          map.removeOverlay(this.marker);
+          this.marker = null;
+        }
+      };
+    
+    this.GetName = function () { 
+        return "Place Observation";
+      };
+    
+    this.GetId = function () { 
+        return "FieldScope.Tool[observations]";
+      };
+    
+    this.GetIconCssClass = function () {
+        return "addObservationIcon";
+      };
   };
 
-try {
-FieldScope.WFS.DataEntryProvider.registerClass('FieldScope.WFS.DataEntryProvider', null, FieldScope.DataEntryProvider);
-} catch (e) { console.error(e); }
+FieldScope.WFS.MouseMode.registerClass('FieldScope.WFS.MouseMode', null, FieldScope.MouseMode);
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }
