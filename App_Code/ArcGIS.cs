@@ -114,10 +114,14 @@ namespace ArcGIS {
                 gen.Brush = new SolidBrush(System.Drawing.Color.Black);
                 gen.Antialias = antialias;
                 foreach (MapServerLegendInfo legend in legends) {
-                    legendEntries.Add(gen.Generate(legend.Name));
+                    if (legend.Name.Length > 0) {
+                        legendEntries.Add(gen.Generate(legend.Name));
+                    }
                     gen.IndentLevel += 1;
                     foreach (MapServerLegendGroup group in legend.LegendGroups) {
-                        legendEntries.Add(gen.Generate(group.Heading));
+                        if (group.Heading.Length > 0) {
+                            legendEntries.Add(gen.Generate(group.Heading));
+                        }
                         gen.IndentLevel += 1;
                         foreach (MapServerLegendClass legendClass in group.LegendClasses) {
                             legendEntries.Add(gen.Generate(new Bitmap(new System.IO.MemoryStream(legendClass.SymbolImage.ImageData)),
