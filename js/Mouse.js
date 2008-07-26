@@ -59,7 +59,7 @@ FieldScope.InfoMouseMode = function (layers) {
                 map.getInfoWindow().isHidden() &&
                 (!map.getExtInfoWindow()) &&
                 ((!overlay) || (!overlay.getLatLng))) {
-              map.getContainer().style.cursor = 'wait';
+              
               var callback = Function.createDelegate(this, function (html) {
                   var options = {
                       onCloseFn : Function.createDelegate(this, function () {
@@ -72,6 +72,7 @@ FieldScope.InfoMouseMode = function (layers) {
                 });
               for (var x = 0; x < this.layers.length; x += 1) {
                 if (this.layers[x].IsVisible() && this.layers[x].Identify) {
+                  map.getContainer().style.cursor = 'wait';
                   if (this.layers[x].Identify(loc, callback)) {
                     break;
                   }
