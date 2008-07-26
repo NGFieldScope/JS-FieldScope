@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using CookComputing.XmlRpc;
@@ -134,13 +135,12 @@ namespace CBIBS {
     public class Service {
 
         private static IBuoyProxy proxy = XmlRpcProxyGen.Create<IBuoyProxy>();
-        /*
         static Service () {
             RequestResponseLogger dumper = new RequestResponseLogger();
             dumper.Directory = @"C:\Documents and Settings\Russell\My Documents\xml-rpc-logs";
             dumper.Attach(proxy);
         }
-        */
+
         public static void ListMethods () {
             try {
                 string[] methodNames = proxy.SystemListMethods();
@@ -202,11 +202,15 @@ namespace CBIBS {
 
         public static PlatformMeasurements[] GetAllCurrentReadings (string constellation) {
             Platform[] platforms = ListPlatforms(constellation);
-            PlatformMeasurements[] result = new PlatformMeasurements[platforms.Length];
+            List<PlatformMeasurements> result = new List<PlatformMeasurements>();
             for (int i = 0; i < platforms.Length; i += 1) {
-                result[i] = new PlatformMeasurements(platforms[i], RetrieveCurrentReadings(platforms[i]));
+                try {
+                    result.Add(new PlatformMeasurements(platforms[i], RetrieveCurrentReadings(platforms[i])));
+                } catch (Exception e) {
+                    Console.WriteLine(e);
+                }
             }
-            return result;
+            return result.ToArray();
         }
 
         public static Measurement[] QueryData (Platform platform, string variable, DateTime begin, DateTime end) {
