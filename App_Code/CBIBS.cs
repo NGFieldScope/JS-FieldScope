@@ -135,11 +135,6 @@ namespace CBIBS {
     public class Service {
 
         private static IBuoyProxy proxy = XmlRpcProxyGen.Create<IBuoyProxy>();
-        static Service () {
-            RequestResponseLogger dumper = new RequestResponseLogger();
-            dumper.Directory = @"C:\Documents and Settings\Russell\My Documents\xml-rpc-logs";
-            dumper.Attach(proxy);
-        }
 
         public static void ListMethods () {
             try {
