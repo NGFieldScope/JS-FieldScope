@@ -280,11 +280,13 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       this.layers.terrain = {
           name : "Terrain",
           id : "FieldScope.Layer[terrain]",
+          group : "basemap",
           IsVisible : Function.createDelegate(this, function () {
               return this.layers.terrain.visible;
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.terrain.visible = visible;
+              this.layers.satellite.visible = !visible;
               FieldScope.DomUtils.show(this.layers.terrain.loadingIndicator);
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
@@ -299,11 +301,13 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       this.layers.satellite = {
           name : "Satellite",
           id : "FieldScope.Layer[satellite]",
+          group : "basemap",
           IsVisible : Function.createDelegate(this, function () {
               return this.layers.satellite.visible;
             }),
           SetVisible : Function.createDelegate(this, function (visible) {
               this.layers.satellite.visible = visible;
+              this.layers.terrain.visible = !visible;
               FieldScope.DomUtils.show(this.layers.satellite.loadingIndicator);
               // use setTimeout so the checkbox updates immediately
               window.setTimeout(this.UpdateMapType, 0);
