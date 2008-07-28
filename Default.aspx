@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>FieldScope Prototype, Version 1.12</title>
+    <title>FieldScope Prototype, Version 1.13</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -17,18 +17,18 @@
     <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
   -->
-  <!-- test version scripts -->
+  <!-- test version scripts 
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRRj6ZVR02exo3LqN0xouiCenXozOhRg0Oiyt6y6h2mDm3nqmdrdLjxlwg" type="text/javascript"></script>
     <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
     <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
-  
-  <!-- release version scripts 
+  -->
+  <!-- release version scripts -->
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQ_5rwwWZl7ALhyiRg47ubM-rTOnRSsVfG-QI3g0i2S9uGQsVLtI_DRLg" type="text/javascript"></script>
     <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
     <script src="js/extinfowindow/extinfowindow_packed.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js" djConfig="parseOnLoad:false, usePlainJson:true"></script>
-  -->
+  
     <script type="text/javascript">
 //<![CDATA[
       /*globals dojo dijit $addHandler $get FieldScope application */

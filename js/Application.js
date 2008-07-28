@@ -102,6 +102,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         impervious : { },
         watersheds : { },
         nutrients : { },
+        bathymetry : { },
         // Async point layers
         metaLens : { },
         cbibs : { },
@@ -130,6 +131,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         if (this.layers.landcover.tileLayer && this.layers.landcover.visible) {
           tileLayers.push(this.layers.landcover.tileLayer);
         }
+        if (this.layers.bathymetry.tileLayer && this.layers.bathymetry.visible) {
+          tileLayers.push(this.layers.bathymetry.tileLayer);
+        }
         if (this.layers.watersheds.tileLayer && this.layers.watersheds.visible) {
           tileLayers.push(this.layers.watersheds.tileLayer);
         }
@@ -147,18 +151,18 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         FieldScope.DomUtils.hide(this.layers.nutrients.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.impervious.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.permeability.loadingIndicator);
- 
         FieldScope.DomUtils.hide(this.layers.landcover.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.bathymetry.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.watersheds.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
       });
     
     this.IdentifyWatershedsDelegate = Function.createDelegate(this, function (loc, callback) {
-        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_watersheds/MapServer/2");
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_watersheds/MapServer/3");
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
-        query.outFields = [ "HUC4_NAME", "HUC8_Name" ];
+        query.outFields = [ "HUC4_NAME", "HUC8_NAME", "HUC11_NAME" ];
         task.execute(query, false, function (result) {
             if (result.features && (result.features.length > 0)) {
               var atributes = result.features[0].attributes;
@@ -171,15 +175,20 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
-              html +=     '<td style="font-weight:bold;text-align:right">Subregion:</td>';
+              html +=     '<td style="font-weight:bold;text-align:right">Subregion (USGS HUC4):</td>';
               html +=     '<td>';
               html +=       atributes.HUC4_NAME;
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
-              html +=   '<td style="font-weight:bold;text-align:right">Subbasin:</td>';
+              html +=   '<td style="font-weight:bold;text-align:right">Cataloging Unit (HUC8):</td>';
               html +=     '<td>';
-              html +=       atributes.HUC8_Name;
+              html +=       atributes.HUC8_NAME;
+              html +=     '</td>';
+              html +=   '</tr>';
+              html +=   '<td style="font-weight:bold;text-align:right">Local Watershed (HUC11):</td>';
+              html +=     '<td>';
+              html +=       atributes.HUC11_NAME;
               html +=     '</td>';
               html +=   '</tr>';
               html += '</table>';
@@ -460,7 +469,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                    }));
         }), 0);
       
-      // Watershed boundaries layer
+      // Nutrients & Sediment layer
       this.layers.nutrients = {
           name : "Nutrients & Sediment",
           id : "FieldScope.Layer[nutrients]",
@@ -490,6 +499,43 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                      this.UpdateMapType();
                                                                    }));
         }), 0);
+        
+      
+      
+      // Bathymetry layer
+      this.layers.bathymetry = {
+          name : "Water Depth",
+          id : "FieldScope.Layer[bathymetry]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.bathymetry.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.bathymetry.visible = visible;
+              FieldScope.DomUtils.show(this.layers.bathymetry.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : null,
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_bathymetry/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_bathymetry/MapServer')+'" />'
+        };
+      window.setTimeout(Function.createDelegate(this, function () {
+          // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+          // constructor again before the first one is finished causes IE6 to hang
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_bathymetry/MapServer",
+                                                                 { opacity: 0.75 },
+                                                                 Function.createDelegate(this, function (layer) {
+                                                                     this.layers.bathymetry.tileLayer = layer;
+                                                                     this.UpdateMapType();
+                                                                   }));
+        }), 0);
+        
+        
+        
+        
+        
       
       // MetaLens layer
       var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
@@ -576,7 +622,8 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
           this.layers.cbibs,
           [ "Watershed",
             this.layers.studyArea,
-            this.layers.watersheds ],
+            this.layers.watersheds,
+            this.layers.bathymetry ],
           [ "Land Use",
             this.layers.landcover,
             this.layers.permeability,
