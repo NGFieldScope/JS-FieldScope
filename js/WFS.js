@@ -87,9 +87,11 @@ FieldScope.WFS.MouseMode = function (layer, url, entryName) {
               GEvent.addListener(this.marker, "infowindowclose", Function.createDelegate(this, function () {
                   map.removeOverlay(this.marker);
                   this.marker = null;
+                  window.setTimeout(function () { map.disableDragging(); }, 0);
                 }));
               GEvent.addListener(this.marker, "infowindowopen", Function.createDelegate(this, function () {
                   this.WireForm(map);
+                  map.enableDragging();
                 }));
               this.marker.openInfoWindowHtml(this.GenerateForm());
             }
