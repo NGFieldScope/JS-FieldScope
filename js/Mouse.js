@@ -1,4 +1,4 @@
-/*global FieldScope GEvent Sys Type */
+/*global FieldScope GEvent GInfoWindowTab Sys Type */
 
 Type.registerNamespace("FieldScope");
 
@@ -46,40 +46,45 @@ FieldScope.NavigateMouseMode.registerClass('FieldScope.NavigateMouseMode', null,
 
 FieldScope.InfoMouseMode = function (layers) {
     
+    this.map = null;
     this.layers = layers;
     this.eventListeners = [];
-    this.infoWindowOpen = false;
+    this.tabs = [];
+    
+    this.OnCloseDelegate = Function.createDelegate(this, function () {
+         this.tabs = [];
+      });
+    
+    this.IdentifyCallbackDelegate = Function.createDelegate(this, function (loc, layer, html) {
+        this.tabs.push(new GInfoWindowTab(layer, html));
+        if (this.tabs.length === 1) {
+          this.map.openInfoWindowTabsHtml(loc, this.tabs, { onCloseFn : this.OnCloseDelegate });
+        } else {
+          this.map.updateInfoWindow(this.tabs);
+        }
+      });
+    
+    this.OnClickDelegate = Function.createDelegate(this, function (overlay, loc, overlayLoc) {
+        this.map.getContainer().style.cursor = 'wait';
+        loc = loc || overlayLoc;
+        if (loc &&
+            this.map.getInfoWindow().isHidden() &&
+            (!this.map.getExtInfoWindow()) &&
+            ((!overlay) || (!overlay.getLatLng))) {
+          for (var x = 0; x < this.layers.length; x += 1) {
+            if (this.layers[x].IsVisible() && this.layers[x].Identify) {
+              this.layers[x].Identify(loc, this.IdentifyCallbackDelegate);
+            }
+          }
+        }
+        this.map.getContainer().style.cursor = 'help';
+      });
     
     this.Activate = function (map) {
         map.disableDragging();
-        map.getContainer().style.cursor = 'pointer';
-        this.eventListeners.push(GEvent.addListener(map, "click", Function.createDelegate(this, function (overlay, loc, overlayLoc) {
-            loc = loc || overlayLoc;
-            if (loc &&
-                map.getInfoWindow().isHidden() &&
-                (!map.getExtInfoWindow()) &&
-                ((!overlay) || (!overlay.getLatLng))) {
-              
-              var callback = Function.createDelegate(this, function (html) {
-                  var options = {
-                      onCloseFn : Function.createDelegate(this, function () {
-                          this.infoWindowOpen = false;
-                        })
-                    };
-                  map.openInfoWindowHtml(loc, html, options);
-                  this.infoWindowOpen = true;
-                  map.getContainer().style.cursor = 'pointer';
-                });
-              for (var x = 0; x < this.layers.length; x += 1) {
-                if (this.layers[x].IsVisible() && this.layers[x].Identify) {
-                  map.getContainer().style.cursor = 'wait';
-                  if (this.layers[x].Identify(loc, callback)) {
-                    break;
-                  }
-                }
-              }
-            }
-          })));
+        map.getContainer().style.cursor = 'help';
+        this.map = map;
+        this.eventListeners.push(GEvent.addListener(map, "click", this.OnClickDelegate));
         var EnableDragging = function () {
             map.enableDragging();
           };
@@ -98,10 +103,11 @@ FieldScope.InfoMouseMode = function (layers) {
           GEvent.removeListener(this.eventListeners[x]);
         }
         this.eventListeners = [];
-        if (this.infoWindowOpen) {
+        if (this.tabs.length > 0) {
           map.closeInfoWindow();
-          this.infoWindowOpen = false;
+          this.tabs = [];
         }
+        this.map = null;
       };
     
     this.GetName = function () { 

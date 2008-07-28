@@ -147,6 +147,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         FieldScope.DomUtils.hide(this.layers.nutrients.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.impervious.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.permeability.loadingIndicator);
+ 
         FieldScope.DomUtils.hide(this.layers.landcover.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.watersheds.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
@@ -159,9 +160,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         query.returnGeometry = false;
         query.outFields = [ "HUC4_NAME", "HUC8_Name" ];
         task.execute(query, false, function (result) {
-            var html = '';
             if (result.features && (result.features.length > 0)) {
               var atributes = result.features[0].attributes;
+              var html = '';
               html += '<table>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
@@ -182,10 +183,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=     '</td>';
               html +=   '</tr>';
               html += '</table>';
+              callback.call(this, loc, "Watersheds", html);
             }
-            callback.apply(this, [ html ]);
           });
-        return true;
       });
     
     this.IdentifyNutreientsDelegate = Function.createDelegate(this, function (loc, callback) {
@@ -198,9 +198,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                             "AG_TN_PER", "FOR_TN_PER", "MIX_TN_PER", "URB_TN_PER", "DEP_TN_PER", "PNT_TN_PER",
                             "AG_SD_PER", "FOR_SD_PER", "MIX_SD_PER", "URB_SD_PER" ];
         task.execute(query, false, function (result) {
-            var html = '';
             if (result.features && (result.features.length > 0)) {
               var atributes = result.features[0].attributes;
+              var html = '';
               html += '<table>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
@@ -256,10 +256,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=       ' width="220" height="75" alt="chart missing" /></td>';
               html +=   '</tr>';
               html += '</table>';
+              callback.call(this, loc, "Runoff", html);
             }
-            callback.apply(this, [ html ]);
           });
-        return true;
       });
     
     //
@@ -273,6 +272,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       this.map.enableScrollWheelZoom();
       this.map.disableDoubleClickZoom();
       this.mapExtension = new esri.arcgis.gmaps.MapExtension(this.map);
+      // Force Google Maps to load info window code & create the info window object
+      var dummy1 = this.map.getInfoWindow();
+      var dummy2 = this.map.getExtInfoWindow();
       
       this.searchTool = new FieldScope.GSearch(this.map, this.SetSearchResults);
       
@@ -359,7 +361,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
@@ -389,7 +391,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy2 = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.landcover.tileLayer = layer;
@@ -419,7 +421,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_impervious/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_impervious/MapServer",
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.impervious.tileLayer = layer;
@@ -450,7 +452,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer",
                                                                  { opacity: 1.0 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.watersheds.tileLayer = layer;
@@ -481,7 +483,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy1 = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_nutrients/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_nutrients/MapServer",
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.nutrients.tileLayer = layer;
