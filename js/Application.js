@@ -103,6 +103,8 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         watersheds : { },
         nutrients : { },
         bathymetry : { },
+        agriculture : { },
+        states : { },
         // Async point layers
         metaLens : { },
         cbibs : { },
@@ -122,6 +124,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         if (this.layers.nutrients.tileLayer && this.layers.nutrients.visible) {
           tileLayers.push(this.layers.nutrients.tileLayer);
         }
+        if (this.layers.agriculture.tileLayer && this.layers.agriculture.visible) {
+          tileLayers.push(this.layers.agriculture.tileLayer);
+        }
         if (this.layers.impervious.tileLayer && this.layers.impervious.visible) {
           tileLayers.push(this.layers.impervious.tileLayer);
         }
@@ -137,6 +142,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         if (this.layers.watersheds.tileLayer && this.layers.watersheds.visible) {
           tileLayers.push(this.layers.watersheds.tileLayer);
         }
+        if (this.layers.states.tileLayer && this.layers.states.visible) {
+          tileLayers.push(this.layers.states.tileLayer);
+        }
         if (this.layers.streets.tileLayer && this.layers.streets.visible) {
           tileLayers.push(this.layers.streets.tileLayer);
         }
@@ -149,11 +157,13 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         FieldScope.DomUtils.hide(this.layers.terrain.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.satellite.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.nutrients.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.agriculture.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.impervious.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.permeability.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.landcover.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.bathymetry.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.watersheds.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.states.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
       });
     
@@ -181,7 +191,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
-              html +=   '<td style="font-weight:bold;text-align:right">Cataloging Unit (HUC8):</td>';
+              html +=   '<td style="font-weight:bold;text-align:right">Subbasin (HUC8):</td>';
               html +=     '<td>';
               html +=       atributes.HUC8_NAME;
               html +=     '</td>';
@@ -266,6 +276,35 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=   '</tr>';
               html += '</table>';
               callback.call(this, loc, "Runoff", html);
+            }
+          });
+      });
+    
+    this.IdentifyStateDelegate = Function.createDelegate(this, function (loc, callback) {
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_states/MapServer/0");
+        var query = new esri.arcgis.gmaps.Query();
+        query.queryGeometry = loc;
+        query.returnGeometry = false;
+        query.outFields = [ "STATE_NAME" ];
+        task.execute(query, false, function (result) {
+            if (result.features && (result.features.length > 0)) {
+              var atributes = result.features[0].attributes;
+              var html = '';
+              html += '<table>';
+              html +=   '<tr>';
+              html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
+              html +=       '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
+              html +=       '&nbsp;State';
+              html +=     '</td>';
+              html +=   '</tr>';
+              html +=   '<tr>';
+              html +=     '<td style="font-weight:bold;text-align:right">Name:</td>';
+              html +=     '<td>';
+              html +=       atributes.STATE_NAME;
+              html +=     '</td>';
+              html +=   '</tr>';
+              html += '</table>';
+              callback.call(this, loc, "States", html);
             }
           });
       });
@@ -499,8 +538,6 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                      this.UpdateMapType();
                                                                    }));
         }), 0);
-        
-      
       
       // Bathymetry layer
       this.layers.bathymetry = {
@@ -531,11 +568,67 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                      this.UpdateMapType();
                                                                    }));
         }), 0);
-        
-        
-        
-        
-        
+      
+      // Percent Agricultural layer
+      this.layers.agriculture = {
+          name : "Percent Agricultural",
+          id : "FieldScope.Layer[agriculture]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.agriculture.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.agriculture.visible = visible;
+              FieldScope.DomUtils.show(this.layers.agriculture.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : null,
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_agriculture/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_agriculture/MapServer')+'" />'
+        };
+      window.setTimeout(Function.createDelegate(this, function () {
+          // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+          // constructor again before the first one is finished causes IE6 to hang
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_agriculture/MapServer",
+                                                                 { opacity: 0.55 },
+                                                                 Function.createDelegate(this, function (layer) {
+                                                                     this.layers.agriculture.tileLayer = layer;
+                                                                     this.UpdateMapType();
+                                                                   }));
+        }), 0);
+      
+      // State Boundaries layer
+      this.layers.states = {
+          name : "State Boundaries",
+          id : "FieldScope.Layer[states]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.states.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.states.visible = visible;
+              FieldScope.DomUtils.show(this.layers.states.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : false,
+          tileLayer : null,
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_states/MapServer/tile/6/24/18.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_states/MapServer')+'" />',
+          Identify : this.IdentifyStateDelegate
+        };
+      window.setTimeout(Function.createDelegate(this, function () {
+          // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+          // constructor again before the first one is finished causes IE6 to hang
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_states/MapServer",
+                                                                 { opacity: 1.0 },
+                                                                 Function.createDelegate(this, function (layer) {
+                                                                     this.layers.states.tileLayer = layer;
+                                                                     this.UpdateMapType();
+                                                                   }));
+        }), 0);
       
       // MetaLens layer
       var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
@@ -553,7 +646,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       this.layers.cbibs.legendHTML = '<span>Real-time water quality data from the <a href="http://www.buoybay.org/" target="_blank">Chesapeake Bay Interpretive Buoy System</a></span>';
       
       // Student observations layer
-      var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_observations/MapServer/0";
+      var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_observations_2/MapServer/0";
       var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, observationsUrl);
       observationsProvider.icon = new GIcon(null, "images/beaker.gif");
       observationsProvider.icon.shadow = "images/beaker-shadow.png";
@@ -562,8 +655,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       observationsProvider.icon.iconAnchor = new GPoint(12, 24);
       observationsProvider.icon.infoWindowAnchor = new GPoint(8, 2);
       observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
-      observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHORUS" ];
-      var html = '<table>';
+      observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHOROUS",
+                                           "SCHOOL_NAME", "COLLECTION_DATE", "ENTRY_DATE", "FIELD_NOTES" ];
+      var html = '<table style="border-collapse:collapse;">';
       html +=      '<tr>';
       html +=        '<td style="font-weight:bold;text-align:center" colspan="2">';
       html +=          '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
@@ -591,8 +685,26 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       html +=        '<td>{NITROGEN}</td>';
       html +=      '</tr>';
       html +=      '<tr>';
-      html +=        '<td style="font-weight:bold">Phosphorus:</td>';
-      html +=        '<td>{PHOSPHORUS}</td>';
+      html +=        '<td style="padding-bottom:4px;font-weight:bold">Phosphorus:</td>';
+      html +=        '<td style="padding-bottom:4px">{PHOSPHOROUS}</td>';
+      html +=      '</tr>';
+      html +=      '<tr>';
+      html +=        '<td style="border-top:thin ridge;padding-top:4px;font-weight:bold">School Name:</td>';
+      html +=        '<td style="border-top:thin ridge;padding-top:4px">{SCHOOL_NAME}</td>';
+      html +=      '</tr>';
+      html +=      '<tr>';
+      html +=        '<td style="font-weight:bold">Collected:</td>';
+      html +=        '<td>{COLLECTION_DATE}</td>';
+      html +=      '</tr>';
+      html +=      '<tr>';
+      html +=        '<td style="padding-bottom:4px;font-weight:bold">Entered:</td>';
+      html +=        '<td style="padding-bottom:4px">{ENTRY_DATE}</td>';
+      html +=      '</tr>';
+      html +=      '<tr>';
+      html +=        '<td style="border-top:thin ridge;padding-top:4px;font-weight:bold;vertical-align:top">Field Notes:</td>';
+      html +=        '<td style="border-top:thin ridge;padding-top:4px" rowspan="2">';
+      html +=          '<div style="max-width:200px">{FIELD_NOTES}</div>';
+      html +=        '</td>';
       html +=      '</tr>';
       html +=    '</table>';
       observationsProvider.infoWindow = html;
@@ -602,7 +714,8 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                      '<img src="images/beaker.gif" style="height:16px" />');
       
       // Watershed boundary layer
-      var studyAreaProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0");
+      var studyAreaUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0";
+      var studyAreaProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, studyAreaUrl);
       studyAreaProvider.fillStyle = {color: "#0000FF", opacity: 0.0};
       studyAreaProvider.lineStyle = {color: "#0000FF", opacity: 0.75, weight: 2};
       var studyAreaLegend = '<div style="width:10px;height:12px;border:2px solid #0000FF;opacity:0.75;filter:alpha(opacity=75)"></div>';
@@ -620,17 +733,19 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
           this.layers.observations,
           this.layers.metaLens,
           this.layers.cbibs,
-          [ "Watershed",
+          [ "Boundaries",
             this.layers.studyArea,
             this.layers.watersheds,
-            this.layers.bathymetry ],
+            this.layers.states ],
           [ "Land Use",
             this.layers.landcover,
             this.layers.permeability,
             this.layers.impervious,
+            this.layers.agriculture,
             this.layers.nutrients ],
           [ "Basemap",
             this.layers.streets,
+            this.layers.bathymetry,
             this.layers.satellite,
             this.layers.terrain ]
         ];
@@ -639,11 +754,11 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       // Setup mouse modes
       //
       this.mouseModes.navigate = new FieldScope.NavigateMouseMode();
-      this.mouseModes.placeObservation = new FieldScope.WFS.MouseMode(this.layers.observations.asyncLayer, 
-                                                                      this.urlPrefix + "/arcgis/services/cb_observations/GeoDataServer/WFSServer",
-                                                                      "cb_observations");
+      this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer, 
+                                                                              this.urlPrefix,
+                                                                              "cb_observations_2");
       this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.metaLens.asyncLayer, "http://focus.metalens.org");
-      this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, this.layers.nutrients]);
+      this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, this.layers.states, this.layers.nutrients]);
       
       //
       // The mouse mode list determines how mode buttons are presented to the user
