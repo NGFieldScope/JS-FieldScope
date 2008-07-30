@@ -1,4 +1,4 @@
-/*global FieldScope esri dojo Sys Type G_DEFAULT_ICON */
+/*global FieldScope esri Sys Type G_DEFAULT_ICON */
 
 Type.registerNamespace("FieldScope.ArcGISServer");
 
@@ -15,24 +15,6 @@ FieldScope.ArcGISServer.GDataProvider = function (mapExt, inUrl) {
     this.queryfields = [];
     this.infoWindow = null;
     
-    this.description = { };
-    try {
-      dojo.xhrGet({ 
-          url: inUrl + "?f=json",
-          handleAs: "json",
-          load: Function.createDelegate(this, function (response, ioArgs) {
-              this.description = response;
-              return response;
-            }),
-          error: function (response, ioArgs) {
-              console.error(response);
-              return response;
-            },
-          sync: true
-        });
-    } catch (e) {
-      console.error(e);
-    }
     this.QueryCallback = function (fset, OnSuccess, OnFailure) {
         try {
           var overlays = [];
