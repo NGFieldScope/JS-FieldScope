@@ -9,25 +9,18 @@
       @import "css/MetaLensWindow.css";
       @import "css/App.css";
     </style>
-  <!-- Mystery key: "ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRT-pF1m860BUFn_yE2HNV-20QsRKhTNLIH1MmOKXzcbTWUjmZ0Js2oTig" -->                                                                 
+    
+    <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQkzReMT6KcnZeGz7n-Q5b7By3ebRQHjl1BuehZRVJFoqAs85jHN9ZOUg"></script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1"></script>
   
-  <!-- development version scripts 
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQ_5rwwWZl7ALhyiRg47ubM-rTOnRSsVfG-QI3g0i2S9uGQsVLtI_DRLg" type="text/javascript"></script>
-    <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
-    <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
+  <!-- development version scripts -->
+    <script type="text/javascript" src="js/extinfowindow/extinfowindow.js"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
-  -->
-  <!-- test version scripts 
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRRj6ZVR02exo3LqN0xouiCenXozOhRg0Oiyt6y6h2mDm3nqmdrdLjxlwg" type="text/javascript"></script>
-    <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
-    <script src="js/extinfowindow/extinfowindow.js" type="text/javascript"></script>
-    <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
-  -->
-  <!-- release version scripts -->
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQ_5rwwWZl7ALhyiRg47ubM-rTOnRSsVfG-QI3g0i2S9uGQsVLtI_DRLg" type="text/javascript"></script>
-    <script src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1" type="text/javascript" ></script>
-    <script src="js/extinfowindow/extinfowindow_packed.js" type="text/javascript"></script>
+  
+  <!-- release version scripts 
+    <script type="text/javascript" src="js/extinfowindow/extinfowindow_packed.js"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js" djConfig="parseOnLoad:false, usePlainJson:true"></script>
+  -->
   
     <script type="text/javascript">
 //<![CDATA[
@@ -228,14 +221,13 @@
           <asp:ScriptReference Path="js/ArcGisServer.js" />
           <asp:ScriptReference Path="js/MetaLens.js" />
           <asp:ScriptReference Path="js/CBIBS.js" />
-          <asp:ScriptReference Path="js/WFS.js" />
+          <asp:ScriptReference Path="js/Observation.js" />
           <asp:ScriptReference Path="js/GSearch.js" />
           <asp:ScriptReference Path="js/Application.js" />
         </Scripts>
         <Services>
           <asp:ServiceReference Path="CBIBSService.asmx" />
           <asp:ServiceReference Path="MetaLensService.asmx" />
-          <asp:ServiceReference Path="WFSService.asmx" />
         </Services>
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" 
@@ -254,13 +246,13 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:384px;margin-top:8px">
+               style="height:314px;margin-top:8px">
             <span style="font-weight:bold">Chesapeake Bay:</span>
             <div style="width:100%;font-size:smaller" id="FieldScope.Layers.Controls"></div>
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="bottom"
-               style="height:175px;margin-top:8px"
+               style="height:145px;margin-top:8px"
                splitter="true">
             <span>Find a Location:</span>
             <div style="margin:2px">
