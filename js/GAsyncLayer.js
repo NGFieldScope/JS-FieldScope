@@ -147,7 +147,7 @@ FieldScope.GAsyncLayer = function (inMap, inProvider) {
     
     this.ReloadLayer = function () {
         // get the data for the initial view
-        this.currentbounds = null;
+        this.currentState = null;
         this.RefreshDataDelegate();
       };
   };
