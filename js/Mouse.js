@@ -50,6 +50,7 @@ FieldScope.InfoMouseMode = function (layers) {
     this.layers = layers;
     this.eventListeners = [];
     this.tabs = [];
+    this.enablePopup = true;
     
     this.OnCloseDelegate = Function.createDelegate(this, function () {
          this.tabs = [];
@@ -68,8 +69,7 @@ FieldScope.InfoMouseMode = function (layers) {
         this.map.getContainer().style.cursor = 'wait';
         loc = loc || overlayLoc;
         if (loc &&
-            this.map.getInfoWindow().isHidden() &&
-            (!this.map.getExtInfoWindow()) &&
+            this.enablePopup &&
             ((!overlay) || (!overlay.getLatLng))) {
           for (var x = 0; x < this.layers.length; x += 1) {
             if (this.layers[x].IsVisible() && this.layers[x].Identify) {
@@ -80,21 +80,31 @@ FieldScope.InfoMouseMode = function (layers) {
         this.map.getContainer().style.cursor = 'help';
       });
     
+    this.EnablePopupDelegate = Function.createDelegate(this, function () {
+        this.enablePopup = true;
+      });
+    
+    this.DisableDraggingDelegate = Function.createDelegate(this, function () {
+        this.map.disableDragging();
+        // Re-enabling popups with setTimeout fixes bug in Firefox that caused
+        // clicking the popup close box would cause another popup to open
+        window.setTimeout(this.EnablePopupDelegate, 0);
+      });
+    
+    this.EnableDraggingDelegate = Function.createDelegate(this, function () {
+        this.map.enableDragging();
+        this.enablePopup = false;
+      });
+    
     this.Activate = function (map) {
         map.disableDragging();
         map.getContainer().style.cursor = 'help';
         this.map = map;
         this.eventListeners.push(GEvent.addListener(map, "click", this.OnClickDelegate));
-        var EnableDragging = function () {
-            map.enableDragging();
-          };
-        var DisableDragging = function () {
-            map.disableDragging();
-          };
-        this.eventListeners.push(GEvent.addListener(map, "infowindowopen", EnableDragging));
-        this.eventListeners.push(GEvent.addListener(map, "extinfowindowopen", EnableDragging));
-        this.eventListeners.push(GEvent.addListener(map, "infowindowclose", DisableDragging));
-        this.eventListeners.push(GEvent.addListener(map, "extinfowindowclose", DisableDragging));
+        this.eventListeners.push(GEvent.addListener(map, "infowindowopen", this.EnableDraggingDelegate));
+        this.eventListeners.push(GEvent.addListener(map, "extinfowindowopen", this.EnableDraggingDelegate));
+        this.eventListeners.push(GEvent.addListener(map, "infowindowclose", this.DisableDraggingDelegate));
+        this.eventListeners.push(GEvent.addListener(map, "extinfowindowclose", this.DisableDraggingDelegate));
       };
     
     this.Deactivate = function (map) {

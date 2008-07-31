@@ -12,11 +12,9 @@ FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
     this.icon = layer.provider.icon;
     this.serverUrl = serverUrl;
     this.serviceName = serviceName;
-    this.geometryName = null;
-    this.marker = null;
     this.map = null;
+    this.marker = null;
     this.onClickListener = null;
-    this.onFinishLoadingHandler = null;
     
     this.GenerateForm = function (marker) {
         var location = this.marker.getLatLng();
@@ -42,7 +40,6 @@ FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
       });
     
     this.UploadCompleteDelegate = Function.createDelegate(this, function () {
-        console.log("got callback");
         this.map.closeInfoWindow();
         window.setTimeout(this.RefreshLayerDelegate, 1000);
       });
@@ -69,11 +66,11 @@ FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
     
     this.DisableDraggingDelegate = Function.createDelegate(this, function () {
         this.map.disableDragging();
+        this.marker = null;
       });
     
     this.OnCloseDelegate = Function.createDelegate(this, function () {
         this.map.removeOverlay(this.marker);
-        this.marker = null;
         window.setTimeout(this.DisableDraggingDelegate, 0);
       });
     
