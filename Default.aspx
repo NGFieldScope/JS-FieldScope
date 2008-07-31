@@ -184,7 +184,7 @@
           }
           
           // Build a tree of controls for the application's data layers
-          var layerControlsHtml = '<table style="width:100%">';
+          var layerControlsHtml = '<table cellspacing="1" cellpadding="0" style="width:100%">';
           layerControlsHtml += MakeLayerControlsHtml(application.layerTree);
           layerControlsHtml += "</table>";
           $get("FieldScope.Layers.Controls").innerHTML = layerControlsHtml;
@@ -246,13 +246,13 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:314px;margin-top:8px">
+               style="height:432px;margin-top:8px">
             <span style="font-weight:bold">Chesapeake Bay:</span>
             <div style="width:100%;font-size:smaller" id="FieldScope.Layers.Controls"></div>
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="bottom"
-               style="height:145px;margin-top:8px"
+               style="height:130px;margin-top:8px"
                splitter="true">
             <span>Find a Location:</span>
             <div style="margin:2px">
