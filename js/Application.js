@@ -285,10 +285,10 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
-        query.outFields = [ "STATE_NAME" ];
+        query.outFields = [ "cb_states.STATE_NAME", "cb_states_2.AREA_SQMI" ];
         task.execute(query, false, function (result) {
             if (result.features && (result.features.length > 0)) {
-              var atributes = result.features[0].attributes;
+              var attributes = result.features[0].attributes;
               var html = '';
               html += '<table>';
               html +=   '<tr>';
@@ -300,11 +300,18 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:right">Name:</td>';
               html +=     '<td>';
-              html +=       atributes.STATE_NAME;
+              html +=       attributes["cb_states.STATE_NAME"];
+              html +=     '</td>';
+              html +=   '</tr>';
+              html +=   '<tr>';
+              html +=     '<td style="font-weight:bold;text-align:right">Area in Watershed:</td>';
+              html +=     '<td>';
+              html +=       attributes["cb_states_2.AREA_SQMI"];
+              html +=       'mi<sup>2</sup>';
               html +=     '</td>';
               html +=   '</tr>';
               html += '</table>';
-              callback.call(this, loc, "States", html);
+              callback.call(this, loc, "State", html);
             }
           });
       });
@@ -616,7 +623,6 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
           visible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_states/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_states/MapServer')+'" />',
           Identify : this.IdentifyStateDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
