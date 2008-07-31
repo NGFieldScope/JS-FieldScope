@@ -175,7 +175,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         query.outFields = [ "HUC4_NAME", "HUC8_NAME", "HUC11_NAME" ];
         task.execute(query, false, function (result) {
             if (result.features && (result.features.length > 0)) {
-              var atributes = result.features[0].attributes;
+              var attributes = result.features[0].attributes;
               var html = '';
               html += '<table>';
               html +=   '<tr>';
@@ -187,18 +187,18 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:right">Subregion (USGS HUC4):</td>';
               html +=     '<td>';
-              html +=       atributes.HUC4_NAME;
+              html +=       attributes.HUC4_NAME;
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
               html +=   '<td style="font-weight:bold;text-align:right">Subbasin (HUC8):</td>';
               html +=     '<td>';
-              html +=       atributes.HUC8_NAME;
+              html +=       attributes.HUC8_NAME;
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<td style="font-weight:bold;text-align:right">Local Watershed (HUC11):</td>';
               html +=     '<td>';
-              html +=       atributes.HUC11_NAME;
+              html +=       attributes.HUC11_NAME;
               html +=     '</td>';
               html +=   '</tr>';
               html += '</table>';
@@ -208,7 +208,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       });
     
     this.IdentifyNutreientsDelegate = Function.createDelegate(this, function (loc, callback) {
-        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_nutrients/MapServer/4");
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_nutrients/MapServer/0");
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
@@ -218,7 +218,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                             "AG_SD_PER", "FOR_SD_PER", "MIX_SD_PER", "URB_SD_PER" ];
         task.execute(query, false, function (result) {
             if (result.features && (result.features.length > 0)) {
-              var atributes = result.features[0].attributes;
+              var attributes = result.features[0].attributes;
               var html = '';
               html += '<table>';
               html +=   '<tr>';
@@ -229,7 +229,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=   '</tr>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold">Basin:</td>';
-              html +=     '<td>' + atributes.TRIB_BASIN + '</td>';
+              html +=     '<td>' + attributes.TRIB_BASIN + '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold">Phosphorous:</td>';
@@ -238,9 +238,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=                 '?cht=p';
               html +=                 '&chs=220x75';
               html +=                 '&chd=t:';
-              html +=                   atributes.AG_TP_PER + ',' + atributes.FOR_TP_PER + ',';
-              html +=                   atributes.MIX_TP_PER + ',' + atributes.URB_TP_PER + ',';
-              html +=                   atributes.DEP_TP_PER + ',' + atributes.PNT_TP_PER;
+              html +=                   attributes.AG_TP_PER + ',' + attributes.FOR_TP_PER + ',';
+              html +=                   attributes.MIX_TP_PER + ',' + attributes.URB_TP_PER + ',';
+              html +=                   attributes.DEP_TP_PER + ',' + attributes.PNT_TP_PER;
               html +=                 '&chl=Agriculture|Forest|Mixed%20Use|Urban|Atmosphere|Point%20Source';
               html +=                 '&chco=E1E298,35824D,BCBCE6,FAAB9F,AACFC9,B2B2B2"';
               html +=           ' width="220" height="75" alt="chart missing" />';
@@ -253,9 +253,9 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=                 '?cht=p';
               html +=                 '&chs=220x75';
               html +=                 '&chd=t:';
-              html +=                   atributes.AG_TN_PER + ',' + atributes.FOR_TN_PER + ',';
-              html +=                   atributes.MIX_TN_PER + ',' + atributes.URB_TN_PER + ',';
-              html +=                   atributes.DEP_TN_PER + ',' + atributes.PNT_TN_PER;
+              html +=                   attributes.AG_TN_PER + ',' + attributes.FOR_TN_PER + ',';
+              html +=                   attributes.MIX_TN_PER + ',' + attributes.URB_TN_PER + ',';
+              html +=                   attributes.DEP_TN_PER + ',' + attributes.PNT_TN_PER;
               html +=                 '&chl=Agriculture|Forest|Mixed%20Use|Urban|Atmosphere|Point%20Source';
               html +=                 '&chco=E1E298,35824D,BCBCE6,FAAB9F,AACFC9,B2B2B2"'; 
               html +=           ' width="220" height="75" alt="chart missing" />';
@@ -268,8 +268,8 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               html +=                 '?cht=p';
               html +=                 '&chs=220x75';
               html +=                 '&chd=t:';
-              html +=                   atributes.AG_SD_PER + ',' + atributes.FOR_SD_PER + ',';
-              html +=                   atributes.MIX_SD_PER + ',' + atributes.URB_SD_PER;
+              html +=                   attributes.AG_SD_PER + ',' + attributes.FOR_SD_PER + ',';
+              html +=                   attributes.MIX_SD_PER + ',' + attributes.URB_SD_PER;
               html +=                 '&chl=Agriculture|Forest|Mixed%20Use|Urban';
               html +=                 '&chco=E1E298,35824D,BCBCE6,FAAB9F"';
               html +=       ' width="220" height="75" alt="chart missing" /></td>';
