@@ -5,7 +5,11 @@ using System.Web;
 using System.Web.UI;
 
 public partial class MetaLensUpload : System.Web.UI.Page {
-    
+
+    const string USERNAME = "fieldscope_user";
+
+    const string PASSWORD = "123321";
+
     /*
      * Setup session variables & check for authentication
      */
@@ -32,33 +36,15 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             } else {
                 lon = (string)Session["FieldScope_MetaLens_Longitude"];
             }
-            bool authorized = false;
-            FieldScope_MetaLens_Username.Text = "";
-            FieldScope_MetaLens_Logout.Visible = false;
-            if (Request.Cookies.AllKeys.Contains("MetaLens_Cookie")) {
-                // NOTE: DO NOT check that (Request.Cookies["MetaLens_Cookie"] == null), 
-                // because this will not only always return false, it will also create 
-                // an empty cookie named MetaLens_Cookie
-                string username = MetaLens.Service.CheckLogin(server, Request.Cookies["MetaLens_Cookie"].Value);
-                if (username != "") {
-                    authorized = true;
-                    FieldScope_MetaLens_Username.Text = username;
-                    FieldScope_MetaLens_Logout.Visible = true;
-                }
-            }
-            if (!authorized) {
-                Response.Redirect("MetaLensLogin.aspx");
+            if ((!Request.Cookies.AllKeys.Contains("MetaLens_Cookie")) ||
+                (MetaLens.Service.CheckLogin(server, Request.Cookies["MetaLens_Cookie"].Value) == null)) {
+                HttpCookie cookie = new HttpCookie("MetaLens_Cookie", MetaLens.Service.Login(server, USERNAME, PASSWORD));
+                cookie.Expires = DateTime.Now.AddMinutes(60);
+                Response.SetCookie(cookie);
             }
         }
     }
-
-    protected void LogoutButton_Click (object sender, EventArgs evt) {
-        HttpCookie c = new HttpCookie("MetaLens_Cookie", "");
-        c.Expires = DateTime.Now.AddMinutes(-1);
-        Response.SetCookie(c);
-        Response.Redirect("MetaLensUpload.aspx");
-    }
-
+    
     protected void UploadButton_Click (object sender, EventArgs evt) {
         if (FieldScope_MetaLens_FileUpload.HasFile) {
             string server = (string)Session["FieldScope_MetaLens_Server"];
@@ -70,7 +56,7 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             string caption = FieldScope_MetaLens_Caption.Text;
             string description = FieldScope_MetaLens_Description.Text;
             string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description);
-            Label1.Text = "Result: " + result;
+            FieldScope_MetaLens_Message.Text = "Result: " + result;
             if (result == "complete") {
                 ClientScript.RegisterStartupScript(typeof(Page),
                                                    "FieldScopeMetaLensUploadComplete",
@@ -82,7 +68,7 @@ public partial class MetaLensUpload : System.Web.UI.Page {
                                                    true);
             }
         } else {
-            Label1.Text = "No File Selected";
+            FieldScope_MetaLens_Message.Text = "No File Selected";
         }
     }
 }

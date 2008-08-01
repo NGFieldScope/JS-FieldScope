@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>FieldScope Prototype, Version 1.13</title>
+    <title>FieldScope Prototype, Version 1.14</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -211,7 +211,7 @@
 //]]>
     </script>
   </head>
-  <body class="tundra">
+  <body class="tundra" onunload="GUnload();">
     <form id="form1" runat="server" method="post" enctype="multipart/form-data">
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Debug">
         <Scripts>
@@ -232,7 +232,7 @@
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" 
            design="sidebar" 
-           style="width:950px; height:600px">
+           style="width:950px; height:600px;border-bottom:medium ridge">
         <div dojoType="dijit.layout.BorderContainer" 
              design="sidebar" 
              style="width:200px;height:600px" 
@@ -246,13 +246,13 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:432px;margin-top:8px">
+               style="height:442px;margin-top:8px">
             <span style="font-weight:bold">Chesapeake Bay:</span>
             <div style="width:100%;font-size:smaller" id="FieldScope.Layers.Controls"></div>
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="bottom"
-               style="height:130px;margin-top:8px"
+               style="height:120px;margin-top:8px"
                splitter="true">
             <span>Find a Location:</span>
             <div style="margin:2px">
@@ -268,6 +268,13 @@
              id="FieldScope.Div.Map">
           Map
         </div>
+      </div>
+      <div">
+        Logged in as 
+        <asp:Label id="FieldScope_Username" runat="server" Text="" />
+        <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
+          logout
+        </asp:LinkButton>
       </div>
     </form>
   </body>

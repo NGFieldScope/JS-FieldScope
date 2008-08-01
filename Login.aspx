@@ -1,19 +1,19 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="MetaLensLogin.aspx.cs" Inherits="MetaLensLogin" smartnavigation="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Login.aspx.cs" Inherits="Login" smartnavigation="false" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head runat="server">
-    <title>MetaLens Login Form</title>
+  <head id="Head1" runat="server">
+    <title>FieldScope Login Form</title>
   </head>
   <body>
     <form id="form1" runat="server">
       <asp:ScriptManager ID="ScriptManager2" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
-	      <table width="100%">
+	      <table>
 	        <tr>
 	          <td align="left" colspan="2">
-	            MetaLens login:
+	            FieldScope login:
 	          </td>
 	        </tr>
 	        <tr>
@@ -21,7 +21,7 @@
               Username:
             </td>
             <td>
-              <asp:TextBox id="FieldScope_MetaLens_Username" runat="server" width="170px" />
+              <asp:TextBox id="FieldScope_Username" runat="server" width="170px" />
             </td>
   		    </tr>
   		    <tr>
@@ -29,13 +29,15 @@
               Password:
             </td>
             <td>
-              <asp:TextBox id="FieldScope_MetaLens_Password" runat="server" width="170px" textmode="Password" />
+              <asp:TextBox id="FieldScope_Password" runat="server" width="170px" textmode="Password" />
             </td>
   		    </tr>
 		      <tr>
-            <td align="right" colspan="2" style="color:#F00">
-              <asp:Label id="FieldScope_MetaLens_Message" runat="server" Visible="False" />
-              <asp:Button id="FieldScope_MetaLens_Login" runat="server" text="Login" OnClick="LoginButton_Click" />
+            <td align="left" style="color:#F00">
+              <asp:Label id="FieldScope_Login_Message" runat="server" Visible="False" />
+            </td>
+            <td align="right">
+              <asp:Button id="FieldScope_Login_Button" runat="server" text="Login" OnClick="LoginButton_Click" />
             </td>
           </tr>
   		  </table>

@@ -10,7 +10,7 @@
     <form id="FieldScope_MetaLens_Form" runat="server">
       <asp:ScriptManager ID="ScriptManager2" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
-        Upload Photo To MetaLens:<br />
+        Upload Photo To FieldScope:<br />
         <table width="98%">
           <tr>
             <td colspan="2">
@@ -36,23 +36,14 @@
         </table>
         <table width="98%">
           <tr>
-            <td align="left" style="font-size:8pt">
-              Logged in as 
-              <asp:Label id="FieldScope_MetaLens_Username" runat="server" Text="" />
-              <asp:LinkButton ID="FieldScope_MetaLens_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
-                logout
-              </asp:LinkButton>
+            <td align="left" style="color:#F00">
+              <asp:Label id="FieldScope_MetaLens_Message" runat="server" Text="" />
             </td>
             <td align="right" style="font-size:9pt">
               <asp:Button id="FieldScope_MetaLens_UploadButton" 
-                          Text="Upload File" 
+                          Text="Upload Photo" 
                           OnClick="UploadButton_Click" 
                           runat="server"/>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <asp:Label id="Label1" runat="server" Text="" />
             </td>
           </tr>
         </table>
