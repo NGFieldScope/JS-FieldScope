@@ -648,6 +648,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       thenAndNowProvider.icon.infoWindowAnchor = new GPoint(5, 0);
       thenAndNowProvider.icon.infoShadowAnchor = new GPoint(11, 8);
       thenAndNowProvider.clusterIcon = new GIcon(thenAndNowProvider.icon, "images/pin-cl.png");
+      thenAndNowProvider.cssClass = "fieldscope_metalens_thenAndNow_window";
       this.layers.thenAndNow = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, thenAndNowProvider),
                                                                  "Chesapeake Then & Now",
                                                                  "FieldScope.Layer[thenAndNow]",
