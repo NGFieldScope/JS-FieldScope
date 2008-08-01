@@ -16,6 +16,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
     this.clusterIcon = null;
     this.marker = null;
     this.thumbnail = null;
+    this.cssClass = "fieldscope_metalens_window";
     this.loadingHTML = '<img src="images/loading24.gif" />Loading...';
     
     function OnFailure (error) {
@@ -55,7 +56,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
       };
     
     this.UpdateInfoWindow = function (html) {
-        var parent = $get("fieldscope_metalens_window_contents");
+        var parent = $get(this.cssClass + "_contents");
         if (parent) {
           parent.innerHTML = html;
           var thumbnail = $get("FieldScope.MetaLens.Media");
@@ -142,7 +143,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
     this.OnClickMarker = function (marker) {
         marker.openExtInfoWindow(
             this.map, 
-            "fieldscope_metalens_window", 
+            this.cssClass,
             this.loadingHTML,
             {beakOffset: 0, paddingX: 10, paddingY: 10}
           );

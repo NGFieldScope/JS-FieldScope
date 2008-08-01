@@ -1,8 +1,8 @@
-#fieldscope_metalens_window{
+#fieldscope_metalens_window {
   width: 400px;
 }
 
-#fieldscope_metalens_window_contents{
+#fieldscope_metalens_window_contents {
   background-color: #FFF;
 }
 
@@ -55,18 +55,18 @@
   cursor: pointer;
 }
 
-* html #fieldscope_metalens_window_close{
+* html #fieldscope_metalens_window_close {
   background-image:none;
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/metalens_close.png', sizingMethod='crop');
 }
 
 #fieldscope_metalens_window_beak {
-  width: 28px;
+  width: 53px;
   height: 38px;
   background: url('../images/metalens_beak.png') top left no-repeat transparent;
 }
 
-* html #fieldscope_metalens_window_beak{
+* html #fieldscope_metalens_window_beak {
   background-image:none;
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/metalens_beak.png', sizingMethod='crop');
 }
@@ -94,4 +94,103 @@
   font-weight: bold;
   color: #030;
   background-color: rgb(255,203,0);
+}
+
+
+#fieldscope_metalens_photos_window {
+  width: 400px;
+}
+
+#fieldscope_metalens_photos_window_contents {
+  background-color: #FFF;
+}
+
+#fieldscope_metalens_photos_window_tl {
+  width: 3px;
+  height: 3px;
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_t {
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_tr {
+  width: 3px;
+  height: 3px;
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_l {
+  width: 3px;
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_r {
+  width: 3px;
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_bl {
+  width: 3px;
+  height: 3px;
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_b {
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_br {
+  width: 3px;
+  height: 3px;
+  background: #E0E0E0;
+}
+
+#fieldscope_metalens_photos_window_close {
+  width: 21px;
+  height: 21px;
+  background: url('../images/metalens_close.png') top left no-repeat transparent;
+  cursor: pointer;
+}
+
+* html #fieldscope_metalens_photos_window_close{
+  background-image:none;
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/metalens_close.png', sizingMethod='crop');
+}
+
+#fieldscope_metalens_photos_window_beak {
+  width: 53px;
+  height: 38px;
+  background: url('../images/metalens_photos_beak.png') top left no-repeat transparent;
+}
+
+* html #fieldscope_metalens_photos_window_beak {
+  background-image:none;
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/metalens_photos_beak.png', sizingMethod='crop');
+}
+
+#fieldscope_metalens_photos_window_contents .section1 {
+  margin: 0;
+  padding: 0;
+}
+
+#fieldscope_metalens_photos_window_contents .section2 {
+  margin: 0;
+  padding: 0;
+  background-color: #E0E0E0;
+  border-bottom: dotted 1px #900;
+  border-top: dotted 1px #900;
+}
+
+#fieldscope_metalens_photos_window_contents p {
+  margin: 1px 0;
+  padding: 5px;
+}
+
+#fieldscope_metalens_photos_window_contents .title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #030;
+  background-color: #E0E0E0;
 }

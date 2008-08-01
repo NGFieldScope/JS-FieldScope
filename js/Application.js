@@ -661,9 +661,10 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       photosProvider.icon.iconSize = new GSize(24, 24);
       photosProvider.icon.shadowSize = new GSize(32, 24);
       photosProvider.icon.iconAnchor = new GPoint(19, 13);
-      photosProvider.icon.infoWindowAnchor = new GPoint(13, 3);
-      photosProvider.icon.infoShadowAnchor = new GPoint(24, 13);
+      photosProvider.icon.infoWindowAnchor = new GPoint(19, 6);
+      photosProvider.icon.infoShadowAnchor = new GPoint(24, 24);
       photosProvider.clusterIcon = new GIcon(photosProvider.icon, "images/camera-cl.png");
+      photosProvider.cssClass = "fieldscope_metalens_photos_window";
       this.layers.photos = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, photosProvider),
                                                                "Photo Locations",
                                                                "FieldScope.Layer[photos]",
