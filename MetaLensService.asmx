@@ -13,8 +13,8 @@ public class MetaLensService : System.Web.Services.WebService {
   
   [WebMethod(Description = "Get clustered  points based on the  bounds and size")]
   [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-  public List<MetaLens.Pin> GetPoints (string url, double left, double right, double bottom, double top, double width, double height) {
-    return MetaLens.Service.GetPoints(url, left, right, bottom, top, width, height);
+  public List<MetaLens.Pin> GetPoints (string url, double left, double right, double bottom, double top, double width, double height, string keyword) {
+    return MetaLens.Service.GetPoints(url, left, right, bottom, top, width, height, keyword);
   }
 
   [WebMethod(Description = "Get the full details for a specific asset")]

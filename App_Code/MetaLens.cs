@@ -124,6 +124,10 @@ namespace MetaLens {
     public class Service {
 
         public static List<Pin> GetPoints (string url, double left, double right, double bottom, double top, double width, double height) {
+            return GetPoints(url, left, right, bottom, top, width, height, null);
+        }
+        
+        public static List<Pin> GetPoints (string url, double left, double right, double bottom, double top, double width, double height, string keyword) {
             HttpWebResponse resp = null;
             try {
                 HttpWebRequest queryRequest = (HttpWebRequest)WebRequest.Create(url + "/assets.cpx");
@@ -145,8 +149,15 @@ namespace MetaLens {
                 buildQuery.WriteElementString("shownullslast", "true");
                 buildQuery.WriteElementString("detail", "assetid");
                 buildQuery.WriteElementString("currentview", "POLYGON((" + left + " " + top + "," + right + " " + top + "," + right + " " + bottom + "," + left + " " + bottom + "))");
-                buildQuery.WriteEndElement();
-                buildQuery.WriteEndElement();
+                buildQuery.WriteEndElement(); // Options
+                if (keyword != null) {
+                    buildQuery.WriteStartElement("Or");
+                    buildQuery.WriteElementString("name", "keywords");
+                    buildQuery.WriteElementString("criteria", "like");
+                    buildQuery.WriteElementString("query", "%" + keyword + "%");
+                    buildQuery.WriteEndElement(); // Or
+                }
+                buildQuery.WriteEndElement(); // QueryAssetParams
                 buildQuery.WriteEndDocument();
                 buildQuery.Close();
                 requestStream.Close();
@@ -315,6 +326,7 @@ namespace MetaLens {
             mp.setField("alat", latitude);
             mp.setField("alon", longitude);
             mp.setField("arights", "public");
+            mp.setField("akeywords", "FieldScope Student");
             CookieContainer cookies = new CookieContainer();
             cookies.Add(new Cookie(".CPXAUTH", cookie, "/", mp.RequestUri.Host));
             mp.sendFile(name, input, cookies);

@@ -3,28 +3,17 @@
 
 Type.registerNamespace("FieldScope.MetaLens");
 
-
-// ----------------------------------------------------------------------------
-// MetaLens icons
-
-FieldScope.MetaLens.icon = new GIcon(null, "images/pin.png");
-FieldScope.MetaLens.icon.shadow = "images/pin-shadow.png";
-FieldScope.MetaLens.icon.iconSize = new GSize(11, 16);
-FieldScope.MetaLens.icon.shadowSize = new GSize(23, 16);
-FieldScope.MetaLens.icon.iconAnchor = new GPoint(5, 7);
-FieldScope.MetaLens.icon.infoWindowAnchor = new GPoint(5, 0);
-FieldScope.MetaLens.icon.infoShadowAnchor = new GPoint(11, 8);
-
-FieldScope.MetaLens.icon_cl = new GIcon(FieldScope.MetaLens.icon, "images/pin-cl.png");
-
 // ----------------------------------------------------------------------------
 // MetaLens.GDataProvider class
 
-FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
+FieldScope.MetaLens.GDataProvider = function (map, service, url) { 
     
-    this.map = inMap;
-    this.service = inService;
-    this.url = inUrl;
+    this.map = map;
+    this.url = url;
+    this.service = service;
+    this.keyword = null;
+    this.icon = G_DEFAULT_ICON;
+    this.clusterIcon = null;
     this.marker = null;
     this.thumbnail = null;
     this.loadingHTML = '<img src="images/loading24.gif" />Loading...';
@@ -162,9 +151,9 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
       };
     
     this.MakeMarker = function (record) {
-        var icon = FieldScope.MetaLens.icon;
-        if (record.AssetIds.length > 1) {
-          icon = FieldScope.MetaLens.icon_cl;
+        var icon = this.icon;
+        if (this.clusterIcon && (record.AssetIds.length > 1)) {
+          icon = this.clusterIcon;
         }
         var marker = new GMarker(new GLatLng(record.Latitude, record.Longitude), icon);
         marker.MetaLensAssetIds = record.AssetIds;
@@ -194,6 +183,7 @@ FieldScope.MetaLens.GDataProvider = function (inMap, inUrl, inService) {
                                bounds.getNorthEast().lat(),
                                size.width,
                                size.height,
+                               this.keyword,
                                Function.createDelegate(this, function (records) {
                                    this.QuerySuccessCallback(records, OnSuccess);
                                  }),
@@ -237,7 +227,7 @@ FieldScope.MetaLens.MouseMode = function (layer, url) {
         result +=              'lat='+encodeURIComponent(location.lat().toString())+'&';
         result +=              'lon='+encodeURIComponent(location.lng().toString())+'"';
         result +=        ' width="350"';
-        result +=        ' height="230"';
+        result +=        ' height="200"';
         result +=        ' frameborder="0">';
         result += '</iframe></div>';
         return result;
@@ -290,7 +280,7 @@ FieldScope.MetaLens.MouseMode = function (layer, url) {
     this.OnClickDelegate = Function.createDelegate(this, function (overlay, loc, overlayLoc) {
         loc = loc || overlayLoc;
         if (loc && (this.marker === null)) {
-          this.marker = new GMarker(loc, FieldScope.MetaLens.icon);
+          this.marker = new GMarker(loc, this.layer.provider.icon);
           this.map.addOverlay(this.marker);
           GEvent.addListener(this.marker, "infowindowclose", this.OnCloseDelegate);
           GEvent.addListener(this.marker, "infowindowopen", this.OnOpenDelegate);

@@ -106,7 +106,8 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
         agriculture : { },
         states : { },
         // Async point layers
-        metaLens : { },
+        thenAndNow : { },
+        photos : { },
         cbibs : { },
         observations : { },
         // Async polygon layers
@@ -636,12 +637,37 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                    }));
         }), 0);
       
-      // MetaLens layer
-      var metaLensProvider = new FieldScope.MetaLens.GDataProvider(this.map, "http://focus.metalens.org", MetaLensService);
-      this.layers.metaLens = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, metaLensProvider),
-                                                                 "Photo Locations",
-                                                                 "FieldScope.Layer[metaLens]",
+      // Chesapeake Then & Now layer
+      var thenAndNowProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
+      thenAndNowProvider.keyword = "jswt";
+      thenAndNowProvider.icon = new GIcon(null, "images/pin.png");
+      thenAndNowProvider.icon.shadow = "images/pin-shadow.png";
+      thenAndNowProvider.icon.iconSize = new GSize(11, 16);
+      thenAndNowProvider.icon.shadowSize = new GSize(23, 16);
+      thenAndNowProvider.icon.iconAnchor = new GPoint(5, 7);
+      thenAndNowProvider.icon.infoWindowAnchor = new GPoint(5, 0);
+      thenAndNowProvider.icon.infoShadowAnchor = new GPoint(11, 8);
+      thenAndNowProvider.clusterIcon = new GIcon(thenAndNowProvider.icon, "images/pin-cl.png");
+      this.layers.thenAndNow = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, thenAndNowProvider),
+                                                                 "Chesapeake Then & Now",
+                                                                 "FieldScope.Layer[thenAndNow]",
                                                                  '<img src="images/pin.png" style="height:16px" />');
+      
+      // Photos layer
+      var photosProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
+      photosProvider.keyword = "FieldScope";
+      photosProvider.icon = new GIcon(null, "images/camera.png");
+      photosProvider.icon.shadow = "images/camera-shadow.png";
+      photosProvider.icon.iconSize = new GSize(24, 24);
+      photosProvider.icon.shadowSize = new GSize(32, 24);
+      photosProvider.icon.iconAnchor = new GPoint(19, 13);
+      photosProvider.icon.infoWindowAnchor = new GPoint(13, 3);
+      photosProvider.icon.infoShadowAnchor = new GPoint(24, 13);
+      photosProvider.clusterIcon = new GIcon(photosProvider.icon, "images/camera-cl.png");
+      this.layers.photos = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, photosProvider),
+                                                               "Photo Locations",
+                                                               "FieldScope.Layer[photos]",
+                                                               '<img src="images/camera.png" style="height:16px" />');
       
       // CBIBS layer
       var cbibsProvider = new FieldScope.CBIBS.GDataProvider(this.map, CBIBSService);
@@ -737,7 +763,8 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       this.layerTree = [ 
           null,
           this.layers.observations,
-          this.layers.metaLens,
+          this.layers.photos,
+          this.layers.thenAndNow,
           this.layers.cbibs,
           [ "Boundaries",
             this.layers.studyArea,
@@ -763,7 +790,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer, 
                                                                               this.urlPrefix,
                                                                               "cb_observations_2");
-      this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.metaLens.asyncLayer, "http://focus.metalens.org");
+      this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.photos.asyncLayer, "http://focus.metalens.org");
       this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, this.layers.states, this.layers.nutrients]);
       
       //
