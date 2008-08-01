@@ -67,7 +67,7 @@ public partial class StudentObservation : System.Web.UI.Page {
                     // (defined in js/Observation.js) has a chance to set the 
                     // FieldScopeObservationUploadComplete property on the 
                     // document before we try to call it
-                   "window.setTimeout(function () { document.FieldScopeObservationUploadComplete(); }, 0);",
+                   @"window.setTimeout(function () { document.FieldScopeObservationUploadComplete(); }, 100);",
                    true
                 );
         }
