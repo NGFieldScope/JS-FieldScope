@@ -124,6 +124,7 @@
             } else {
               result +=           ' dojoType="dijit.form.CheckBox" />';
             }
+            result +=       '&nbsp;';
             result +=       '<label for="'+checkboxId+'">';
             result +=         layer.name;
             result +=       '</label>';
