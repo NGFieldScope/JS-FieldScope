@@ -56,6 +56,7 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             string caption = FieldScope_MetaLens_Caption.Text;
             string description = FieldScope_MetaLens_Description.Text;
             string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description);
+            //string result = "complete";
             FieldScope_MetaLens_Message.Text = "Result: " + result;
             if (result == "complete") {
                 ClientScript.RegisterStartupScript(typeof(Page),
@@ -64,7 +65,7 @@ public partial class MetaLensUpload : System.Web.UI.Page {
                                                    // (defined in js/MetaLens.js) has a chance to set the 
                                                    // FieldScopeMetaLensUploadComplete property on the 
                                                    // document before we try to call it
-                                                   "window.setTimeout(function () { document.FieldScopeMetaLensUploadComplete(); }, 0);",
+                                                   @"window.setTimeout(function () { document.FieldScopeMetaLensUploadComplete(); }, 100);",
                                                    true);
             }
         } else {
