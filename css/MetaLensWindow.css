@@ -7,45 +7,46 @@
 }
 
 #fieldscope_metalens_window_tl {
-  width: 3px;
-  height: 3px;
-  background: rgb(255,203,0);
+  width: 1px;
+  height: 1px;
+  background: #222;
 }
 
 #fieldscope_metalens_window_t {
-  background: rgb(255,203,0);
+  height: 1px;
+  background:  #222;
 }
 
 #fieldscope_metalens_window_tr {
-  width: 3px;
-  height: 3px;
-  background: rgb(255,203,0);
+  width: 1px;
+  height: 1px;
+  background: #222;
 }
 
 #fieldscope_metalens_window_l {
-  width: 3px;
-  background: rgb(255,203,0);
+  width: 1px;
+  background: #222;
 }
 
 #fieldscope_metalens_window_r {
-  width: 3px;
-  background: rgb(255,203,0);
+  width: 1px;
+  background: #222;
 }
 
 #fieldscope_metalens_window_bl {
-  width: 3px;
-  height: 3px;
-  background: rgb(255,203,0);
+  width: 1px;
+  height: 1px;
+  background: #222;
 }
 
 #fieldscope_metalens_window_b {
-  background: rgb(255,203,0);
+  background: #222;
 }
 
 #fieldscope_metalens_window_br {
-  width: 3px;
-  height: 3px;
-  background: rgb(255,203,0);
+  width: 1px;
+  height: 1px;
+  background: #222;
 }
 
 #fieldscope_metalens_window_close {
@@ -61,7 +62,7 @@
 }
 
 #fieldscope_metalens_window_beak {
-  width: 27px;
+  width: 67px;
   height: 38px;
   background: url('../images/metalens_beak.png') top left no-repeat transparent;
 }
@@ -92,8 +93,9 @@
 #fieldscope_metalens_window_contents .title {
   font-size: 18px;
   font-weight: bold;
-  color: #030;
-  background-color: rgb(255,203,0);
+  color: #222;
+  background-color: #DDD;
+  border-bottom: ridge 1px #222;
 }
 
 
@@ -112,6 +114,7 @@
 }
 
 #fieldscope_metalens_photos_window_t {
+  height: 3px;
   background: #E0E0E0;
 }
 
@@ -211,6 +214,7 @@
 }
 
 #fieldscope_metalens_thenAndNow_window_t {
+  height: 3px;
   background: rgb(255,203,0);
 }
 
