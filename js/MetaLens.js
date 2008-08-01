@@ -256,8 +256,6 @@ FieldScope.MetaLens.MouseMode = function (layer, url) {
         // is unfortunate, but at least it works. Maybe once I know what
         // I'm doing I'll figure out a better way to do this.
         doc.FieldScopeMetaLensUploadComplete = this.UploadCompleteDelegate;
-        console.log(doc);
-        console.log(doc.FieldScopeMetaLensUploadComplete);
       });
     
     this.WireForm = function () {
