@@ -657,6 +657,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  "Chesapeake Then & Now",
                                                                  "FieldScope.Layer[thenAndNow]",
                                                                  '<img src="images/pin.png" style="height:16px" />');
+      this.layers.thenAndNow.legendHTML = '<span>Stories from National Geographic\'s <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a></span>';
       this.layers.thenAndNow.SetVisible(savedState ? savedState.thenAndNowVisible : false);
       
       // Photos layer
