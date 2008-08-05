@@ -132,7 +132,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           }
         } else if (data.Type === "audio") {
           result += '<tr>';
-          result += '<td>';
+          result += '<td' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
           result += '<div id="FieldScope.MetaLens.Media.Audio">';
           result += assetId;
           result += '</div>';
@@ -140,7 +140,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           result += '</tr>';
           if (data.Copyright !== null) {
             result += '<tr>';
-            result += '<td align="right">';
+            result += '<td align="right"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
             result += '<div style="font-size:7pt;font-weight:bold">';
             result += data.Copyright;
             result += '</div>';
@@ -149,7 +149,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           }
           if (data.Description !== null) {
             result += '<tr>';
-            result += '<td style="vertical-align:top;width:100%">';
+            result += '<td style="vertical-align:top;width:100%"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
             result += '<div style="font-size:8pt;max-height:130px;overflow:auto">';
             result += data.Description;
             result += '</div>';
