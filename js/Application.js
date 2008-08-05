@@ -37,7 +37,7 @@ FieldScope.AsyncLayerController.registerClass('FieldScope.AsyncLayerController')
 // ----------------------------------------------------------------------------
 // Application class
 
-FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) {
+FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearchResultsFn) {
     
     this.urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
     
@@ -323,7 +323,11 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
     if (GBrowserIsCompatible()) {
       this.map = new GMap2(mapDiv);
       var blankMap = new GMapType([], G_SATELLITE_MAP.getProjection(),  "FieldScope", { maxResolution : 17, minResolution : 6 });
-      this.map.setCenter(new GLatLng(39.9265, -77.2558), 6, blankMap);
+      if (savedState) {
+        this.map.setCenter(new GLatLng(savedState.centerLatitude, savedState.centerLongitude), savedState.zoomLevel, blankMap);
+      } else {
+        this.map.setCenter(new GLatLng(39.9265, -77.2558), 6, blankMap);
+      }
       this.map.addControl(new GLargeMapControl());
       this.map.enableScrollWheelZoom();
       this.map.disableDoubleClickZoom();
@@ -350,7 +354,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : true,
+          visible : savedState ? savedState.terrainVisible : true,
           tileLayer : G_PHYSICAL_MAP.getTileLayers()[0],
           iconHTML : '<img src="images/terrain.jpg" style="height:16px" />'
         };
@@ -371,7 +375,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.satelliteVisible : false,
           tileLayer : G_HYBRID_MAP.getTileLayers()[0],
           iconHTML : '<img src="images/satellite.jpg" style="height:16px" />'
         };
@@ -390,7 +394,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.streetsVisible : false,
           tileLayer : G_HYBRID_MAP.getTileLayers()[1],
           iconHTML : '<img src="http://mt2.google.com/mt?n=404&v=apt.75&hl=en&x=292&y=391&zoom=7&s=Gal" style="height:16px" />'
         };
@@ -409,7 +413,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.permeabilityVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />'
@@ -439,7 +443,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.landcoverVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_landcover/MapServer')+'" />'
@@ -469,7 +473,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.imperviousVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_impervious/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_impervious/MapServer')+'" />'
@@ -499,7 +503,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.watershedsVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_watersheds/MapServer/tile/6/24/18.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_watersheds/MapServer')+'" />',
@@ -530,7 +534,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.nutrientsVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_nutrients/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_nutrients/MapServer')+'" />',
@@ -561,7 +565,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.bathymetryVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_bathymetry/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_bathymetry/MapServer')+'" />'
@@ -591,7 +595,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.agricultureVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_agriculture/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_agriculture/MapServer')+'" />'
@@ -621,7 +625,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
               window.setTimeout(this.UpdateMapType, 0);
             }),
           loadingIndicator : null,
-          visible : false,
+          visible : savedState ? savedState.statesVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_states/MapServer/tile/6/24/18.png" style="height:16px" />',
           Identify : this.IdentifyStateDelegate
@@ -653,6 +657,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                  "Chesapeake Then & Now",
                                                                  "FieldScope.Layer[thenAndNow]",
                                                                  '<img src="images/pin.png" style="height:16px" />');
+      this.layers.thenAndNow.SetVisible(savedState ? savedState.thenAndNowVisible : false);
       
       // Photos layer
       var photosProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
@@ -670,6 +675,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                "Photo Locations",
                                                                "FieldScope.Layer[photos]",
                                                                '<img src="images/camera.png" style="height:16px" />');
+      this.layers.photos.SetVisible(savedState ? savedState.photosVisible : false);
       
       // CBIBS layer
       var cbibsProvider = new FieldScope.CBIBS.GDataProvider(this.map, CBIBSService);
@@ -678,6 +684,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                               "FieldScope.Layer[cbibs]",
                                                               '<img src="images/buoy.png" style="height:16px" />');
       this.layers.cbibs.legendHTML = '<span>Real-time water quality data from the <a href="http://www.buoybay.org/" target="_blank">Chesapeake Bay Interpretive Buoy System</a></span>';
+      this.layers.cbibs.SetVisible(savedState ? savedState.cbibsVisible : false);
       
       // Student observations layer
       var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_observations_2/MapServer/0";
@@ -746,6 +753,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                      "Student Observations",
                                                                      "FieldScope.Layer[observations]",
                                                                      '<img src="images/beaker.gif" style="height:16px" />');
+      this.layers.observations.SetVisible(savedState ? savedState.observationsVisible : false);
       
       // Watershed boundary layer
       var studyAreaUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0";
@@ -757,7 +765,7 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
                                                                    "Chesapeake Watershed",
                                                                    "FieldScope.Layer[studyArea]",
                                                                    studyAreaLegend);
-      this.layers.studyArea.SetVisible(true);
+      this.layers.studyArea.SetVisible(savedState ? savedState.studyAreaVisible : true);
       
       // 
       // The layerTree determines how the layers are presented to the user
@@ -814,6 +822,30 @@ FieldScope.Application = function (mapDiv, getSearchTextFn, setSearchResultsFn) 
       //
       mapDiv.innerHTML = "Sorry, your browser is not compatable with Google Maps";
     }
+    
+    this.GetState = function () {
+        return {
+            centerLatitude : this.map.getCenter().lat(),
+            centerLongitude : this.map.getCenter().lng(),
+            zoomLevel : this.map.getZoom(),
+            terrainVisible : this.layers.terrain.IsVisible(),
+            satelliteVisible : this.layers.satellite.IsVisible(),
+            streetsVisible : this.layers.streets.IsVisible(),
+            landcoverVisible : this.layers.landcover.IsVisible(),
+            permeabilityVisible : this.layers.permeability.IsVisible(),
+            imperviousVisible : this.layers.impervious.IsVisible(),
+            watershedsVisible : this.layers.watersheds.IsVisible(),
+            nutrientsVisible : this.layers.nutrients.IsVisible(),
+            bathymetryVisible : this.layers.bathymetry.IsVisible(),
+            agricultureVisible : this.layers.agriculture.IsVisible(),
+            statesVisible : this.layers.states.IsVisible(),
+            thenAndNowVisible : this.layers.thenAndNow.IsVisible(),
+            photosVisible : this.layers.photos.IsVisible(),
+            cbibsVisible : this.layers.cbibs.IsVisible(),
+            observationsVisible : this.layers.observations.IsVisible(),
+            studyAreaVisible : this.layers.studyArea.IsVisible()
+          };
+      };
   };
 
 FieldScope.Application.registerClass('FieldScope.Application');

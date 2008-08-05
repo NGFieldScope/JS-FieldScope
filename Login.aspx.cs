@@ -18,13 +18,11 @@ public partial class Login : System.Web.UI.Page {
     protected void LoginButton_Click (object sender, EventArgs e) {
         FieldScope_Login_Message.Visible = false;
         string username = FieldScope_Username.Text;
-        if (username == "") {
-            FieldScope_Login_Message.Text = "Empty Username";
-            FieldScope_Login_Message.Visible = true;
-        }
         string password = FieldScope_Password.Text;
-        if (password.Equals("fieldscope!")) {
-            HttpCookie c = new HttpCookie("FieldScope_Cookie", "7A4256FDE2343945");
+        string cookie = SqlServer.Service.CheckLogin(username, password);
+        if (cookie != null) {
+            Session["FieldScope_Cookie"] = cookie;
+            HttpCookie c = new HttpCookie("FieldScope_Cookie", cookie);
             c.Expires = DateTime.Now.AddMinutes(60);
             Response.SetCookie(c);
             Response.Redirect("Default.aspx");

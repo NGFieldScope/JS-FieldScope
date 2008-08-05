@@ -15,10 +15,13 @@ public partial class _Default : System.Web.UI.Page  {
                 // NOTE: DO NOT check that (Request.Cookies["FieldScope_Cookie"] == null), 
                 // because this will not only always return false, it will also create 
                 // an empty cookie named FieldScope_Cookie
-                if (Request.Cookies["FieldScope_Cookie"].Value.Equals("7A4256FDE2343945")) {
+                string cookie = Request.Cookies["FieldScope_Cookie"].Value;
+                SqlServer.UserInfo user = SqlServer.Service.CheckLogin(cookie);
+                if (user != null) {
                     authorized = true;
-                    FieldScope_Username.Text = "defaultuser";
+                    FieldScope_Username.Text = user.Username;
                     FieldScope_Logout.Visible = true;
+                    FieldScope_State.Value = user.State;
                 }
             }
             if (!authorized) {
@@ -27,7 +30,14 @@ public partial class _Default : System.Web.UI.Page  {
         }
     }
 
+    protected void SaveButton_Click (object sender, EventArgs evt) {
+        string state = FieldScope_State.Value;
+        string cookie = (string)Session["FieldScope_Cookie"];
+        SqlServer.Service.StoreState(cookie, state);
+    }
+
     protected void LogoutButton_Click (object sender, EventArgs evt) {
+        Session["FieldScope_Cookie"] = Request.Cookies["FieldScope_Cookie"].Value;
         HttpCookie c = new HttpCookie("FieldScope_Cookie", "");
         c.Expires = DateTime.Now.AddMinutes(-1);
         Response.SetCookie(c);

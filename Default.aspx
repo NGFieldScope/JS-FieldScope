@@ -160,8 +160,15 @@
       }
       
       dojo.addOnLoad(function () {
+          
+          var savedState = null;
+          try {
+            savedState = dojo.fromJson($get("FieldScope_State").value);
+          } catch (e) { }
+          
           // instantiate the application
           application = new FieldScope.Application(
+              savedState,
               $get("FieldScope.Div.Map"),
               function () {
                 return $get("FieldScope.Input.SearchText").value;
@@ -209,10 +216,16 @@
           }
           
         });
+      
+      function OnUload () {
+        $get("FieldScope_State").value = dojo.toJson(application.GetState());
+        __doPostBack('FieldScope_SaveState','');
+        GUnload();
+      } 
 //]]>
     </script>
   </head>
-  <body class="tundra" onunload="GUnload();">
+  <body class="tundra" onunload="OnUload();">
     <form id="form1" runat="server" method="post" enctype="multipart/form-data">
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Debug">
         <Scripts>
@@ -276,6 +289,12 @@
         <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
           logout
         </asp:LinkButton>
+        <input id="FieldScope_State" runat="server" type="text" style="display:none" />
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+          <ContentTemplate>
+            <asp:LinkButton ID="FieldScope_SaveState" runat="server" OnClick="SaveButton_Click" style="display:none" />
+          </ContentTemplate>
+        </asp:UpdatePanel>
       </div>
     </form>
   </body>
