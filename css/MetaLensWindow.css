@@ -40,6 +40,7 @@
 }
 
 #fieldscope_metalens_window_b {
+  height: 1px;
   background: #222;
 }
 
@@ -141,6 +142,7 @@
 }
 
 #fieldscope_metalens_photos_window_b {
+  height: 3px;
   background: #E0E0E0;
 }
 
@@ -192,13 +194,13 @@
 }
 
 #fieldscope_metalens_photos_window_contents .title {
-  font-size: 18px;
+  font-size: 10pt;
   font-weight: bold;
   color: #030;
   background-color: #E0E0E0;
-  max-height : 36px;
-  max-width : 400px;
-  overflow : auto;
+  max-height: 36px;
+  max-width: 400px;
+  overflow: auto;
 }
 
 
@@ -244,6 +246,7 @@
 }
 
 #fieldscope_metalens_thenAndNow_window_b {
+  height: 3px;
   background: rgb(255,203,0);
 }
 
@@ -295,11 +298,11 @@
 }
 
 #fieldscope_metalens_thenAndNow_window_contents .title {
-  font-size: 18px;
+  font-size: 10pt;
   font-weight: bold;
   color: #030;
   background-color: rgb(255,203,0);
-  max-height : 36px;
-  max-width : 400px;
-  overflow : auto;
+  max-height: 36px;
+  max-width: 400px;
+  overflow: auto;
 }

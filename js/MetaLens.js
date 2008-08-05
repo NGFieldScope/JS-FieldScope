@@ -101,7 +101,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         var assetId = FieldScope.StringUtils.padLeft(data.Id, 32, "0");
         var result = "<div>";
         if (data.Caption !== null) {
-          result += '<div class="title" style="font-size:10pt">';
+          result += '<div class="title">';
           result += data.Caption;
           result += '</div>';
         }
