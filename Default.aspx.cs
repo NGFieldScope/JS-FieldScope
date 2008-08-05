@@ -33,7 +33,9 @@ public partial class _Default : System.Web.UI.Page  {
     protected void SaveButton_Click (object sender, EventArgs evt) {
         string state = FieldScope_State.Value;
         string cookie = (string)Session["FieldScope_Cookie"];
-        SqlServer.Service.StoreState(cookie, state);
+        if (cookie != null) {
+            SqlServer.Service.StoreState(cookie, state);
+        }
     }
 
     protected void LogoutButton_Click (object sender, EventArgs evt) {
