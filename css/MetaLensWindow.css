@@ -196,6 +196,9 @@
   font-weight: bold;
   color: #030;
   background-color: #E0E0E0;
+  max-height : 36px;
+  max-width : 400px;
+  overflow : auto;
 }
 
 
@@ -296,4 +299,7 @@
   font-weight: bold;
   color: #030;
   background-color: rgb(255,203,0);
+  max-height : 36px;
+  max-width : 400px;
+  overflow : auto;
 }
