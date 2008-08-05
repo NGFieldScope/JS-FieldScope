@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script type="text/javascript" src="../js/swfobject.js"></script>
+    <script type="text/javascript">
+      var traceFn = function (data) {
+          console.log(data);
+        };
+      var flashvars = {
+          file : "../MetaLensProxyService.ashx?server%3Dhttp%3A%2F%2Ffocus.metalens.org%26asset%3D00000000000000000000000000012140",
+          type : "video",
+          tracecall : traceFn
+        };
+      var params = {
+          allowfullscreen : "true",
+          allowscriptaccess : "always"
+        };
+      swfobject.embedSWF("player.swf", "FieldScope_CPXPlayer", "320", "21", "9", null, flashvars, params);
+    </script>
+  </head>
+  <body>
+    <div id="FieldScope_CPXPlayer">
+      Flash player not available.
+    </div>
+  </body>
+</html>
