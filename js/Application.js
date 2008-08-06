@@ -636,13 +636,14 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.statesVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_states/MapServer/tile/6/24/18.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_states/MapServer')+'" />',
           Identify : this.IdentifyStateDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
           var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_states/MapServer",
-                                                                 { opacity: 1.0 },
+                                                                 { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.states.tileLayer = layer;
                                                                      this.UpdateMapType();
