@@ -21,6 +21,7 @@
   <!-- release version scripts 
     <script type="text/javascript" src="js/extinfowindow/extinfowindow_packed.js"></script>
     <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js" djConfig="parseOnLoad:false, usePlainJson:true"></script>
+    <script type="text/javascript" src="js/swfobject/swfobject_packed.js"></script>
   -->
   
     <script type="text/javascript">
