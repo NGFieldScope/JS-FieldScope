@@ -30,3 +30,8 @@
   width: 24px;
   height: 24px;
 }
+
+.legendDataSource {
+  font-size: 7pt;
+  max-width: 150px;
+}

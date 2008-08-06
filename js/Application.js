@@ -416,7 +416,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.permeabilityVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />'
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001"</p>'
+                       
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -446,7 +448,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.landcoverVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_landcover/MapServer')+'" />'
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_landcover/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v5.0)</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -476,7 +479,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.imperviousVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_impervious/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_impervious/MapServer')+'" />'
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_impervious/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001; Chesapeake Bay Program</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -506,7 +510,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.watershedsVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_watersheds/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_watersheds/MapServer')+'" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_watersheds/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: USGS; Chesapeake Bay Program</p>',
           Identify : this.IdentifyWatershedsDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
@@ -537,7 +542,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.nutrientsVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_nutrients/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_nutrients/MapServer')+'" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_nutrients/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v4.3)</p>',
           Identify : this.IdentifyNutreientsDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
@@ -553,7 +559,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
       
       // Bathymetry layer
       this.layers.bathymetry = {
-          name : "Water Depth",
+          name : "Water Depth (Bathymetry)",
           id : "FieldScope.Layer[bathymetry]",
           IsVisible : Function.createDelegate(this, function () {
               return this.layers.bathymetry.visible;
@@ -568,7 +574,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.bathymetryVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_bathymetry/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_bathymetry/MapServer')+'" />'
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_bathymetry/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: National Geographic Maps</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -598,7 +605,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.agricultureVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_agriculture/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_agriculture/MapServer')+'" />'
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_agriculture/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program; National Geographic Maps</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
