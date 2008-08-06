@@ -215,18 +215,29 @@
               WireLayerControls(layer);
             }
           }
-          
         });
       
-      function OnUload () {
-        $get("FieldScope_State").value = dojo.toJson(application.GetState());
-        __doPostBack('FieldScope_SaveState','');
+      function On_Uload () {
+        // AAAAAAARGH! Safari Sux!
+        // We have to do this synchronously to make it work on Safari,
+        // so we do it by posting to an ashx using xhrPost, rather than 
+        // using any of the numerous other ways it could be done 
+        // asynchronously, most of which I tried unsuccessfully before 
+        // coming up with this method.
+        var cookie = $get("FieldScope_Cookie").value;
+        var state = dojo.toJson(application.GetState());
+        dojo.xhrPost({ 
+            url: "SaveUserStateService.ashx",
+            content : { "cookie" : cookie, "state" : state },
+            sync : true
+         });
+        return false;
         GUnload();
-      } 
+      }
 //]]>
     </script>
   </head>
-  <body class="tundra" onunload="OnUload();">
+  <body class="tundra" onunload="On_Uload();">
     <form id="form1" runat="server" method="post" enctype="multipart/form-data">
       <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Debug">
         <Scripts>
@@ -284,18 +295,15 @@
           Map
         </div>
       </div>
-      <div">
+      <div>
         Logged in as 
         <asp:Label id="FieldScope_Username" runat="server" Text="" />
         <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
           logout
         </asp:LinkButton>
         <input id="FieldScope_State" runat="server" type="text" style="display:none" />
-        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-          <ContentTemplate>
-            <asp:LinkButton ID="FieldScope_SaveState" runat="server" OnClick="SaveButton_Click" style="display:none" />
-          </ContentTemplate>
-        </asp:UpdatePanel>
+        <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
+        <input type="button" value="Test" onclick="On_Test();" />
       </div>
     </form>
   </body>

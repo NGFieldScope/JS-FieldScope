@@ -30,7 +30,7 @@ namespace SqlServer {
 
         static SqlConnection conn = new SqlConnection(@"Data Source=GEODE1\SQLEXPRESS;Initial Catalog=chesapeake_users;Integrated Security=True");
 
-        public static void AddUser (string username, string password) {
+        public static int AddUser (string username, string password) {
             string cookie = FormsAuthentication.HashPasswordForStoringInConfigFile(username, "SHA1");
             string hashedPw = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "SHA1");
             SqlCommand command = new SqlCommand("INSERT INTO users (username, cookie, password) VALUES (@Username, @Cookie, @Password)", conn);
@@ -39,7 +39,7 @@ namespace SqlServer {
             command.Parameters.Add("@Password", SqlDbType.VarChar, 50).Value = hashedPw;
             conn.Open();
             try {
-                command.ExecuteNonQuery();
+                return command.ExecuteNonQuery();
             } finally {
                 conn.Close();
             }
@@ -79,13 +79,13 @@ namespace SqlServer {
             }
         }
 
-        public static void StoreState (string cookie, string state) {
+        public static int StoreState (string cookie, string state) {
             SqlCommand command = new SqlCommand("UPDATE users SET state = @State WHERE cookie = @Cookie", conn);
             command.Parameters.Add("@State", SqlDbType.Text).Value = state;
             command.Parameters.Add("@Cookie", SqlDbType.VarChar, 50).Value = cookie;
             conn.Open();
             try {
-                command.ExecuteNonQuery();
+                return command.ExecuteNonQuery();
             } finally {
                 conn.Close();
             }

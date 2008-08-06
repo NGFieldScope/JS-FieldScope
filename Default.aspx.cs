@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 
 public partial class _Default : System.Web.UI.Page  {
-
+    
     protected void Page_Load (object sender, EventArgs evt) {
         if (!Page.IsPostBack) {
             bool authorized = false;
@@ -22,6 +22,7 @@ public partial class _Default : System.Web.UI.Page  {
                     FieldScope_Username.Text = user.Username;
                     FieldScope_Logout.Visible = true;
                     FieldScope_State.Value = user.State;
+                    FieldScope_Cookie.Value = cookie;
                 }
             }
             if (!authorized) {
@@ -29,17 +30,8 @@ public partial class _Default : System.Web.UI.Page  {
             }
         }
     }
-
-    protected void SaveButton_Click (object sender, EventArgs evt) {
-        string state = FieldScope_State.Value;
-        string cookie = (string)Session["FieldScope_Cookie"];
-        if (cookie != null) {
-            SqlServer.Service.StoreState(cookie, state);
-        }
-    }
-
+    
     protected void LogoutButton_Click (object sender, EventArgs evt) {
-        Session["FieldScope_Cookie"] = Request.Cookies["FieldScope_Cookie"].Value;
         HttpCookie c = new HttpCookie("FieldScope_Cookie", "");
         c.Expires = DateTime.Now.AddMinutes(-1);
         Response.SetCookie(c);
