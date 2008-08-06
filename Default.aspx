@@ -303,7 +303,6 @@
         </asp:LinkButton>
         <input id="FieldScope_State" runat="server" type="text" style="display:none" />
         <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
-        <input type="button" value="Test" onclick="On_Test();" />
       </div>
     </form>
   </body>
