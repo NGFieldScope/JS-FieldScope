@@ -72,7 +72,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
                 file : fileUrl,
                 type : "video"
               };
-            swfobject.embedSWF("swf/player.swf", "FieldScope.MetaLens.Media.Audio", "395", "21", "9", null, flashvars);
+            swfobject.embedSWF("swf/player.swf", "FieldScope.MetaLens.Media.Audio", "390", "21", "9", null, flashvars);
           }
           var prevButton = $get("FieldScope.MetaLens.PrevButton");
           if (prevButton) {
@@ -109,13 +109,15 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         if (data.Type === "image") {
           result += '<tr>';
           result += '<td style="vertical-align:top">';
+          result += '<div style="margin-left:3px;margin-top:3px">';
           result += '<a href="MetaLensDisplayAsset.aspx?server='+encodeURIComponent(this.url)+'&asset='+encodeURIComponent(assetId)+'" target="_blank">';
           result += '<img id="FieldScope.MetaLens.ResizeTrigger" src="'+this.url+'/assets/'+assetId+'/thumb/large.cpx">';
           result += '</a>';
+          result += '</div>';
           result += '</td>';
           if (data.Description !== null) {
             result += '<td style="vertical-align:top;width:100%">';
-            result += '<div style="font-size:8pt;max-height:150px;overflow:auto">';
+            result += '<div style="font-size:9pt;max-height:150px;overflow:auto;margin-left:3px">';
             result += data.Description;
             result += '</div>';
             result += '</td>';
@@ -133,8 +135,10 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         } else if (data.Type === "audio") {
           result += '<tr>';
           result += '<td' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
+          result += '<div style="margin:3px">';
           result += '<div id="FieldScope.MetaLens.Media.Audio">';
           result += assetId;
+          result += '</div>';
           result += '</div>';
           result += '</td>';
           result += '</tr>';
@@ -150,7 +154,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           if (data.Description !== null) {
             result += '<tr>';
             result += '<td style="vertical-align:top;width:100%"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
-            result += '<div style="font-size:8pt;max-height:130px;overflow:auto">';
+            result += '<div style="font-size:9pt;max-height:130px;overflow:auto;margin-left:3px">';
             result += data.Description;
             result += '</div>';
             result += '</td>';
