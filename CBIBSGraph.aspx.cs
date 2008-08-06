@@ -16,6 +16,16 @@ public partial class CBIBSGraph : System.Web.UI.Page {
 
     static string COMPLEX_ENCODING_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 
+    static CBIBS.NameMap NAMES = new CBIBS.NameMap();
+    static CBIBSGraph () {
+        NAMES.Add("concentration_of_chlorophyll_in_sea_water", "Chlorophyll A");
+        NAMES.Add("concentration_of_oxygen_in_sea_water", "Dissolved Oxygen");
+        NAMES.Add("simple_turbidity", "Turbidity");
+        NAMES.Add("sea_water_electrical_conductivity", "Water Conductivity");
+        NAMES.Add("sea_water_salinity", "Water Salinity");
+        NAMES.Add("sea_water_temperature", "Water Temperature");
+    }
+    
     static void encode (double value, double min, double max, StringBuilder sb) {
         if (min == max) {
             // sanity check: sometimes we get bad values
@@ -39,7 +49,9 @@ public partial class CBIBSGraph : System.Web.UI.Page {
                 Session["FieldScope_CBIBS_Platform"] = platformId;
                 CBIBS.Platform p = new CBIBS.Platform("CBIBS", platformId);
                 foreach (string variable in CBIBS.Service.ListParameters(p)) {
-                    FieldScope_CBIBS_Variable_Menu.Items.Add(variable);
+                    if (NAMES.ContainsInternalName(variable)) {
+                        FieldScope_CBIBS_Variable_Menu.Items.Add(NAMES.PresentationName(variable));
+                    }
                 }
                 FieldScope_CBIBS_Generate_Button.Enabled = true;
             }
@@ -88,7 +100,7 @@ public partial class CBIBSGraph : System.Web.UI.Page {
         string platform = (string)Session["FieldScope_CBIBS_Platform"];
         string variable = FieldScope_CBIBS_Variable_Menu.Items[FieldScope_CBIBS_Variable_Menu.SelectedIndex].Text;
         CBIBS.Measurement[] measurements = CBIBS.Service.QueryData(new CBIBS.Platform("CBIBS", platform),
-                                                                   variable,
+                                                                   NAMES.InternalName(variable),
                                                                    FieldScope_CBIBS_Begin_Date.SelectedDate,
                                                                    FieldScope_CBIBS_End_Date.SelectedDate);
         StringBuilder sb = new StringBuilder();
@@ -141,12 +153,13 @@ public partial class CBIBSGraph : System.Web.UI.Page {
         sb.Append("|");
         sb.Append(measurements[measurements.Length - 1].Time.ToString());
         sb.Append("|");
+        string units = measurements[0].Units;
         sb.Append("1:||");
-        sb.Append(minValue);
+        sb.Append(minValue.ToString("G3") + " " + units);
         sb.Append("||||");
-        sb.Append(minValue + ((maxValue - minValue) / 2.0));
+        sb.Append((minValue + ((maxValue - minValue) / 2.0)).ToString("G3") + " " + units);
         sb.Append("||||");
-        sb.Append(maxValue);
+        sb.Append(maxValue.ToString("G3") + " " + units);
         sb.Append("|");
         sb.Append("&chm=d,ff9900,0,-1,8");
 
