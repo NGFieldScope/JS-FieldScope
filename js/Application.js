@@ -417,7 +417,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
           legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001"</p>'
+                       '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001</p>'
                        
         };
       window.setTimeout(Function.createDelegate(this, function () {
