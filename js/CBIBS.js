@@ -102,7 +102,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           var closeButton = document.createElement("input");
           closeButton.type = "button";
           closeButton.value = "X";
-          closeButton.style.width = "16px";
+          closeButton.style.width = "20px";
           closeButton.style.backgroundColor = "silver";
           closeButton.style.color = "gray";
           closeButton.style.textAlign = "center";
@@ -124,12 +124,15 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           var download = document.createElement("a");
           download.href = "DownloadChartProxy.ashx?query=" + encodeURIComponent(img.src.substring(img.src.indexOf("?")));
           download.style.display = "block";
-          download.style.width = "16px";
+          download.style.width = "20px";
           download.style.backgroundColor = "silver";
           download.style.color = "gray";
           download.style.textAlign = "center";
           download.style.textDecoration = "none";
-          download.appendChild(document.createTextNode("D"));
+          var saveIcon = document.createElement("img");
+          saveIcon.alt = "S";
+          saveIcon.src = "images/save.gif";
+          download.appendChild(saveIcon);
           cell31.appendChild(download);
           row3.appendChild(cell31);
           tbody.appendChild(row3);
