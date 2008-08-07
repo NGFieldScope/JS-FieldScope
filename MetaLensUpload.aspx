@@ -8,7 +8,6 @@
   </head>
   <body>
     <form id="FieldScope_MetaLens_Form" runat="server">
-      <asp:ScriptManager ID="ScriptManager2" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
         Upload Photo To FieldScope:<br />
         <table width="98%">
