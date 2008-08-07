@@ -1,4 +1,5 @@
-/*global FieldScope Sys Type GEvent GIcon GInfoWindowTab GLatLng GMarker GPoint GSize G_DEFAULT_ICON */
+/*global FieldScope Sys Type $addHandler $get */
+/*global GEvent GIcon GInfoWindowTab GLatLng GMarker GPoint GSize G_DEFAULT_ICON */
 
 Type.registerNamespace("FieldScope.CBIBS");
 
@@ -9,6 +10,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
     
     this.map = map;
     this.service = service;
+    this.graphIndex = 0;
     
     this.icon = new GIcon(null, "images/buoy.png");
     this.icon.shadow = "";
@@ -67,14 +69,80 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         var tab2 = '<div>';
         tab2 +=      '<iframe id="FieldScope.CBIBS.GraphFrame"';
         tab2 +=        ' name="FieldScope.CBIBS.GraphFrame"';
-        tab2 +=        ' src="CBIBSGraph.aspx?';
-        tab2 +=              'platform='+encodeURIComponent(platform.Id)+'"';
+        tab2 +=        ' src="CBIBSGraph.aspx';
+        tab2 +=              '?platform='+encodeURIComponent(platform.Id);
+        tab2 +=              '&name='+encodeURIComponent(platform.Name)+'"';
         tab2 +=        ' width="400"';
         tab2 +=        ' height="365"';
         tab2 +=        ' frameborder="0">';
         tab2 +=      '</iframe>';
-        tab2 +=     '</div>';
+        tab2 +=    '</div>';
         return [ new GInfoWindowTab("Current", tab1),  new GInfoWindowTab("Graphs", tab2) ];
+      };
+    
+    this.OnSaveGraphDelegate = Function.createDelegate(this, function (img) {
+        if (img && img.src) {
+          var id = "FieldScope_Graph_" + (this.graphIndex++);
+          var tableId = id + "_Table";
+          var buttonId = id + "_Button";
+          var html = '<table id="'+tableId+'" cellspacing="0" style="float:left;border:1px solid silver;margin:2px">';
+          html +=   '<tr>';
+          html +=     '<td rowspan="4">';
+          html +=       '<img src="'+img.src+'" />';
+          html +=     '</td>';
+          html +=     '<td>';
+          html +=       '<a href="javascript:void(0);"';
+          html +=         ' style="display:block;width:16px;background-color:silver;color:gray;text-align:center;text-decoration:none"';
+          html +=         ' id="'+buttonId+'"';
+          html +=         '>X</a>';
+          html +=     '</td>';
+          html +=   '</tr>';
+          html +=   '<tr>';
+          html +=     '<td>';
+          html +=       '&nbsp;';
+          html +=     '</td>';
+          html +=   '</tr>';
+          html +=   '<tr>';
+          html +=     '<td>';
+          html +=       '<a href="DownloadChartProxy.ashx?query=' + encodeURIComponent(img.src.substring(img.src.indexOf("?"))) + '"';
+          html +=         ' style="display:block;width:16px;background-color:silver;color:gray;text-align:center;text-decoration:none"';
+          html +=         '>D</a>';
+          html +=     '</td>';
+          html +=   '</tr>';
+          html +=   '<tr>';
+          html +=     '<td height="200">';
+          html +=       '&nbsp;';
+          html +=     '</td>';
+          html +=   '</tr>';
+          html += '</table>';
+          $get("FieldScope_Pasteboard").innerHTML += html;
+          $get(buttonId).onclick = function () {
+              var table = $get(tableId);
+              if (table) {
+                table.parentNode.removeChild(table);
+              }
+            };
+        }
+      });
+    
+    this.OnLoadDelegate = Function.createDelegate(this, function (event) {
+        var iframe = $get("FieldScope.CBIBS.GraphFrame");
+        var doc = iframe.contentWindow || iframe.contentDocument;
+        if (doc.document) {
+          doc = doc.document;
+        }
+        // CBIBS.aspx contains a button that calls this method
+        doc.FieldScopeCBIBSSaveGraph = this.OnSaveGraphDelegate;
+      });
+    
+    this.OnOpenDelegate = Function.createDelegate(this, function () {
+        var iframe = $get("FieldScope.CBIBS.GraphFrame");
+        $addHandler(iframe, "load", this.OnLoadDelegate);
+      });
+    
+    this.OnClick = function (marker, platform, measurements) {
+        GEvent.addListener(marker, "infowindowopen", this.OnOpenDelegate);
+        marker.openInfoWindowTabsHtml(this.CreateInfoWindowHTML(platform, measurements));
       };
     
     this.CreateMarker = function (reading) {
@@ -91,9 +159,8 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           }
         }
         var marker = new GMarker(new GLatLng(lat, lng), this.icon);
-        //marker.CBIBSMeasurements = measurements;
         GEvent.addListener(marker, "click", Function.createDelegate(this, function () {
-            marker.openInfoWindowTabsHtml(this.CreateInfoWindowHTML(reading.Platform, measurements));
+            this.OnClick(marker, reading.Platform, measurements);
           }));
         return marker;
       };
@@ -109,7 +176,6 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         callback.call(this, overlays);
       };
     
-    
     this.AddOverlays = function (bounds, size, OnSuccess, OnFailure) { 
         this.service.GetAllCurrentReadings(Function.createDelegate(this, function (measurements) {
                                                this.QuerySuccessCallback(measurements, OnSuccess);
@@ -123,9 +189,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
       };
   };
 
-try {
 FieldScope.CBIBS.GDataProvider.registerClass('FieldScope.CBIBS.GDataProvider', null, FieldScope.GAsyncDataProvider);
-} catch (e) { console.error(e); }
 
 // ----------------------------------------------------------------------------
 if (typeof(Sys) !== "undefined") { Sys.Application.notifyScriptLoaded(); }

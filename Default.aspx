@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>FieldScope Prototype, Version 1.15</title>
+    <title>FieldScope Prototype, Version 1.16</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -305,6 +305,7 @@
         <input id="FieldScope_State" runat="server" type="text" style="display:none" />
         <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
       </div>
+      <div id="FieldScope_Pasteboard"></div>
     </form>
   </body>
 </html>
