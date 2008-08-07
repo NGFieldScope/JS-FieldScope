@@ -86,6 +86,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           table.cellSpacing = 0;
           table.style.border = "1px solid silver";
           table.style.margin = "2px";
+          table.style.backgroundColor = "white";
           // HACK: this browser-specific business is necessary because IE's
           // implementation of float:left is broken. Fortunately, so is its 
           // implementation of display:inline (in a good way). Browser 

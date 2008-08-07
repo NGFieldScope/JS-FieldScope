@@ -71,14 +71,25 @@
           });
       }
       
-      function ToggleTreeRow (folder, dom) {
+      function ToggleVisibility (folder, dom) {
         var img = folder.getElementsByTagName('img')[0];
+        var span = folder.getElementsByTagName('span')[0];
         if (FieldScope.DomUtils.visible(dom)) {
           FieldScope.DomUtils.hide(dom);
-          img.src = "images/folder_closed.gif";
+          if (img) {
+            img.src = "images/folder_closed.gif";
+          }
+          if (span) {
+            span.innerHTML = "Show";
+          }
         } else {
           FieldScope.DomUtils.show(dom);
-          img.src = "images/folder_open.gif";
+          if (img) {
+            img.src = "images/folder_open.gif";
+          }
+          if (span) {
+            span.innerHTML = "Hide";
+          }
         }
       }
       
@@ -90,12 +101,10 @@
         if (layerGroup[0]) {
           result += '<tr>';
           result +=   '<td colspan="3">';
-          result +=     '<a style="text-decoration:none" href="javascript:void(0)" onclick="ToggleTreeRow(this, $get(\''+id+'\'));">';
-          result +=       '<img src="images/folder_open.gif" style="vertical-align:middle" />';
+          result +=     '<a style="text-decoration:none" href="javascript:void(0)" onclick="ToggleVisibility(this, $get(\''+id+'\'));">';
+          result +=       '<img src="images/folder_open.gif" style="vertical-align:text-top" />';
           result +=       '&nbsp;';
-          result +=       '<span style="text-decoration:underline">';
-          result +=         layerGroup[0];
-          result +=       '</span>';
+          result +=       layerGroup[0];
           result +=     '</a>';
           result +=   '</td>';
           result += '</tr>';
@@ -259,10 +268,10 @@
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" 
            design="sidebar" 
-           style="height:600px;border-bottom:medium ridge">
+           style="height:600px">
         <div dojoType="dijit.layout.BorderContainer" 
              design="sidebar" 
-             style="width:200px;height:600px" 
+             style="width:200px;height:600px;border-bottom:1px solid gray" 
              region="left">
           <div dojoType="dijit.layout.ContentPane" 
                region="top"
@@ -296,6 +305,27 @@
           Map
         </div>
       </div>
+      <div style="border:2px solid gray">
+        <div style="background-color:#DEDEDE;border-bottom:1px solid gray">
+          <table width="100%">
+            <tr>
+              <td align="left">
+                <img src="images/clipboard.gif" alt="" style="vertical-align:text-bottom" />
+                Graph Pasteboard
+              </td>
+              <td align="right">
+                <a style="text-decoration:none;float:right" 
+                   href="javascript:void(0)" 
+                   onclick="ToggleVisibility(this, $get('FieldScope_Pasteboard'));">
+                  <span>Hide</span>
+                  <img src="images/folder_open.gif" alt="" style="vertical-align:text-top" />
+                </a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div id="FieldScope_Pasteboard" style="background-color:#F2F2F2;overflow:auto"></div>
+      </div>
       <div style="margin:2px">
         Logged in as 
         <asp:Label id="FieldScope_Username" runat="server" Text="" />
@@ -306,17 +336,5 @@
         <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
       </div>
     </form>
-    <div style="border:2px solid gray;overflow:auto">
-      <div style="background-color:#DEDEDE;border-bottom:1px solid gray">
-        <img src="images/clipboard.gif" alt="" style="vertical-align:text-bottom" />
-        <a style="text-decoration:none" 
-           href="javascript:void(0)" 
-           onclick="ToggleTreeRow(this, $get('FieldScope_Pasteboard'));">
-          Graph Pasteboard
-          <img src="images/folder_open.gif" alt="" style="vertical-align:middle" />
-        </a>
-      </div>
-      <div id="FieldScope_Pasteboard"></div>
-    </div>
   </body>
 </html>

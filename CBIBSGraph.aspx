@@ -56,7 +56,7 @@
             </td>
             <td>
               <img id="FieldScope_CBIBS_SaveGraph_Button" 
-                   style="display:block;border:thin outset"
+                   style="display:block;border:medium outset"
                    src="images/clipboard-large.gif"
                    alt="Save"
                    onclick="document.FieldScopeCBIBSSaveGraph($get('FieldScope_CBIBS_Chart_Image'));"
