@@ -123,6 +123,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           tbody.appendChild(row1);
           var row2 = document.createElement("tr");
           var cell21 = document.createElement("td");
+          cell21.style.backgroundColor = "white";
           cell21.innerHTML = "&nbsp;";
           row2.appendChild(cell21);
           tbody.appendChild(row2);
@@ -139,12 +140,14 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           var saveIcon = document.createElement("img");
           saveIcon.alt = "S";
           saveIcon.src = "images/save.gif";
+          saveIcon.style.margin = "2px";
           download.appendChild(saveIcon);
           cell31.appendChild(download);
           row3.appendChild(cell31);
           tbody.appendChild(row3);
           var row4 = document.createElement("tr");
           var cell41 = document.createElement("td");
+          cell41.style.backgroundColor = "white";
           cell41.height = 200;
           cell41.innerHTML = "&nbsp;";
           row4.appendChild(cell41);
