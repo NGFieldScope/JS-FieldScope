@@ -84,11 +84,17 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         if (img && img.src) {
           var table = document.createElement("table");
           table.cellSpacing = 0;
-          table.style.cssFloat = "left";
           table.style.border = "1px solid silver";
           table.style.margin = "2px";
-          if (false /*@cc_on || @_jscript_version < 5.7 @*/) {
+          // HACK: this browser-specific business is necessary because IE's
+          // implementation of float:left is broken. Fortunately, so is its 
+          // implementation of display:inline (in a good way). Browser 
+          // detection code based on 
+          // http://www.thefutureoftheweb.com/blog/detect-ie6-in-javascript
+          if (false /*@cc_on || true @*/) {
             table.style.display = "inline";
+          } else {
+            table.style.cssFloat = "left";
           }
           var tbody = document.createElement("tbody");
           var row1 = document.createElement("tr");
@@ -143,7 +149,9 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           row4.appendChild(cell41);
           tbody.appendChild(row4);
           table.appendChild(tbody);
-          $get("FieldScope_Pasteboard").appendChild(table);
+          var pasteboard = $get("FieldScope_Pasteboard");
+          FieldScope.DomUtils.show(pasteboard);
+          pasteboard.appendChild(table);
         }
       });
 

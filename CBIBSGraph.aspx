@@ -55,15 +55,14 @@
                             Visible="false" />
             </td>
             <td>
-              <input id="FieldScope_CBIBS_SaveGraph_Button" 
-                     type="image"
-                     src="images/clipboard-large.gif"
-                     alt="Save"
-                     onclick="document.FieldScopeCBIBSSaveGraph($get('FieldScope_CBIBS_Chart_Image'));"
-                     style="border:thin outset"; 
-                     onmousedown="this.style.borderStyle='inset';"
-                     onmouseup="this.style.borderStyle='outset';" 
-                     onmouseout="this.style.borderStyle='outset';" />
+              <img id="FieldScope_CBIBS_SaveGraph_Button" 
+                   style="display:block;border:thin outset"
+                   src="images/clipboard-large.gif"
+                   alt="Save"
+                   onclick="document.FieldScopeCBIBSSaveGraph($get('FieldScope_CBIBS_Chart_Image'));"
+                   onmousedown="this.style.borderStyle='inset';"
+                   onmouseup="this.style.borderStyle='outset';" 
+                   onmouseout="this.style.borderStyle='outset';" />
             </td>
           </tr>
         </table>

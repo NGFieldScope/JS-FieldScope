@@ -306,11 +306,17 @@
         <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
       </div>
     </form>
-    <div id="FieldScope_Pasteboard" style="border:2px solid gray;overflow:auto">
-      <div>
-        <img src="images/clipboard.gif" alt="" style="vertical-align:middle" />
-        Graph Pasteboard
+    <div style="border:2px solid gray;overflow:auto">
+      <div style="background-color:#DEDEDE;border-bottom:1px solid gray">
+        <img src="images/clipboard.gif" alt="" style="vertical-align:text-bottom" />
+        <a style="text-decoration:none" 
+           href="javascript:void(0)" 
+           onclick="ToggleTreeRow(this, $get('FieldScope_Pasteboard'));">
+          Graph Pasteboard
+          <img src="images/folder_open.gif" alt="" style="vertical-align:middle" />
+        </a>
       </div>
+      <div id="FieldScope_Pasteboard"></div>
     </div>
   </body>
 </html>
