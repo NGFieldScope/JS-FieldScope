@@ -305,7 +305,7 @@
         <input id="FieldScope_State" runat="server" type="text" style="display:none" />
         <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
       </div>
-      <div id="FieldScope_Pasteboard"></div>
     </form>
+    <div id="FieldScope_Pasteboard" style="border:2px solid gray;overflow:auto"></div>
   </body>
 </html>
