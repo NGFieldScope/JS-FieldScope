@@ -105,7 +105,13 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           result += data.Caption;
           result += '</div>';
         }
-        result += '<table style="width:100%">';
+        result += '<table style="width:100%;height:'
+        if (this.marker.MetaLensAssetIds.length > 1) {
+          result += '190';
+        } else {
+          result += '170';
+        }
+        result += 'px">';
         if (data.Type === "image") {
           result += '<tr>';
           result +=   '<td style="vertical-align:top">';
@@ -155,7 +161,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           if (data.Description !== null) {
             result += '<tr>';
             result +=   '<td style="vertical-align:top;width:100%"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
-            result +=     '<div style="font-size:9pt;max-height:130px;overflow:auto;margin-left:3px">';
+            result +=     '<div style="font-size:9pt;height:115px;overflow:auto;margin-left:3px">';
             result +=       data.Description;
             result +=     '</div>';
             result +=   '</td>';
@@ -215,9 +221,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         }
         result += '</table>';
         result += '</div>';
-        if (data.Type === "audio") {
-          result += '<br />';
-        }
+        result += '<div style="clear:both"></div>';
         return result;
       };
     
