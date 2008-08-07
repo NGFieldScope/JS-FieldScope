@@ -215,6 +215,9 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         }
         result += '</table>';
         result += '</div>';
+        if (data.Type === "audio") {
+          result += '<br />';
+        }
         return result;
       };
     
