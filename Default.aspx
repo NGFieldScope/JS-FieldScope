@@ -259,7 +259,7 @@
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" 
            design="sidebar" 
-           style="width:950px; height:600px;border-bottom:medium ridge">
+           style="height:600px;border-bottom:medium ridge">
         <div dojoType="dijit.layout.BorderContainer" 
              design="sidebar" 
              style="width:200px;height:600px" 
@@ -291,12 +291,12 @@
         </div>
         <div dojoType="dijit.layout.ContentPane" 
              region="center"
-             style="border:1px inset gray;width:750px;height:598px" 
+             style="border:1px inset gray;width:100%;height:598px" 
              id="FieldScope.Div.Map">
           Map
         </div>
       </div>
-      <div>
+      <div style="margin:2px">
         Logged in as 
         <asp:Label id="FieldScope_Username" runat="server" Text="" />
         <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
@@ -306,6 +306,11 @@
         <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
       </div>
     </form>
-    <div id="FieldScope_Pasteboard" style="border:2px solid gray;overflow:auto"></div>
+    <div id="FieldScope_Pasteboard" style="border:2px solid gray;overflow:auto">
+      <div>
+        <img src="images/clipboard.gif" alt="" style="vertical-align:middle" />
+        Graph Pasteboard
+      </div>
+    </div>
   </body>
 </html>
