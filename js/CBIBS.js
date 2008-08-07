@@ -82,49 +82,68 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
     
     this.OnSaveGraphDelegate = Function.createDelegate(this, function (img) {
         if (img && img.src) {
-          var id = "FieldScope_Graph_" + (this.graphIndex++);
-          var tableId = id + "_Table";
-          var buttonId = id + "_Button";
-          var html = '<table id="'+tableId+'" cellspacing="0" style="float:left;border:1px solid silver;margin:2px">';
-          html +=   '<tr>';
-          html +=     '<td rowspan="4">';
-          html +=       '<img src="'+img.src+'" />';
-          html +=     '</td>';
-          html +=     '<td>';
-          html +=       '<a href="javascript:void(0);"';
-          html +=         ' style="display:block;width:16px;background-color:silver;color:gray;text-align:center;text-decoration:none"';
-          html +=         ' id="'+buttonId+'"';
-          html +=         '>X</a>';
-          html +=     '</td>';
-          html +=   '</tr>';
-          html +=   '<tr>';
-          html +=     '<td>';
-          html +=       '&nbsp;';
-          html +=     '</td>';
-          html +=   '</tr>';
-          html +=   '<tr>';
-          html +=     '<td>';
-          html +=       '<a href="DownloadChartProxy.ashx?query=' + encodeURIComponent(img.src.substring(img.src.indexOf("?"))) + '"';
-          html +=         ' style="display:block;width:16px;background-color:silver;color:gray;text-align:center;text-decoration:none"';
-          html +=         '>D</a>';
-          html +=     '</td>';
-          html +=   '</tr>';
-          html +=   '<tr>';
-          html +=     '<td height="200">';
-          html +=       '&nbsp;';
-          html +=     '</td>';
-          html +=   '</tr>';
-          html += '</table>';
-          $get("FieldScope_Pasteboard").innerHTML += html;
-          $get(buttonId).onclick = function () {
-              var table = $get(tableId);
-              if (table) {
-                table.parentNode.removeChild(table);
-              }
+          var table = document.createElement("table");
+          table.cellSpacing = 0;
+          table.style.cssFloat = "left";
+          table.style.border = "1px solid silver";
+          table.style.margin = "2px";
+          if (false /*@cc_on || @_jscript_version < 5.7 @*/) {
+            table.style.display = "inline";
+          }
+          var tbody = document.createElement("tbody");
+          var row1 = document.createElement("tr");
+          var cell11 = document.createElement("td");
+          cell11.rowSpan = 4;
+          var timg = document.createElement("img");
+          timg.src = img.src;
+          cell11.appendChild(timg);
+          row1.appendChild(cell11);
+          var cell12 = document.createElement("td");
+          var closeButton = document.createElement("input");
+          closeButton.type = "button";
+          closeButton.value = "X";
+          closeButton.style.width = "16px";
+          closeButton.style.backgroundColor = "silver";
+          closeButton.style.color = "gray";
+          closeButton.style.textAlign = "center";
+          closeButton.style.textDecoration = "none";
+          closeButton.style.borderStyle = "none";
+          closeButton.onclick = function () {
+              table.parentNode.removeChild(table);
             };
+          cell12.appendChild(closeButton);
+          row1.appendChild(cell12);
+          tbody.appendChild(row1);
+          var row2 = document.createElement("tr");
+          var cell21 = document.createElement("td");
+          cell21.innerHTML = "&nbsp;";
+          row2.appendChild(cell21);
+          tbody.appendChild(row2);
+          var row3 = document.createElement("tr");
+          var cell31 = document.createElement("td");
+          var download = document.createElement("a");
+          download.href = "DownloadChartProxy.ashx?query=" + encodeURIComponent(img.src.substring(img.src.indexOf("?")));
+          download.style.display = "block";
+          download.style.width = "16px";
+          download.style.backgroundColor = "silver";
+          download.style.color = "gray";
+          download.style.textAlign = "center";
+          download.style.textDecoration = "none";
+          download.appendChild(document.createTextNode("D"));
+          cell31.appendChild(download);
+          row3.appendChild(cell31);
+          tbody.appendChild(row3);
+          var row4 = document.createElement("tr");
+          var cell41 = document.createElement("td");
+          cell41.height = 200;
+          cell41.innerHTML = "&nbsp;";
+          row4.appendChild(cell41);
+          tbody.appendChild(row4);
+          table.appendChild(tbody);
+          $get("FieldScope_Pasteboard").appendChild(table);
         }
       });
-    
+
     this.OnLoadDelegate = Function.createDelegate(this, function (event) {
         var iframe = $get("FieldScope.CBIBS.GraphFrame");
         var doc = iframe.contentWindow || iframe.contentDocument;
