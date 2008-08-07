@@ -8,12 +8,16 @@
   </head>
   <body>
     <form id="form1" runat="server">
+      <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
         <table cellpadding="2" width="100%" style="font-size:small">
           <tr style="vertical-align:top">
-            <td colspan="3">
+            <td colspan="4">
               Variable:
-              <asp:DropDownList ID="FieldScope_CBIBS_Variable_Menu" runat="server" />
+              <asp:DropDownList ID="FieldScope_CBIBS_Variable_Menu" 
+                                runat="server" 
+                                AutoPostBack="true"
+                                OnSelectedIndexChanged="Variable_Changed" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -50,19 +54,15 @@
                             CellSpacing="0"
                             Visible="false" />
             </td>
-          </tr>
-          <tr>
-            <td colspan="3" style="text-align:right;vertical-align:middle">
-              <asp:Button id="FieldScope_CBIBS_Generate_Button" 
-                          runat="server" 
-                          text="Generate Graph" 
-                          Enabled="false" 
-                          OnClick="GenerateGraph_Click" />
+            <td>
+              <input id="FieldScope_CBIBS_SaveGraph_Button" 
+                     type="button" 
+                     value="Save" 
+                     onclick="document.FieldScopeCBIBSSaveGraph($get('FieldScope_CBIBS_Chart_Image'));" />
             </td>
+          </tr>
         </table>
         <asp:Image ID="FieldScope_CBIBS_Chart_Image" runat="server" Visible="false" />
-        <br />
-        <asp:Label ID="Test1" runat="server" Text="" />
       </div>
     </form>
   </body>

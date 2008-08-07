@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Web;
 using System.Text;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Xml.Linq;
+using System.Web;
 
 public partial class CBIBSGraph : System.Web.UI.Page {
 
@@ -39,21 +29,23 @@ public partial class CBIBSGraph : System.Web.UI.Page {
 
     protected void Page_Load(object sender, EventArgs e) {
         if (!IsPostBack) {
-            FieldScope_CBIBS_Generate_Button.Enabled = false;
             FieldScope_CBIBS_End_Date.SelectedDate = DateTime.Now.Date;
             FieldScope_CBIBS_End_Date_Label.Text = FieldScope_CBIBS_End_Date.SelectedDate.ToString("d");
             FieldScope_CBIBS_Begin_Date.SelectedDate = DateTime.Now.AddDays(-1).Date;
             FieldScope_CBIBS_Begin_Date_Label.Text = FieldScope_CBIBS_Begin_Date.SelectedDate.ToString("d");
+            FieldScope_CBIBS_Variable_Menu.Items.Add("");
             string platformId = Request.QueryString["platform"];
+            string platformName = Request.QueryString["name"];
             if (platformId != null) {
                 Session["FieldScope_CBIBS_Platform"] = platformId;
+                Session["FieldScope_CBIBS_Name"] = platformName;
                 CBIBS.Platform p = new CBIBS.Platform("CBIBS", platformId);
                 foreach (string variable in CBIBS.Service.ListParameters(p)) {
                     if (NAMES.ContainsInternalName(variable)) {
                         FieldScope_CBIBS_Variable_Menu.Items.Add(NAMES.PresentationName(variable));
                     }
                 }
-                FieldScope_CBIBS_Generate_Button.Enabled = true;
+                FieldScope_CBIBS_Variable_Menu.SelectedIndex = 0;
             }
         }
     }
@@ -75,6 +67,7 @@ public partial class CBIBSGraph : System.Web.UI.Page {
         FieldScope_CBIBS_Begin_Date.Visible = false;
         FieldScope_CBIBS_Begin_Date_Label.Visible = true;
         FieldScope_CBIBS_Begin_Date_Button.Visible = true;
+        GenerateGraph();
     }
 
     protected void Edit_EndDate (object sender, EventArgs e) {
@@ -94,13 +87,28 @@ public partial class CBIBSGraph : System.Web.UI.Page {
         FieldScope_CBIBS_End_Date.Visible = false;
         FieldScope_CBIBS_End_Date_Label.Visible = true;
         FieldScope_CBIBS_End_Date_Button.Visible = true;
+        GenerateGraph();
     }
 
-    protected void GenerateGraph_Click (object sender, EventArgs e) {
+    protected void Variable_Changed (object sender, EventArgs e) {
+        GenerateGraph();
+    }
+    
+    protected void GenerateGraph () {
+        if (FieldScope_CBIBS_Variable_Menu.SelectedIndex < 1) {
+            return;
+        }
         string platform = (string)Session["FieldScope_CBIBS_Platform"];
-        string variable = FieldScope_CBIBS_Variable_Menu.Items[FieldScope_CBIBS_Variable_Menu.SelectedIndex].Text;
+        string platformName = (string)Session["FieldScope_CBIBS_Name"];
+        if (platformName == null) {
+            platformName = "";
+        } else {
+            platformName = " at " + platformName;
+        }
+        string presentationName = FieldScope_CBIBS_Variable_Menu.SelectedItem.Text;
+        string variableName = NAMES.InternalName(presentationName);
         CBIBS.Measurement[] measurements = CBIBS.Service.QueryData(new CBIBS.Platform("CBIBS", platform),
-                                                                   NAMES.InternalName(variable),
+                                                                   variableName,
                                                                    FieldScope_CBIBS_Begin_Date.SelectedDate,
                                                                    FieldScope_CBIBS_End_Date.SelectedDate);
         StringBuilder sb = new StringBuilder();
@@ -111,7 +119,7 @@ public partial class CBIBSGraph : System.Web.UI.Page {
         sb.Append("&chs=375x250");
         // Chart title
         sb.Append("&chtt=");
-        sb.Append(variable);
+        sb.Append(HttpUtility.UrlEncode(presentationName + platformName));
         // chart data
         sb.Append("&chd=e:");
         double firstTime = measurements[0].Time.ToFileTime();
