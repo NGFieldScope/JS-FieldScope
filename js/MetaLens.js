@@ -33,7 +33,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         // http://www.howtocreate.co.uk/safaribenchmarks.html
         var dummy = document.body.offsetWidth;
         // resize the info window, now that we know how big the image is
-        infoWindow.resize();
+        window.setTimeout(function () { infoWindow.resize(); }, 100);
         // Run this once and then remove the listener, or
         // you'll end up in an infinite loop on IE6.
         if (this.resizeTrigger) {
