@@ -324,7 +324,7 @@
             </tr>
           </table>
         </div>
-        <div id="FieldScope_Pasteboard" style="background-color:#F2F2F2;overflow:auto"></div>
+        <div id="FieldScope_Pasteboard" style="background-color:#F0F0F2;overflow:auto"></div>
       </div>
       <div style="margin:2px">
         Logged in as 
