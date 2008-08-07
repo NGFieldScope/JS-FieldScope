@@ -161,7 +161,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           if (data.Description !== null) {
             result += '<tr>';
             result +=   '<td style="vertical-align:top;width:100%"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
-            result +=     '<div style="font-size:9pt;height:115px;overflow:auto;margin-left:3px">';
+            result +=     '<div style="font-size:9pt;height:120px;overflow:auto;margin-left:3px">';
             result +=       data.Description;
             result +=     '</div>';
             result +=   '</td>';
