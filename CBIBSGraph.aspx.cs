@@ -6,7 +6,7 @@ public partial class CBIBSGraph : System.Web.UI.Page {
 
     static string COMPLEX_ENCODING_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 
-    static CBIBS.NameMap NAMES = new CBIBS.NameMap();
+    static Utilities.NameMap NAMES = new Utilities.NameMap();
     static CBIBSGraph () {
         NAMES.Add("concentration_of_chlorophyll_in_sea_water", "Chlorophyll A");
         NAMES.Add("concentration_of_oxygen_in_sea_water", "Dissolved Oxygen");
