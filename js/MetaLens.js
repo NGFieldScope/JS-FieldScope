@@ -108,102 +108,110 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
         result += '<table style="width:100%">';
         if (data.Type === "image") {
           result += '<tr>';
-          result += '<td style="vertical-align:top">';
-          result += '<div style="margin-left:3px;margin-top:3px">';
-          result += '<a href="MetaLensDisplayAsset.aspx?server='+encodeURIComponent(this.url)+'&asset='+encodeURIComponent(assetId)+'" target="_blank">';
-          result += '<img id="FieldScope.MetaLens.ResizeTrigger" src="'+this.url+'/assets/'+assetId+'/thumb/large.cpx">';
-          result += '</a>';
-          result += '</div>';
+          result +=   '<td style="vertical-align:top">';
+          result +=     '<div style="margin-left:3px;margin-top:3px">';
+          result +=       '<a href="MetaLensDisplayAsset.aspx?server='+encodeURIComponent(this.url)+'&asset='+encodeURIComponent(assetId)+'"';
+          result +=         ' target="_blank">';
+          result +=         '<img id="FieldScope.MetaLens.ResizeTrigger" src="'+this.url+'/assets/'+assetId+'/thumb/large.cpx">';
+          result +=       '</a>';
+          result +=     '</div>';
           result += '</td>';
           if (data.Description !== null) {
             result += '<td style="vertical-align:top;width:100%">';
-            result += '<div style="font-size:9pt;max-height:150px;overflow:auto;margin-left:3px">';
-            result += data.Description;
-            result += '</div>';
+            result +=   '<div style="font-size:9pt;max-height:150px;overflow:auto;margin-left:3px">';
+            result +=     data.Description;
+            result +=   '</div>';
             result += '</td>';
           }
           result += '</tr>';
           if (data.Copyright !== null) {
             result += '<tr>';
-            result += '<td colspan="2">';
-            result += '<div style="font-size:7pt;font-weight:bold">';
-            result += data.Copyright;
-            result += '</div>';
-            result += '</td>';
+            result +=   '<td colspan="2">';
+            result +=     '<div style="font-size:7pt;font-weight:bold">';
+            result +=       data.Copyright;
+            result +=     '</div>';
+            result +=   '</td>';
             result += '</tr>';
           }
         } else if (data.Type === "audio") {
           result += '<tr>';
-          result += '<td' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
-          result += '<div style="margin:3px">';
-          result += '<div id="FieldScope.MetaLens.Media.Audio">';
-          result += assetId;
-          result += '</div>';
-          result += '</div>';
-          result += '</td>';
+          result +=   '<td' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
+          result +=     '<div style="margin:3px">';
+          result +=       '<div id="FieldScope.MetaLens.Media.Audio">';
+          result +=         assetId;
+          result +=       '</div>';
+          result +=     '</div>';
+          result +=   '</td>';
           result += '</tr>';
           if (data.Copyright !== null) {
             result += '<tr>';
-            result += '<td align="right"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
-            result += '<div style="font-size:7pt;font-weight:bold">';
-            result += data.Copyright;
-            result += '</div>';
-            result += '</td>';
+            result +=   '<td align="right"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
+            result +=     '<div style="font-size:7pt;font-weight:bold">';
+            result +=       data.Copyright;
+            result +=     '</div>';
+            result +=   '</td>';
             result += '</tr>';
           }
           if (data.Description !== null) {
             result += '<tr>';
-            result += '<td style="vertical-align:top;width:100%"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
-            result += '<div style="font-size:9pt;max-height:130px;overflow:auto;margin-left:3px">';
-            result += data.Description;
-            result += '</div>';
-            result += '</td>';
+            result +=   '<td style="vertical-align:top;width:100%"' + ((this.marker.MetaLensAssetIds.length > 1) ? ' colspan="2"' : '') + '>';
+            result +=     '<div style="font-size:9pt;max-height:130px;overflow:auto;margin-left:3px">';
+            result +=       data.Description;
+            result +=     '</div>';
+            result +=   '</td>';
             result += '</tr>';
           }
         } else if (data.Type === "video") {
-          result += '<a href="MetaLensDisplayAsset.aspx?server='+encodeURIComponent(this.url)+'&asset='+encodeURIComponent(assetId)+'" target="_blank">';
           //TODO: inline media player?
-          result += '<img id="FieldScope.MetaLens.Media.Image" src="images/Video.png" height="65" alt="video" />';
-          result += '</a>';
-          result += '</td>';
+          result += '<tr>';
+          result +=   '<td>';
+          result +=     '<a href="MetaLensDisplayAsset.aspx?server='+encodeURIComponent(this.url)+'&asset='+encodeURIComponent(assetId)+'"';
+          result +=       ' target="_blank">';
+          result +=     '<img id="FieldScope.MetaLens.Media.Image" src="images/Video.png" height="65" alt="video" />';
+          result +=   '</a>';
+          result +=   '</td>';
           if (data.Description !== null) {
             result += '<td style="vertical-align:top;width:100%">';
-            result += '<div style="font-size:8pt;max-height:150px;overflow:auto">';
-            result += data.Description;
-            result += '</div>';
+            result +=   '<div style="font-size:8pt;max-height:150px;overflow:auto">';
+            result +=     data.Description;
+            result +=   '</div>';
             result += '</td>';
           }
           result += '</tr>';
           if (data.Copyright !== null) {
             result += '<tr>';
-            result += '<td colspan="2">';
-            result += '<div style="font-size:7pt;font-weight:bold">';
-            result += data.Copyright;
-            result += '</div>';
-            result += '</td>';
+            result +=   '<td colspan="2">';
+            result +=     '<div style="font-size:7pt;font-weight:bold">';
+            result +=       data.Copyright;
+            result +=     '</div>';
+            result +=   '</td>';
             result += '</tr>';
           }
         }
         if (this.marker.MetaLensAssetIds.length > 1) {
           result += '<tr>';
-          result += '<td align="left">';
-          result += '<input type="button" id="FieldScope.MetaLens.PrevButton" value="&lt;- Previous" style="font-size:8pt"';
+          result +=   '<td align="left">';
+          result +=     '<input type="button" id="FieldScope.MetaLens.PrevButton" value="&lt;- Previous" style="font-size:8pt"';
           if (this.marker.MetaLensAssetIndex === 0) {
-            result += ' disabled="disabled"';
+            result +=         ' disabled="disabled"';
           }
-          result += ' />';
-          result += '</td>';
-          result += '<td align="right">';
-          result += '<input type="button" id="FieldScope.MetaLens.NextButton" value="Next -&gt;" style="font-size:8pt"';
+          result +=     ' />';
+          result +=   '</td>';
+          result +=   '<td align="right">';
+          result +=     '<input type="button" id="FieldScope.MetaLens.NextButton" value="Next -&gt;" style="font-size:8pt"';
           if (this.marker.MetaLensAssetIndex === (this.marker.MetaLensAssetIds.length - 1)) {
-            result += ' disabled="disabled"';
+            result +=         ' disabled="disabled"';
           }
-          result += ' />';
-          result += '</td>';
+          result +=     ' />';
+          result +=   '</td>';
           result += '</tr>';
         }
         if (data.Type === "audio") {
-          result += '<tr><td><img src="images/dummy.gif" id="FieldScope.MetaLens.ResizeTrigger" /></tr></td>';
+          result += '<tr>';
+          result +=   '<td>';
+          result +=     '<img src="images/dummy.gif" id="FieldScope.MetaLens.ResizeTrigger" />';
+          result +=   '</td>';
+          result += '</tr>';
         }
         result += '</table>';
         result += '</div>';
