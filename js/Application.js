@@ -224,7 +224,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
               html +=       '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
-              html +=       '&nbsp;Nutrients & Sediment Runoff';
+              html +=       '&nbsp;Sources of Nutrients & Sediment Runoff';
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
