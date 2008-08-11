@@ -40,6 +40,11 @@
               <asp:Button id="FieldScope_Login_Button" runat="server" text="Login" OnClick="LoginButton_Click" />
             </td>
           </tr>
+		      <tr>
+            <td colspan="2">
+              <a href="Newuser.aspx">New User...</a>
+            </td>
+          </tr>
   		  </table>
       </div>
     </form>
