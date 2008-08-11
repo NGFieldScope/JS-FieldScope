@@ -15,12 +15,16 @@
   
   <!-- development version scripts -->
     <script type="text/javascript" src="js/extinfowindow/extinfowindow.js"></script>
-    <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
+    <script type="text/javascript" 
+            src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" 
+            djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
     <script type="text/javascript" src="js/swfobject/swfobject.js"></script>
   
   <!-- release version scripts 
     <script type="text/javascript" src="js/extinfowindow/extinfowindow_packed.js"></script>
-    <script type="text/javascript" src="js/dojo-1.1.1/dojo/dojo.js" djConfig="parseOnLoad:false, usePlainJson:true"></script>
+    <script type="text/javascript" 
+            src="js/dojo-1.1.1/dojo/dojo.js" 
+            djConfig="parseOnLoad:false, usePlainJson:true"></script>
     <script type="text/javascript" src="js/swfobject/swfobject_packed.js"></script>
   -->
   
@@ -40,6 +44,7 @@
       
       // globals
       application = null;
+      editUserDialog = null;
       
       function UpdateMouseModeButtons () {
         for (var x = 0; x < application.mouseModeList.length; x += 1) {
@@ -244,6 +249,30 @@
         return false;
         GUnload();
       }
+      
+      function Edit_User () {
+        if (!editUserDialog) {
+          var pane = dojo.byId('FieldScope.EditUser.Dialog.Pane');
+          editUserDialog = new dijit.Dialog({
+	          id : "FieldScope.EditUsers.Dialog",
+	          refocus : false,
+	          title : "Edit Account Settings"
+          }, pane);
+        }
+        editUserDialog.show();
+      }
+      
+      function Set_EditUser_Delegate (iframe) {
+        var doc = iframe.contentWindow || iframe.contentDocument;
+        if (doc.document) {
+          doc = doc.document;
+        }
+        // EditUser.aspx.cs registers a client script that 
+        // calls this method
+        doc.FieldScopeSaveUserComplete = function () {
+            editUserDialog.hide();
+          };
+      }
 //]]>
     </script>
   </head>
@@ -332,9 +361,25 @@
         <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
           logout
         </asp:LinkButton>
-        <input id="FieldScope_State" runat="server" type="text" style="display:none" />
-        <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
+        &nbsp;
+        <a href="javascript:void(0)" onclick="Edit_User();">
+          settings...
+        </a>
       </div>
+      <input id="FieldScope_State" runat="server" type="text" style="display:none" />
+      <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
     </form>
+    
+    <div id="FieldScope.EditUser.Dialog.Pane" style="display: none;">
+	    <iframe id="FieldScope.EditUser" 
+	            name="FieldScope.EditUser" 
+	            src="EditUser.aspx"
+	            width="450"
+	            height="250"
+	            frameborder="0"
+	            onload="Set_EditUser_Delegate(this);">
+	    </iframe>
+	  </div>
+    
   </body>
 </html>

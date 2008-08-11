@@ -1,20 +1,14 @@
-﻿using System;
-using System.Data;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Xml.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 /// <summary>
 /// Summary description for Utilities
 /// </summary>
 namespace Utilities {
+
+    public sealed class Regexp {
+
+        public static readonly System.Text.RegularExpressions.Regex EMAIL = new System.Text.RegularExpressions.Regex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+    }
 
     public sealed class NameMap {
 
