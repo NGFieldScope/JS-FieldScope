@@ -213,8 +213,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
-        query.outFields = [ "TRIB_BASIN", 
-                            "AG_TP_PER", "FOR_TP_PER", "MIX_TP_PER", "URB_TP_PER", "DEP_TP_PER", "PNT_TP_PER",
+        query.outFields = [ "AG_TP_PER", "FOR_TP_PER", "MIX_TP_PER", "URB_TP_PER", "DEP_TP_PER", "PNT_TP_PER",
                             "AG_TN_PER", "FOR_TN_PER", "MIX_TN_PER", "URB_TN_PER", "DEP_TN_PER", "PNT_TN_PER",
                             "AG_SD_PER", "FOR_SD_PER", "MIX_SD_PER", "URB_SD_PER" ];
         task.execute(query, false, function (result) {
@@ -225,12 +224,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
               html +=       '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
-              html +=       '&nbsp;Nutrients & Sediment';
+              html +=       '&nbsp;Nutrients & Sediment Runoff';
               html +=     '</td>';
-              html +=   '</tr>';
-              html +=   '<tr>';
-              html +=     '<td style="font-weight:bold">Basin:</td>';
-              html +=     '<td>' + attributes.TRIB_BASIN + '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold">Phosphorous:</td>';
