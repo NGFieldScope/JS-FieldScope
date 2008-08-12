@@ -4,10 +4,10 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head runat="server">
-    <title>New User</title>
+    <title>New FieldScope User</title>
   </head>
   <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" defaultbutton="FieldScope_NewUser_Button">
       <asp:ScriptManager ID="ScriptManager2" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
 	      <table>
