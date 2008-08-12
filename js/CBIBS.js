@@ -95,6 +95,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         if (img && img.src) {
           var table = document.createElement("table");
           table.cellSpacing = 0;
+          table.style.height = "258px";
           table.style.border = "1px solid silver";
           table.style.margin = "2px";
           table.style.backgroundColor = "white";
