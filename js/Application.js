@@ -224,7 +224,21 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
               html +=       '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
-              html +=       '&nbsp;Sources of Nutrients & Sediment Runoff';
+              html +=       '&nbsp;Sources of Nutrient & Sediment Runoff';
+              html +=     '</td>';
+              html +=   '</tr>';
+              html +=   '<tr>';
+              html +=     '<td align="right" colspan="2">';
+              html +=       '<img id="FieldScope_CBIBS_SaveGraph_Button"';
+              html +=           ' style="display:block;border:2px outset"';
+              html +=           ' src="images/clipboard-large.gif"';
+              html +=           ' alt="Save"';
+              html +=           ' onclick="document.FieldScopeNutrientsSaveGraph($get(\'FieldScope_Runoff_Phosphorous\'),';
+              html +=                                                          ' $get(\'FieldScope_Runoff_Nitrogen\'),';
+              html +=                                                          ' $get(\'FieldScope_Runoff_Sediment\'));"';
+              html +=           ' onmousedown="this.style.borderStyle=\'inset\';"';
+              html +=           ' onmouseup="this.style.borderStyle=\'outset\';"';
+              html +=           ' onmouseout="this.style.borderStyle=\'outset\';" />';
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
@@ -239,7 +253,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=                   attributes.DEP_TP_PER + ',' + attributes.PNT_TP_PER;
               html +=                 '&chl=Agriculture|Forest|Mixed%20Use|Urban|Atmosphere|Point%20Source';
               html +=                 '&chco=E1E298,35824D,BCBCE6,FAAB9F,AACFC9,B2B2B2"';
-              html +=           ' width="220" height="75" alt="chart missing" />';
+              html +=           ' width="220" height="75" alt="chart missing" id="FieldScope_Runoff_Phosphorous" />';
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
@@ -254,7 +268,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=                   attributes.DEP_TN_PER + ',' + attributes.PNT_TN_PER;
               html +=                 '&chl=Agriculture|Forest|Mixed%20Use|Urban|Atmosphere|Point%20Source';
               html +=                 '&chco=E1E298,35824D,BCBCE6,FAAB9F,AACFC9,B2B2B2"'; 
-              html +=           ' width="220" height="75" alt="chart missing" />';
+              html +=           ' width="220" height="75" alt="chart missing" id="FieldScope_Runoff_Nitrogen" />';
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
@@ -268,13 +282,85 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=                   attributes.MIX_SD_PER + ',' + attributes.URB_SD_PER;
               html +=                 '&chl=Agriculture|Forest|Mixed%20Use|Urban';
               html +=                 '&chco=E1E298,35824D,BCBCE6,FAAB9F"';
-              html +=       ' width="220" height="75" alt="chart missing" /></td>';
+              html +=       ' width="220" height="75" alt="chart missing" id="FieldScope_Runoff_Sediment" /></td>';
               html +=   '</tr>';
               html += '</table>';
               callback.call(this, loc, "Runoff", html);
             }
           });
       });
+    
+    document.FieldScopeNutrientsSaveGraph = function (phosphorousImg, nitrogenImg, sedimentImg) {
+        var table = document.createElement("table");
+        table.cellSpacing = 0;
+        table.style.height = "258px";
+        table.style.border = "1px solid silver";
+        table.style.margin = "2px";
+        table.style.padding = "2px";
+        table.style.backgroundColor = "white";
+        // HACK: this browser-specific business is necessary because IE's
+        // implementation of float:left is broken. Fortunately, so is its 
+        // implementation of display:inline (in a good way). Browser 
+        // detection code based on 
+        // http://www.thefutureoftheweb.com/blog/detect-ie6-in-javascript
+        if (false /*@cc_on || true @*/) {
+          table.style.display = "inline";
+        } else {
+          table.style.cssFloat = "left";
+        }
+        var tbody = document.createElement("tbody");
+        var row1 = document.createElement("tr");
+        var cell11 = document.createElement("td");
+        cell11.appendChild(document.createTextNode("Phosphorous:"));
+        row1.appendChild(cell11);
+        var cell12 = document.createElement("td");
+        var pImg = document.createElement("img");
+        pImg.src = phosphorousImg.src;
+        cell12.appendChild(pImg);
+        row1.appendChild(cell12);
+        var cell13 = document.createElement("td");
+        cell13.rowSpan = 3;
+        cell13.style.verticalAlign = "top";
+        var closeButton = document.createElement("input");
+        closeButton.type = "button";
+        closeButton.value = "X";
+        closeButton.style.width = "20px";
+        closeButton.style.backgroundColor = "silver";
+        closeButton.style.color = "gray";
+        closeButton.style.textAlign = "center";
+        closeButton.style.textDecoration = "none";
+        closeButton.style.borderStyle = "none";
+        closeButton.onclick = function () {
+            table.parentNode.removeChild(table);
+          };
+        cell13.appendChild(closeButton);
+        row1.appendChild(cell13);
+        tbody.appendChild(row1);
+        var row2 = document.createElement("tr");
+        var cell21 = document.createElement("td");
+        cell21.appendChild(document.createTextNode("Nitrogen:"));
+        row2.appendChild(cell21);
+        var cell22 = document.createElement("td");
+        var nImg = document.createElement("img");
+        nImg.src = nitrogenImg.src;
+        cell22.appendChild(nImg);
+        row2.appendChild(cell22);
+        tbody.appendChild(row2);
+        var row3 = document.createElement("tr");
+        var cell31 = document.createElement("td");
+        cell31.appendChild(document.createTextNode("Sediment:"));
+        row3.appendChild(cell31);
+        var cell32 = document.createElement("td");
+        var sImg = document.createElement("img");
+        sImg.src = sedimentImg.src;
+        cell32.appendChild(sImg);
+        row3.appendChild(cell32);
+        tbody.appendChild(row3);
+        table.appendChild(tbody);
+        var pasteboard = $get("FieldScope_Pasteboard");
+        FieldScope.DomUtils.show(pasteboard);
+        pasteboard.appendChild(table);
+      };
     
     this.IdentifyStateDelegate = Function.createDelegate(this, function (loc, callback) {
         var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_states/MapServer/0");
