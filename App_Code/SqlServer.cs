@@ -105,6 +105,26 @@ namespace SqlServer {
             }
         }
 
+        public static UserInfo FindUser (string usernameOrPassword) {
+            SqlCommand command = new SqlCommand("SELECT username,state,admin,organization,email FROM users WHERE username = @Search OR email = @Search", conn);
+            command.Parameters.Add("@Search", SqlDbType.VarChar).Value = usernameOrPassword;
+            conn.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            try {
+                if (reader.Read()) {
+                    return new UserInfo((string)reader[0],
+                                        (reader[1] is string) ? (string)reader[1] : "",
+                                        (bool)reader[2],
+                                        (string)reader[3],
+                                        (string)reader[4]);
+                } else {
+                    return null;
+                }
+            } finally {
+                conn.Close();
+            }
+        }
+
         public static string CheckLogin (string username, string password) {
             string hashedPw = FormsAuthentication.HashPasswordForStoringInConfigFile(password, "SHA1");
             SqlCommand command = new SqlCommand("SELECT cookie FROM users WHERE username = @Username AND password = @Password", conn);

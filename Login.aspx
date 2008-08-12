@@ -7,7 +7,7 @@
     <title>FieldScope Login Form</title>
   </head>
   <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" defaultbutton="FieldScope_Login_Button">
       <asp:ScriptManager ID="ScriptManager2" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
 	      <table>
@@ -41,8 +41,11 @@
             </td>
           </tr>
 		      <tr>
-            <td colspan="2">
-              <a href="Newuser.aspx">New User...</a>
+            <td align="left">
+              <a href="NewUser.aspx">New User...</a>
+            </td>
+            <td align="right">
+              <a href="ResetPassword.aspx">Forgot Password...</a>
             </td>
           </tr>
   		  </table>
