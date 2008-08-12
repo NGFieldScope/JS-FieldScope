@@ -55,7 +55,14 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             string name = FieldScope_MetaLens_FileUpload.FileName;
             string caption = FieldScope_MetaLens_Caption.Text;
             string description = FieldScope_MetaLens_Description.Text;
-            string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description);
+            string school = null;
+            if (Request.Cookies.AllKeys.Contains("FieldScope_Cookie")) {
+                SqlServer.UserInfo user = SqlServer.Service.CheckLogin(Request.Cookies["FieldScope_Cookie"].Value);
+                if (user != null) {
+                    school = user.Organization;
+                }
+            }
+            string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description, school);
             //string result = "complete";
             FieldScope_MetaLens_Message.Text = "Result: " + result;
             if (result == "complete") {
