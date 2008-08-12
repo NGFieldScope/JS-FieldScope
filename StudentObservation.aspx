@@ -12,7 +12,7 @@
     </style>
   </head>
   <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" defaultbutton="FieldScope_Observation_SubmitButton">
       <div>
         <table cellspacing="1" cellpadding="0" width="100%" style="font-size:small">
           <tr style="vertical-align:top">
@@ -26,12 +26,27 @@
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Temperature" runat="server" Columns="6" />
+              <asp:DropDownList ID="FieldScope_Observation_Temperature_Units" runat="server">
+                <asp:ListItem Text="&deg;F" Value="F" />
+                <asp:ListItem Text="&deg;C" Value="C" />
+              </asp:DropDownList>
+              <asp:CustomValidator ID="FieldScope_Observation_Temperature_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="<br />Temperature value is not empty and is not a number" 
+                                   ControlToValidate="FieldScope_Observation_Temperature" 
+                                   OnServerValidate="Validate_Number_Or_Empty" 
+                                   Display="Dynamic" />
             </td>
             <td style="font-weight:bold">
               School Name:
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_School" runat="server" Columns="24" />
+              <asp:RequiredFieldValidator ID="FieldScope_Observation_School_Validator" 
+                                          runat="server" 
+                                          ControlToValidate="FieldScope_Observation_School" 
+                                          ErrorMessage="<br />Please enter your school name" 
+                                          Display="Dynamic" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -40,6 +55,15 @@
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Salinity" runat="server" Columns="6" />
+              <asp:DropDownList ID="FieldScope_Observation_Salinity_Units" runat="server">
+                <asp:ListItem Text="PSU" Value="PSU" />
+              </asp:DropDownList>
+              <asp:CustomValidator ID="FieldScope_Observation_Salinity_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="<br />Salinity value is not empty and is not a number" 
+                                   ControlToValidate="FieldScope_Observation_Salinity" 
+                                   OnServerValidate="Validate_Number_Or_Empty" 
+                                   Display="Dynamic" />
             </td>
             <td style="font-weight:bold">
               Date
@@ -49,7 +73,8 @@
               <asp:Button ID="FieldScope_Observation_Date_Button" 
                           runat="server" 
                           Text="..."
-                          OnClick="Edit_Date" />
+                          OnClick="Edit_Date" 
+                          CausesValidation="False" />
               <asp:Calendar ID="FieldScope_Observation_Date" 
                             runat="server" 
                             Font-Size="XX-Small" 
@@ -66,12 +91,26 @@
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Turbidity" runat="server" Columns="6" />
+              <asp:DropDownList ID="FieldScope_Observation_Turbidity_Units" runat="server">
+                <asp:ListItem Text="NTU" Value="NTU" />
+              </asp:DropDownList>
+              <asp:CustomValidator ID="FieldScope_Observation_Turbidity_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="<br />Turbidity value is not empty and is not a number" 
+                                   ControlToValidate="FieldScope_Observation_Turbidity" 
+                                   OnServerValidate="Validate_Number_Or_Empty" 
+                                   Display="Dynamic" />
             </td>
             <td style="font-weight:bold">
               Time:
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Time" runat="server" Columns="8"/>
+              <asp:RequiredFieldValidator ID="FieldScope_Observation_Time_Validator" 
+                                          runat="server" 
+                                          ControlToValidate="FieldScope_Observation_Time" 
+                                          ErrorMessage="<br />Please enter the observation time" 
+                                          Display="Dynamic" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -80,6 +119,15 @@
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Oxygen" runat="server" Columns="6" />
+              <asp:DropDownList ID="FieldScope_Observation_Oxygen_Units" runat="server">
+                <asp:ListItem Text="mg/L" Value="OXYGEN[mg/L]" />
+              </asp:DropDownList>
+              <asp:CustomValidator ID="FieldScope_Observation_Oxygen_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="<br />Dissolved oxygen value is not empty and is not a number" 
+                                   ControlToValidate="FieldScope_Observation_Oxygen" 
+                                   OnServerValidate="Validate_Number_Or_Empty" 
+                                   Display="Dynamic" />
             </td>
             <td style="font-weight:bold">
               Field Notes:
@@ -100,6 +148,15 @@
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Nitrogen" runat="server" Columns="6" />
+              <asp:DropDownList ID="FieldScope_Observation_Nitrogen_Units" runat="server">
+                <asp:ListItem Text="mg/L" Value="NITROGEN[mg/L]" />
+              </asp:DropDownList>
+              <asp:CustomValidator ID="FieldScope_Observation_Nitrogen_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="<br />Nitrogen value is not empty and is not a number" 
+                                   ControlToValidate="FieldScope_Observation_Nitrogen" 
+                                   OnServerValidate="Validate_Number_Or_Empty" 
+                                   Display="Dynamic" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -108,6 +165,15 @@
             </td>
             <td>
               <asp:TextBox ID="FieldScope_Observation_Phosphorous" runat="server" Columns="6" />
+              <asp:DropDownList ID="FieldScope_Observation_Phosphorous_Units" runat="server">
+                <asp:ListItem Text="mg/L" Value="PHOSPHOROUS[mg/L]" />
+              </asp:DropDownList>
+              <asp:CustomValidator ID="FieldScope_Observation_Phosphorous_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="<br />Phosphorous value is not empty and is not a number" 
+                                   ControlToValidate="FieldScope_Observation_Phosphorous" 
+                                   OnServerValidate="Validate_Number_Or_Empty" 
+                                   Display="Dynamic" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -116,11 +182,6 @@
                           Text="Save" 
                           OnClick="SaveButton_Click" 
                           runat="server"/>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <asp:Label id="Label1" runat="server" Text="" />
             </td>
           </tr>
         </table>
