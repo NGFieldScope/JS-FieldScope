@@ -6,6 +6,15 @@ Type.registerNamespace("FieldScope.CBIBS");
 // ----------------------------------------------------------------------------
 // CBIBS.GDataProvider class
 
+FieldScope.CBIBS.FieldNames = {
+    concentration_of_chlorophyll_in_sea_water : "Chlorophyll A",
+    concentration_of_oxygen_in_sea_water : "Dissolved Oxygen",
+    simple_turbidity : "Turbidity",
+    sea_water_electrical_conductivity : "Water Conductivity",
+    sea_water_salinity : "Water Salinity",
+    sea_water_temperature : "Water Temperature"
+  };
+
 FieldScope.CBIBS.GDataProvider = function (map, service) {
     
     this.map = map;
@@ -22,7 +31,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
     
     this.CreateInfoWindowHTML = function (platform, measurements) {
         var tab1 = "<div>";
-        tab1 += '<table>';
+        tab1 += '<table cellspacing="3">';
         tab1 += '<tr style="font-weight:bold;font-size:8pt">';
         tab1 += '<td colspan="4">';
         tab1 += 'Current Readings At Buoy: "';
@@ -36,33 +45,35 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
         tab1 += '<td>Time</td>';
         tab1 += '</tr>';
         for (var x = 0; x < measurements.length; x += 1) {
-          tab1 += '<tr style="font-size:8pt">';
-          tab1 += '<td>';
-          tab1 += measurements[x].Name;
-          tab1 += '</td><td>';
-          tab1 += measurements[x].Value;
-          tab1 += '</td><td>';
-          tab1 += measurements[x].Units;
-          tab1 += '</td><td>';
-          tab1 += measurements[x].Time.getFullYear();
-          tab1 += '-';
-          tab1 += measurements[x].Time.getMonth()+1;
-          tab1 += '-';
-          tab1 += measurements[x].Time.getDate();
-          tab1 += ' ';
-          tab1 += measurements[x].Time.getHours();
-          tab1 += ':';
-          if (measurements[x].Time.getMinutes() < 10) {
-            tab1 += '0';
+          if (FieldScope.CBIBS.FieldNames[measurements[x].Name]) {
+            tab1 += '<tr style="font-size:8pt">';
+            tab1 += '<td>';
+            tab1 += FieldScope.CBIBS.FieldNames[measurements[x].Name];
+            tab1 += '</td><td>';
+            tab1 += measurements[x].Value;
+            tab1 += '</td><td>';
+            tab1 += measurements[x].Units;
+            tab1 += '</td><td>';
+            tab1 += measurements[x].Time.getFullYear();
+            tab1 += '-';
+            tab1 += measurements[x].Time.getMonth()+1;
+            tab1 += '-';
+            tab1 += measurements[x].Time.getDate();
+            tab1 += ' ';
+            tab1 += measurements[x].Time.getHours();
+            tab1 += ':';
+            if (measurements[x].Time.getMinutes() < 10) {
+              tab1 += '0';
+            }
+            tab1 += measurements[x].Time.getMinutes();
+            tab1 += ':';
+            if (measurements[x].Time.getSeconds() < 10) {
+              tab1 += '0';
+            }
+            tab1 += measurements[x].Time.getSeconds();
+            tab1 += '</td>';
+            tab1 += '</tr>';
           }
-          tab1 += measurements[x].Time.getMinutes();
-          tab1 += ':';
-          if (measurements[x].Time.getSeconds() < 10) {
-            tab1 += '0';
-          }
-          tab1 += measurements[x].Time.getSeconds();
-          tab1 += '</td>';
-          tab1 += '</tr>';
         }
         tab1 += '</table></div>';
         
@@ -188,7 +199,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
             lat = reading.Measurements[x].Value;
           } else if (reading.Measurements[x].Name === "longitude") {
             lng = -reading.Measurements[x].Value;
-          } else {
+          } else if (reading.Measurements[x].Name) {
             measurements.push(reading.Measurements[x]);
           }
         }
