@@ -105,7 +105,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           result += data.Caption;
           result += '</div>';
         }
-        result += '<table style="width:100%;height:'
+        result += '<table style="width:100%;height:';
         if (this.marker.MetaLensAssetIds.length > 1) {
           result += '190';
         } else {
