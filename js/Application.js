@@ -404,6 +404,36 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           });
       });
     
+    
+    this.IdentifyPhysiographyDelegate = Function.createDelegate(this, function (loc, callback) {
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_physiography/MapServer/0");
+        var query = new esri.arcgis.gmaps.Query();
+        query.queryGeometry = loc;
+        query.returnGeometry = false;
+        query.outFields = [ "provNames5.NAME" ];
+        task.execute(query, false, function (result) {
+            if (result.features && (result.features.length > 0)) {
+              var attributes = result.features[0].attributes;
+              var html = '';
+              html += '<table>';
+              html +=   '<tr>';
+              html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
+              html +=       '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
+              html +=       '&nbsp;Physiographic Region';
+              html +=     '</td>';
+              html +=   '</tr>';
+              html +=   '<tr>';
+              html +=     '<td style="font-weight:bold;text-align:right">Name:</td>';
+              html +=     '<td>';
+              html +=       attributes["provNames5.NAME"];
+              html +=     '</td>';
+              html +=   '</tr>';
+              html += '</table>';
+              callback.call(this, loc, "Region", html);
+            }
+          });
+      });
+    
     //
     // Here is where we actually do the setup, now that our methods have all been defined
     //
@@ -503,7 +533,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.permeabilityVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
+          legendHTML : '<img src=sLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001</p>'
                        
         };
@@ -754,7 +784,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.physiographyVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_physiography/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_physiography/MapServer')+'" />'
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_physiography/MapServer')+'" />' +
+                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program; USGS</p>',
+          Identify : this.IdentifyPhysiographyDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -964,7 +996,10 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                               this.urlPrefix,
                                                                               "cb_observations_2");
       this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.photos.asyncLayer, "http://focus.metalens.org");
-      this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, this.layers.states, this.layers.nutrients]);
+      this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, 
+                                                               this.layers.physiography, 
+                                                               this.layers.states, 
+                                                               this.layers.nutrients]);
       
       //
       // The mouse mode list determines how mode buttons are presented to the user
