@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>FieldScope Prototype, Version 1.17</title>
+    <title>FieldScope Prototype, Version 1.18</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -311,13 +311,13 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:442px;margin-top:8px">
+               style="height:462px;margin-top:8px">
             <span style="font-weight:bold">Chesapeake Bay:</span>
             <div style="width:100%;font-size:smaller" id="FieldScope.Layers.Controls"></div>
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="bottom"
-               style="height:120px;margin-top:8px"
+               style="height:100px;margin-top:8px"
                splitter="true">
             <span>Find a Location:</span>
             <div style="margin:2px">
