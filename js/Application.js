@@ -308,7 +308,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         table.style.height = "258px";
         table.style.border = "1px solid silver";
         table.style.margin = "2px";
-        table.style.padding = "2px";
+        table.style.paddingLeft = "4px";
         table.style.backgroundColor = "white";
         // HACK: this browser-specific business is necessary because IE's
         // implementation of float:left is broken. Fortunately, so is its 
@@ -329,8 +329,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         cell02.innerHTML = basinTd.innerHTML;
         row0.appendChild(cell02);
         var cell03 = document.createElement("td");
-        cell03.rowSpan = 3;
-        cell03.style.verticalAlign = "top";
+        cell03.align = "right";
         var closeButton = document.createElement("input");
         closeButton.type = "button";
         closeButton.value = "X";
@@ -351,7 +350,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         cell11.appendChild(document.createTextNode("Phosphorous:"));
         row1.appendChild(cell11);
         var cell12 = document.createElement("td");
-        cell12.colspan = 2;
+        cell12.colSpan = 2;
         var pImg = document.createElement("img");
         pImg.src = phosphorousImg.src;
         cell12.appendChild(pImg);
@@ -362,7 +361,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         cell21.appendChild(document.createTextNode("Nitrogen:"));
         row2.appendChild(cell21);
         var cell22 = document.createElement("td");
-        cell22.colspan = 2;
+        cell22.colSpan = 2;
         var nImg = document.createElement("img");
         nImg.src = nitrogenImg.src;
         cell22.appendChild(nImg);
@@ -373,7 +372,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         cell31.appendChild(document.createTextNode("Sediment:"));
         row3.appendChild(cell31);
         var cell32 = document.createElement("td");
-        cell32.colspan = 2;
+        cell32.colSpan = 2;
         var sImg = document.createElement("img");
         sImg.src = sedimentImg.src;
         cell32.appendChild(sImg);
