@@ -7,24 +7,15 @@ public partial class EditUser : System.Web.UI.Page {
 
     protected void Page_Load (object sender, EventArgs e) { 
         if (!Page.IsPostBack) {
-            bool authorized = false;
             FieldScope_Username.Text = "";
             FieldScope_Organization.Text = "";
             FieldScope_Email.Text = "";
-            if (Request.Cookies.AllKeys.Contains("FieldScope_Cookie")) {
-                // NOTE: DO NOT check that (Request.Cookies["FieldScope_Cookie"] == null), 
-                // because this will not only always return false, it will also create 
-                // an empty cookie named FieldScope_Cookie
-                string cookie = Request.Cookies["FieldScope_Cookie"].Value;
-                SqlServer.UserInfo user = SqlServer.Service.CheckLogin(cookie);
-                if (user != null) {
-                    authorized = true;
-                    FieldScope_Username.Text = user.Username;
-                    FieldScope_Organization.Text = user.Organization;
-                    FieldScope_Email.Text = user.Email;
-                }
-            }
-            if (!authorized) {
+            SqlServer.UserInfo user = Utilities.User.GetCurrentUser(Request);
+            if (user != null) {
+                FieldScope_Username.Text = user.Username;
+                FieldScope_Organization.Text = user.Organization;
+                FieldScope_Email.Text = user.Email;
+            } else {
                 Response.Redirect("Login.aspx");
             }
         }
@@ -77,12 +68,12 @@ public partial class EditUser : System.Web.UI.Page {
         SqlServer.Service.UpdateUser(username, organization, email);
 
         ClientScript.RegisterStartupScript(typeof(Page),
-                                           "FieldScopeSaveUserComplete",
-                                           // Use setTimeout here so that Set_EditUser_Delegate
+                                           "FieldScopeEditUserComplete",
+                                           // Use setTimeout here so that Set_Popup_Delegates
                                            // (defined in Default.aspx) has a chance to set the 
                                            // FieldScopeSaveUserComplete property on the document
                                            // before we try to call it
-                                           @"window.setTimeout(function () { document.FieldScopeSaveUserComplete(); }, 100);",
+                                           @"window.setTimeout(function () { document.FieldScopeEditUserComplete(); }, 100);",
                                            true);
     }
 }

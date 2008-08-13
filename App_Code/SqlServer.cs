@@ -12,18 +12,22 @@ namespace SqlServer {
         private readonly bool _isAdmin;
         private readonly string _organization;
         private readonly string _email;
+        private readonly string _cookie;
 
         public string Username { get { return _username; } }
         public string State { get { return _state; } }
         public bool Admin { get { return _isAdmin; } }
         public string Organization { get { return _organization; } }
         public string Email { get { return _email; } }
+        public string Cookie { get { return _cookie; } }
 
-        public UserInfo (string username,
+        public UserInfo (string cookie,
+                         string username,
                          string state,
                          bool admin,
                          string organization,
                          string email) {
+            _cookie = cookie.TrimEnd();
             _username = username.TrimEnd();
             _state = state.TrimEnd();
             _isAdmin = admin;
@@ -106,17 +110,18 @@ namespace SqlServer {
         }
 
         public static UserInfo FindUser (string usernameOrPassword) {
-            SqlCommand command = new SqlCommand("SELECT username,state,admin,organization,email FROM users WHERE username = @Search OR email = @Search", conn);
+            SqlCommand command = new SqlCommand("SELECT cookie,username,state,admin,organization,email FROM users WHERE username = @Search OR email = @Search", conn);
             command.Parameters.Add("@Search", SqlDbType.VarChar).Value = usernameOrPassword;
             conn.Open();
             SqlDataReader reader = command.ExecuteReader();
             try {
                 if (reader.Read()) {
                     return new UserInfo((string)reader[0],
-                                        (reader[1] is string) ? (string)reader[1] : "",
-                                        (bool)reader[2],
-                                        (string)reader[3],
-                                        (string)reader[4]);
+                                        (string)reader[1],
+                                        (reader[2] is string) ? (string)reader[2] : "",
+                                        (bool)reader[3],
+                                        (string)reader[4],
+                                        (string)reader[5]);
                 } else {
                     return null;
                 }
@@ -150,7 +155,8 @@ namespace SqlServer {
             SqlDataReader reader = command.ExecuteReader();
             try {
                 if (reader.Read()) {
-                    return new UserInfo((string)reader[0],
+                    return new UserInfo(cookie,
+                                        (string)reader[0],
                                         (reader[1] is string) ? (string)reader[1] : "",
                                         (bool)reader[2],
                                         (string)reader[3],

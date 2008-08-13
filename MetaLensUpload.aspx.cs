@@ -56,11 +56,9 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             string caption = FieldScope_MetaLens_Caption.Text;
             string description = FieldScope_MetaLens_Description.Text;
             string school = null;
-            if (Request.Cookies.AllKeys.Contains("FieldScope_Cookie")) {
-                SqlServer.UserInfo user = SqlServer.Service.CheckLogin(Request.Cookies["FieldScope_Cookie"].Value);
-                if (user != null) {
-                    school = user.Organization;
-                }
+            SqlServer.UserInfo user = Utilities.User.GetCurrentUser(Request);
+            if (user != null) {
+                school = user.Organization;
             }
             string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description, school);
             //string result = "complete";

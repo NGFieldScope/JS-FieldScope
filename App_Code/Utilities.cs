@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
+using System;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
 
 /// <summary>
 /// Summary description for Utilities
@@ -49,6 +56,20 @@ namespace Utilities {
         public ByteCache (byte[] data, string contentType) {
             _data = data;
             _contentType = contentType;
+        }
+    }
+
+    public sealed class User {
+
+        public static SqlServer.UserInfo GetCurrentUser (HttpRequest request) {
+            if (request.Cookies.AllKeys.Contains("FieldScope_Cookie")) {
+                // NOTE: DO NOT check that (Request.Cookies["FieldScope_Cookie"] == null), 
+                // because this will not only always return false, it will also create 
+                // an empty cookie named FieldScope_Cookie
+                string cookie = request.Cookies["FieldScope_Cookie"].Value;
+                return SqlServer.Service.CheckLogin(cookie);
+            }
+            return null;
         }
     }
 }

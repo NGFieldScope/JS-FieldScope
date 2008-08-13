@@ -32,6 +32,10 @@ public partial class StudentObservation : System.Web.UI.Page {
             Session["FieldScope_Obs_Service"] = service;
             Session["FieldScope_Obs_Lat"] = lat;
             Session["FieldScope_Obs_Lon"] = lon;
+            SqlServer.UserInfo user = Utilities.User.GetCurrentUser(Request);
+            if (user != null) {
+                FieldScope_Observation_School.Text = user.Organization;
+            }
         }
     }
 
@@ -116,10 +120,10 @@ public partial class StudentObservation : System.Web.UI.Page {
                 ClientScript.RegisterStartupScript(
                         typeof(Page),
                         "FieldScopeObservationUploadComplete",
-                    // Use setTimeout here so the load handler on the iframe 
-                    // (defined in js/Observation.js) has a chance to set the 
-                    // FieldScopeObservationUploadComplete property on the 
-                    // document before we try to call it
+                        // Use setTimeout here so the load handler on the iframe 
+                        // (defined in js/Observation.js) has a chance to set the 
+                        // FieldScopeObservationUploadComplete property on the 
+                        // document before we try to call it
                        @"window.setTimeout(function () { document.FieldScopeObservationUploadComplete(); }, 100);",
                        true
                     );
