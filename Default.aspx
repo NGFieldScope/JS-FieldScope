@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>Chesapeake Bay FieldScope 1.0</title>
+    <title>Chesapeake Bay FieldScope Prototype 1.19</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -30,7 +30,7 @@
   
     <script type="text/javascript">
 //<![CDATA[
-      /*globals dojo dijit $addHandler $get FieldScope application */
+      /*globals dojo dijit $addHandler $get FieldScope application editUserDialog feedbackDialog */
       dojo.require("dijit.layout.SplitContainer");
       dojo.require("dijit.layout.ContentPane");
       dojo.require("dijit.layout.BorderContainer");
@@ -99,22 +99,23 @@
         }
       }
       
-      function MakeLayerControlsHtml (layerGroup, id) {
-        if (!id) {
-          id = "FieldScope.LayerTable.Row";
-        }
+      function MakeLayerControlsHtml (layerGroup) {
         var result = '';
         if (layerGroup[0]) {
           result += '<tr>';
           result +=   '<td colspan="3">';
-          result +=     '<a style="text-decoration:none" href="javascript:void(0)" onclick="ToggleVisibility(this, $get(\''+id+'\'));">';
-          result +=       '<img src="images/folder_open.gif" style="vertical-align:text-top" />';
+          result +=     '<a style="text-decoration:none" href="javascript:void(0)" onclick="ToggleVisibility(this, $get(\''+layerGroup[0].id+'\'));">';
+          result +=       '<img src="images/folder_' + (layerGroup[0].visible ? 'open' : 'closed') + '.gif" style="vertical-align:text-top" />';
           result +=       '&nbsp;';
-          result +=       layerGroup[0];
+          result +=       layerGroup[0].name;
           result +=     '</a>';
           result +=   '</td>';
           result += '</tr>';
-          result += '<tr id="'+id+'">';
+          result += '<tr id="'+layerGroup[0].id+'"';
+          if (!layerGroup[0].visible) {
+            result +=  ' style="display:none"';
+          }
+          result += '>';
           result +=   '<td>&nbsp;&nbsp;</td>';
           result +=   '<td colspan="2">';
           result +=     '<table width="100%">';
@@ -122,7 +123,7 @@
         for (var x = 1; x < layerGroup.length; x += 1) {
           result +=     '<tr>';
           if (layerGroup[x] instanceof Array) {
-            result += MakeLayerControlsHtml(layerGroup[x], id + "_" + x);
+            result += MakeLayerControlsHtml(layerGroup[x]);
           } else {
             var layer = layerGroup[x];
             var checkboxId = layer.id + ".Checkbox";
@@ -165,6 +166,7 @@
           result += '</tr>';
         }
         return result;
+        
       }
       
       function WireLayerControls (layer) {
@@ -201,7 +203,7 @@
                 }
               }
             );
-            
+          
           // Build a button for each of the application's mouse modes
           var toolbar = $get("FieldScope.Div.Toolbar");
           for (var x = 0; x < application.mouseModeList.length; x += 1) {
@@ -379,14 +381,14 @@
             <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
               logout
             </asp:LinkButton>
-            &nbsp;
-            <a href="javascript:void(0);" onclick="Edit_User();">
-              settings...
-            </a>
           </td>
           <td align="right"> 
+            <a href="javascript:void(0);" onclick="Edit_User();">
+              Settings...
+            </a>
+            &nbsp;
             <a href="javascript:void(0);" onclick="Send_Feedback();">
-              feedback...
+              Feedback...
             </a>
           </td>
         </tr>
@@ -411,7 +413,7 @@
 	            name="FieldScope.Feedback" 
 	            src="Feedback.aspx"
 	            width="450"
-	            height="250"
+	            height="240"
 	            frameborder="0"
 	            onload="Set_Popup_Delegates(this);">
 	    </iframe>
