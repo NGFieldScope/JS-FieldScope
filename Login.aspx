@@ -45,7 +45,7 @@
               <a href="NewUser.aspx">New User...</a>
             </td>
             <td align="right">
-              <a href="ResetPassword.aspx">Forgot Password...</a>
+              <a href="ResetPassword.aspx">Forgot Password?</a>
             </td>
           </tr>
   		  </table>
