@@ -22,7 +22,7 @@ public partial class StudentObservation : System.Web.UI.Page {
         UNIT_CONVERTERS.Add("NITROGEN[mg/L]", IDENTITY);
         UNIT_CONVERTERS.Add("PHOSPHOROUS[mg/L]", IDENTITY);
         UNIT_CONVERTERS.Add("mS/cm", IDENTITY);
-        UNIT_CONVERTERS.Add("mho/cm", IDENTITY);
+        UNIT_CONVERTERS.Add("mho/cm", delegate(double value) { return value * 1000000.0; });
     }
     
     protected void Page_Load(object sender, EventArgs e) {
