@@ -106,7 +106,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         agriculture : { },
         states : { },
         // Async point layers
-        thenAndNow : { },
+        then : { },
+        now : { },
         photos : { },
         cbibs : { },
         observations : { },
@@ -731,24 +732,49 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                    }));
         }), 0);
       
-      // Chesapeake Then & Now layer
-      var thenAndNowProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
-      thenAndNowProvider.keyword = "jswt";
-      thenAndNowProvider.icon = new GIcon(null, "images/pin.png");
-      thenAndNowProvider.icon.shadow = "images/pin-shadow.png";
-      thenAndNowProvider.icon.iconSize = new GSize(11, 16);
-      thenAndNowProvider.icon.shadowSize = new GSize(23, 16);
-      thenAndNowProvider.icon.iconAnchor = new GPoint(5, 7);
-      thenAndNowProvider.icon.infoWindowAnchor = new GPoint(5, 0);
-      thenAndNowProvider.icon.infoShadowAnchor = new GPoint(11, 8);
-      thenAndNowProvider.clusterIcon = new GIcon(thenAndNowProvider.icon, "images/pin-cl.png");
-      thenAndNowProvider.cssClass = "fieldscope_metalens_thenAndNow_window";
-      this.layers.thenAndNow = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, thenAndNowProvider),
-                                                                 "Chesapeake Then & Now",
-                                                                 "FieldScope.Layer[thenAndNow]",
-                                                                 '<img src="images/pin.png" style="height:16px" />');
-      this.layers.thenAndNow.legendHTML = '<span>Stories from National Geographic\'s <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a></span>';
-      this.layers.thenAndNow.SetVisible(savedState ? savedState.thenAndNowVisible : false);
+      // Chesapeake "Then" layer
+      var thenProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
+      thenProvider.keyword = "thenjs";
+      thenProvider.icon = new GIcon(null, "images/cbthen.png");
+      thenProvider.icon.shadow = "images/cbshadow.png";
+      thenProvider.icon.iconSize = new GSize(15, 18);
+      thenProvider.icon.shadowSize = new GSize(22, 19);
+      thenProvider.icon.iconAnchor = new GPoint(7, 18);
+      thenProvider.icon.infoWindowAnchor = new GPoint(7, 0);
+      thenProvider.icon.infoShadowAnchor = new GPoint(22, 20);
+      thenProvider.clusterIcon = new GIcon(thenProvider.icon, "images/cbthen-cl.png");
+      thenProvider.clusterIcon.iconSize = new GSize(15, 23);
+      thenProvider.clusterIcon.iconAnchor = new GPoint(7, 23);
+      thenProvider.clusterIcon.infoShadowAnchor = new GPoint(22, 27);
+      thenProvider.cssClass = "fieldscope_metalens_thenAndNow_window";
+      this.layers.then = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, thenProvider),
+                                                             "Chesapeake 1607",
+                                                             "FieldScope.Layer[then]",
+                                                             '<img src="images/cbthen.png" style="height:16px" />');
+      this.layers.then.legendHTML = '<span>Stories from National Geographic\'s <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a></span>';
+      this.layers.then.SetVisible(savedState ? savedState.thenVisible : false);
+      
+      // Chesapeake "Now" layer
+      var nowProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
+      nowProvider.keyword = "nowjs";
+      nowProvider.icon = new GIcon(null, "images/cbnow.png");
+      nowProvider.icon.shadow = "images/cbshadow.png";
+      nowProvider.icon.iconSize = new GSize(15, 18);
+      nowProvider.icon.shadowSize = new GSize(22, 19);
+      nowProvider.icon.iconAnchor = new GPoint(7, 18);
+      nowProvider.icon.infoWindowAnchor = new GPoint(7, 0);
+      nowProvider.icon.infoShadowAnchor = new GPoint(22, 20);
+      nowProvider.clusterIcon = new GIcon(thenProvider.icon, "images/cbnow-cl.png");
+      nowProvider.clusterIcon.iconSize = new GSize(15, 23);
+      nowProvider.clusterIcon.iconAnchor = new GPoint(7, 23);
+      nowProvider.clusterIcon.infoShadowAnchor = new GPoint(22, 27);
+      nowProvider.cssClass = "fieldscope_metalens_thenAndNow_window";
+      this.layers.now = new FieldScope.AsyncLayerController(new FieldScope.GAsyncLayer(this.map, nowProvider),
+                                                            "Chesapeake Today",
+                                                            "FieldScope.Layer[now]",
+                                                            '<img src="images/cbnow.png" style="height:16px" />');
+      this.layers.now.legendHTML = '<span>Stories from National Geographic\'s <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a></span>';
+      this.layers.now.SetVisible(savedState ? savedState.nowVisible : false);
       
       // Photos layer
       var photosProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
@@ -864,9 +890,11 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
       this.layerTree = [ 
           null,
           this.layers.observations,
-          this.layers.photos,
-          this.layers.thenAndNow,
           this.layers.cbibs,
+          this.layers.photos,
+          [ "Chesapeake Then & Now",
+            this.layers.then,
+            this.layers.now ],
           [ "Boundaries",
             this.layers.studyArea,
             this.layers.watersheds,
@@ -930,7 +958,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
             bathymetryVisible : this.layers.bathymetry.IsVisible(),
             agricultureVisible : this.layers.agriculture.IsVisible(),
             statesVisible : this.layers.states.IsVisible(),
-            thenAndNowVisible : this.layers.thenAndNow.IsVisible(),
+            thenVisible : this.layers.then.IsVisible(),
+            nowVisible : this.layers.now.IsVisible(),
             photosVisible : this.layers.photos.IsVisible(),
             cbibsVisible : this.layers.cbibs.IsVisible(),
             observationsVisible : this.layers.observations.IsVisible(),
