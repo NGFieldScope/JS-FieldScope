@@ -412,7 +412,7 @@
 	    <iframe id="FieldScope.Feedback" 
 	            name="FieldScope.Feedback" 
 	            src="Feedback.aspx"
-	            width="450"
+	            width="500"
 	            height="240"
 	            frameborder="0"
 	            onload="Set_Popup_Delegates(this);">
