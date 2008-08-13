@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>FieldScope Prototype, Version 1.18</title>
+    <title>Chesapeake Bay FieldScope 1.0</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -45,6 +45,7 @@
       // globals
       application = null;
       editUserDialog = null;
+      feedbackDialog = null;
       
       function UpdateMouseModeButtons () {
         for (var x = 0; x < application.mouseModeList.length; x += 1) {
@@ -262,15 +263,30 @@
         editUserDialog.show();
       }
       
-      function Set_EditUser_Delegate (iframe) {
+      function Send_Feedback () {
+        if (!feedbackDialog) {
+          var pane = dojo.byId('FieldScope.Feedback.Dialog.Pane');
+          feedbackDialog = new dijit.Dialog({
+	          id : "FieldScope.Feedback.Dialog",
+	          refocus : false,
+	          title : "FieldScope Feedback Form"
+          }, pane);
+        }
+        feedbackDialog.show();
+      }
+      
+      function Set_Popup_Delegates (iframe) {
         var doc = iframe.contentWindow || iframe.contentDocument;
         if (doc.document) {
           doc = doc.document;
         }
-        // EditUser.aspx.cs registers a client script that 
-        // calls this method
-        doc.FieldScopeSaveUserComplete = function () {
+        // EditUser.aspx.cs and Feedback.aspx.cs register client scripts 
+        // that call these methods
+        doc.FieldScopeEditUserComplete = function () {
             editUserDialog.hide();
+          };
+        doc.FieldScopeFeedbackComplete = function () {
+            feedbackDialog.hide();
           };
       }
 //]]>
@@ -355,17 +371,26 @@
         </div>
         <div id="FieldScope_Pasteboard" style="background-color:#F0F0F2;overflow:auto"></div>
       </div>
-      <div style="margin:2px">
-        Logged in as 
-        <asp:Label id="FieldScope_Username" runat="server" Text="" />
-        <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
-          logout
-        </asp:LinkButton>
-        &nbsp;
-        <a href="javascript:void(0)" onclick="Edit_User();">
-          settings...
-        </a>
-      </div>
+      <table style="width:100%;margin:2px">
+        <tr>
+          <td align="left">
+            Logged in as 
+            <asp:Label id="FieldScope_Username" runat="server" Text="" />
+            <asp:LinkButton ID="FieldScope_Logout" runat="server" OnClick="LogoutButton_Click" Visible="false">
+              logout
+            </asp:LinkButton>
+            &nbsp;
+            <a href="javascript:void(0);" onclick="Edit_User();">
+              settings...
+            </a>
+          </td>
+          <td align="right"> 
+            <a href="javascript:void(0);" onclick="Send_Feedback();">
+              feedback...
+            </a>
+          </td>
+        </tr>
+      </table>
       <input id="FieldScope_State" runat="server" type="text" style="display:none" />
       <input id="FieldScope_Cookie" runat="server" type="text" style="display:none" />
     </form>
@@ -377,7 +402,18 @@
 	            width="450"
 	            height="250"
 	            frameborder="0"
-	            onload="Set_EditUser_Delegate(this);">
+	            onload="Set_Popup_Delegates(this);">
+	    </iframe>
+	  </div>
+    
+    <div id="FieldScope.Feedback.Dialog.Pane" style="display: none;">
+	    <iframe id="FieldScope.Feedback" 
+	            name="FieldScope.Feedback" 
+	            src="Feedback.aspx"
+	            width="450"
+	            height="250"
+	            frameborder="0"
+	            onload="Set_Popup_Delegates(this);">
 	    </iframe>
 	  </div>
     
