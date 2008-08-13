@@ -548,7 +548,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           visible : savedState ? savedState.permeabilityVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src=sLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
+          legendHTML : '<img src=ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001</p>'
                        
         };
