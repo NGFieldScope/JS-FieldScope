@@ -17,11 +17,6 @@
       <div>
 	      <table>
 	        <tr>
-	          <td align="left" colspan="2">
-	            FieldScope Feedback Form:
-	          </td>
-	        </tr>
-	        <tr>
             <td align="right" style="font-weight:bold">
               Your Name:
             </td>
