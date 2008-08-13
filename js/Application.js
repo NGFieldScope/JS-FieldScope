@@ -219,7 +219,8 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
-        query.outFields = [ "AG_TP_PER", "FOR_TP_PER", "MIX_TP_PER", "URB_TP_PER", "DEP_TP_PER", "PNT_TP_PER",
+        query.outFields = [ "TRIB_BAS_1",
+                            "AG_TP_PER", "FOR_TP_PER", "MIX_TP_PER", "URB_TP_PER", "DEP_TP_PER", "PNT_TP_PER",
                             "AG_TN_PER", "FOR_TN_PER", "MIX_TN_PER", "URB_TN_PER", "DEP_TN_PER", "PNT_TN_PER",
                             "AG_SD_PER", "FOR_SD_PER", "MIX_SD_PER", "URB_SD_PER" ];
         task.execute(query, false, function (result) {
@@ -228,20 +229,25 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               var html = '';
               html += '<table>';
               html +=   '<tr>';
-              html +=     '<td style="font-weight:bold;text-align:center" colspan="2">';
+              html +=     '<td style="font-weight:bold;text-align:center" colspan="3">';
               html +=       '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
               html +=       '&nbsp;Sources of Nutrient & Sediment Runoff';
               html +=     '</td>';
               html +=   '</tr>';
               html +=   '<tr>';
-              html +=     '<td align="right" colspan="2">';
+              html +=     '<td style="font-weight:bold">Basin:</td>';
+              html +=     '<td id="FieldScope_Runoff_Basin">';
+              html +=       attributes.TRIB_BAS_1;
+              html +=     '</td>';
+              html +=     '<td align="right">';
               html +=       '<img id="FieldScope_CBIBS_SaveGraph_Button"';
               html +=           ' style="display:block;border:2px outset"';
               html +=           ' src="images/clipboard-large.gif"';
               html +=           ' alt="Save"';
-              html +=           ' onclick="document.FieldScopeNutrientsSaveGraph($get(\'FieldScope_Runoff_Phosphorous\'),';
-              html +=                                                          ' $get(\'FieldScope_Runoff_Nitrogen\'),';
-              html +=                                                          ' $get(\'FieldScope_Runoff_Sediment\'));"';
+              html +=           ' onclick="document.FieldScopeNutrientsSaveGraph($get(\'FieldScope_Runoff_Basin\'),';
+              html +=                                                           '$get(\'FieldScope_Runoff_Phosphorous\'),';
+              html +=                                                           '$get(\'FieldScope_Runoff_Nitrogen\'),';
+              html +=                                                           '$get(\'FieldScope_Runoff_Sediment\'));"';
               html +=           ' onmousedown="this.style.borderStyle=\'inset\';"';
               html +=           ' onmouseup="this.style.borderStyle=\'outset\';"';
               html +=           ' onmouseout="this.style.borderStyle=\'outset\';" />';
@@ -249,7 +255,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=   '</tr>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold">Phosphorous:</td>';
-              html +=     '<td>';
+              html +=     '<td colspan="2">';
               html +=       '<img src="http://chart.apis.google.com/chart';
               html +=                 '?cht=p';
               html +=                 '&chs=220x75';
@@ -264,7 +270,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=   '</tr>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold">Nitrogen:</td>';
-              html +=     '<td>';
+              html +=     '<td colspan="2">';
               html +=       '<img src="http://chart.apis.google.com/chart';
               html +=                 '?cht=p';
               html +=                 '&chs=220x75';
@@ -279,7 +285,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
               html +=   '</tr>';
               html +=   '<tr>';
               html +=     '<td style="font-weight:bold">Sediment:</td>';
-              html +=     '<td>';
+              html +=     '<td colspan="2">';
               html +=       '<img src="http://chart.apis.google.com/chart';
               html +=                 '?cht=p';
               html +=                 '&chs=220x75';
@@ -296,7 +302,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           });
       });
     
-    document.FieldScopeNutrientsSaveGraph = function (phosphorousImg, nitrogenImg, sedimentImg) {
+    document.FieldScopeNutrientsSaveGraph = function (basinTd, phosphorousImg, nitrogenImg, sedimentImg) {
         var table = document.createElement("table");
         table.cellSpacing = 0;
         table.style.height = "258px";
@@ -315,18 +321,16 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           table.style.cssFloat = "left";
         }
         var tbody = document.createElement("tbody");
-        var row1 = document.createElement("tr");
-        var cell11 = document.createElement("td");
-        cell11.appendChild(document.createTextNode("Phosphorous:"));
-        row1.appendChild(cell11);
-        var cell12 = document.createElement("td");
-        var pImg = document.createElement("img");
-        pImg.src = phosphorousImg.src;
-        cell12.appendChild(pImg);
-        row1.appendChild(cell12);
-        var cell13 = document.createElement("td");
-        cell13.rowSpan = 3;
-        cell13.style.verticalAlign = "top";
+        var row0 = document.createElement("tr");
+        var cell01 = document.createElement("td");
+        cell01.appendChild(document.createTextNode("Basin:"));
+        row0.appendChild(cell01);
+        var cell02 = document.createElement("td");
+        cell02.innerHTML = basinTd.innerHTML;
+        row0.appendChild(cell02);
+        var cell03 = document.createElement("td");
+        cell03.rowSpan = 3;
+        cell03.style.verticalAlign = "top";
         var closeButton = document.createElement("input");
         closeButton.type = "button";
         closeButton.value = "X";
@@ -339,14 +343,26 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         closeButton.onclick = function () {
             table.parentNode.removeChild(table);
           };
-        cell13.appendChild(closeButton);
-        row1.appendChild(cell13);
+        cell03.appendChild(closeButton);
+        row0.appendChild(cell03);
+        tbody.appendChild(row0);
+        var row1 = document.createElement("tr");
+        var cell11 = document.createElement("td");
+        cell11.appendChild(document.createTextNode("Phosphorous:"));
+        row1.appendChild(cell11);
+        var cell12 = document.createElement("td");
+        cell12.colspan = 2;
+        var pImg = document.createElement("img");
+        pImg.src = phosphorousImg.src;
+        cell12.appendChild(pImg);
+        row1.appendChild(cell12);
         tbody.appendChild(row1);
         var row2 = document.createElement("tr");
         var cell21 = document.createElement("td");
         cell21.appendChild(document.createTextNode("Nitrogen:"));
         row2.appendChild(cell21);
         var cell22 = document.createElement("td");
+        cell22.colspan = 2;
         var nImg = document.createElement("img");
         nImg.src = nitrogenImg.src;
         cell22.appendChild(nImg);
@@ -357,6 +373,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         cell31.appendChild(document.createTextNode("Sediment:"));
         row3.appendChild(cell31);
         var cell32 = document.createElement("td");
+        cell32.colspan = 2;
         var sImg = document.createElement("img");
         sImg.src = sedimentImg.src;
         cell32.appendChild(sImg);
@@ -403,7 +420,6 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
             }
           });
       });
-    
     
     this.IdentifyPhysiographyDelegate = Function.createDelegate(this, function (loc, callback) {
         var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_physiography/MapServer/0");
