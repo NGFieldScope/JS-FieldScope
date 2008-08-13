@@ -105,6 +105,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         bathymetry : { },
         agriculture : { },
         states : { },
+        physiography : { },
         // Async point layers
         then : { },
         now : { },
@@ -144,6 +145,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         if (this.layers.watersheds.tileLayer && this.layers.watersheds.visible) {
           tileLayers.push(this.layers.watersheds.tileLayer);
         }
+        if (this.layers.physiography.tileLayer && this.layers.physiography.visible) {
+          tileLayers.push(this.layers.physiography.tileLayer);
+        }
         if (this.layers.states.tileLayer && this.layers.states.visible) {
           tileLayers.push(this.layers.states.tileLayer);
         }
@@ -165,6 +169,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         FieldScope.DomUtils.hide(this.layers.landcover.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.bathymetry.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.watersheds.loadingIndicator);
+        FieldScope.DomUtils.hide(this.layers.physiography.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.states.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
       });
@@ -506,7 +511,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
           var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
-                                                                 { opacity: 0.45 },
+                                                                 { opacity: 0.55 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
                                                                      this.UpdateMapType();
@@ -732,6 +737,36 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                    }));
         }), 0);
       
+      // Physiography layer
+      this.layers.physiography = {
+          name : "Physiographic Regions",
+          id : "FieldScope.Layer[physiography]",
+          IsVisible : Function.createDelegate(this, function () {
+              return this.layers.physiography.visible;
+            }),
+          SetVisible : Function.createDelegate(this, function (visible) {
+              this.layers.physiography.visible = visible;
+              FieldScope.DomUtils.show(this.layers.physiography.loadingIndicator);
+              // use setTimeout so the checkbox updates immediately
+              window.setTimeout(this.UpdateMapType, 0);
+            }),
+          loadingIndicator : null,
+          visible : savedState ? savedState.physiographyVisible : false,
+          tileLayer : null,
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_physiography/MapServer/tile/6/24/18.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_physiography/MapServer')+'" />'
+        };
+      window.setTimeout(Function.createDelegate(this, function () {
+          // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+          // constructor again before the first one is finished causes IE6 to hang
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_physiography/MapServer",
+                                                                 { opacity: 0.65 },
+                                                                 Function.createDelegate(this, function (layer) {
+                                                                     this.layers.physiography.tileLayer = layer;
+                                                                     this.UpdateMapType();
+                                                                   }));
+        }), 0);
+      
       // Chesapeake "Then" layer
       var thenProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
       thenProvider.keyword = "thenjs";
@@ -892,20 +927,29 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           this.layers.observations,
           this.layers.cbibs,
           this.layers.photos,
-          [ "Chesapeake Then & Now",
+          [ { name    : "Chesapeake Then & Now", 
+              id      : "FieldScope.LayerGroup[thenAndNow]", 
+              visible : savedState ? savedState.thenAndNowOpen : false },
             this.layers.then,
             this.layers.now ],
-          [ "Boundaries",
+          [ { name    : "Boundaries", 
+              id      : "FieldScope.LayerGroup[boundaries]", 
+              visible : savedState ? savedState.boundariesOpen : true },
             this.layers.studyArea,
             this.layers.watersheds,
-            this.layers.states ],
-          [ "Land Use",
+            this.layers.states,
+            this.layers.physiography ],
+          [ { name    : "Land Use", 
+              id      : "FieldScope.LayerGroup[landuse]", 
+              visible : savedState ? savedState.landuseOpen : true },
             this.layers.landcover,
             this.layers.permeability,
             this.layers.impervious,
             this.layers.agriculture,
             this.layers.nutrients ],
-          [ "Basemap",
+          [ { name    : "Basemap", 
+              id      : "FieldScope.LayerGroup[basemap]", 
+              visible : savedState ? savedState.basemapOpen : true },
             this.layers.streets,
             this.layers.bathymetry,
             this.layers.satellite,
@@ -939,7 +983,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
       //TODO: provide information about how to enable Javascript, what
       // browsers are supported, etc...
       //
-      mapDiv.innerHTML = "Sorry, your browser is not compatable with Google Maps";
+      mapDiv.innerHTML = "Sorry, your browser is not compatable with Google Maps. Make sure Javascript is enabled.";
     }
     
     this.GetState = function () {
@@ -963,7 +1007,12 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
             photosVisible : this.layers.photos.IsVisible(),
             cbibsVisible : this.layers.cbibs.IsVisible(),
             observationsVisible : this.layers.observations.IsVisible(),
-            studyAreaVisible : this.layers.studyArea.IsVisible()
+            studyAreaVisible : this.layers.studyArea.IsVisible(),
+            physiographyVisible : this.layers.physiography.IsVisible(),
+            thenAndNowOpen : FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[thenAndNow]")),
+            boundariesOpen : FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[boundaries]")),
+            landuseOpen : FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[landuse]")),
+            basemapOpen : FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[basemap]"))
           };
       };
   };
