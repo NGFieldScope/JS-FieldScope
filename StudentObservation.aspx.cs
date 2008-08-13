@@ -13,11 +13,16 @@ public partial class StudentObservation : System.Web.UI.Page {
     static StudentObservation () {
         UNIT_CONVERTERS.Add("C", IDENTITY);
         UNIT_CONVERTERS.Add("F", delegate(double value) { return (value - 32.0) * (100.0 / (212.0 - 32.0)); });
-        UNIT_CONVERTERS.Add("PSU", IDENTITY);
+        UNIT_CONVERTERS.Add("psu", IDENTITY);
+        UNIT_CONVERTERS.Add("ppt", IDENTITY);
+        UNIT_CONVERTERS.Add("ppm", delegate(double value) { return value / 1000.0; });
         UNIT_CONVERTERS.Add("NTU", IDENTITY);
+        UNIT_CONVERTERS.Add("FTU", IDENTITY);
         UNIT_CONVERTERS.Add("OXYGEN[mg/L]", IDENTITY);
         UNIT_CONVERTERS.Add("NITROGEN[mg/L]", IDENTITY);
         UNIT_CONVERTERS.Add("PHOSPHOROUS[mg/L]", IDENTITY);
+        UNIT_CONVERTERS.Add("mS/cm", IDENTITY);
+        UNIT_CONVERTERS.Add("mho/cm", IDENTITY);
     }
     
     protected void Page_Load(object sender, EventArgs e) {

@@ -26,8 +26,8 @@ FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
         result +=              'service='+encodeURIComponent(this.serviceName)+'&';
         result +=              'lat='+encodeURIComponent(location.lat().toString())+'&';
         result +=              'lon='+encodeURIComponent(location.lng().toString())+'"';
-        result +=        ' width="500"';
-        result +=        ' height="220"';
+        result +=        ' width="550"';
+        result +=        ' height="300"';
         result +=        ' frameborder="0"';
         result +=        ' marginheight="0"';
         result +=        ' marginwidth="0">';
