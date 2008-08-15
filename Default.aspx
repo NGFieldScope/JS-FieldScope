@@ -347,7 +347,7 @@
         </div>
         <div dojoType="dijit.layout.ContentPane" 
              region="center"
-             style="border:1px inset gray;width:100%;height:598px" 
+             style="border:1px inset gray;width:100%;height:598px;overflow:hidden" 
              id="FieldScope.Div.Map">
           Map
         </div>

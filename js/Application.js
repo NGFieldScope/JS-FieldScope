@@ -42,7 +42,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
     this.urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
     
     this.map = null;
-    this.mapTypes = null;
+    this.overview = null;
     this.mapExtension = null;
     
     this.searchTool = null;
@@ -160,6 +160,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                          { errorMessage:"No data available",
                                            maxResolution : 15,
                                            minResolution : 6 }));
+        this.overview.setMapType(G_PHYSICAL_MAP);
         FieldScope.DomUtils.hide(this.layers.terrain.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.satellite.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.nutrients.loadingIndicator);
@@ -455,10 +456,11 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
     if (GBrowserIsCompatible()) {
       this.map = new GMap2(mapDiv);
       var blankMap = new GMapType([], G_SATELLITE_MAP.getProjection(),  "FieldScope", { maxResolution : 15, minResolution : 6 });
+      this.map.setCenter(new GLatLng(39.9265, -77.2558), 6, blankMap);
+      this.overview = new GOverviewMapControl();
+      this.map.addControl(this.overview);
       if (savedState) {
         this.map.setCenter(new GLatLng(savedState.centerLatitude, savedState.centerLongitude), savedState.zoomLevel, blankMap);
-      } else {
-        this.map.setCenter(new GLatLng(39.9265, -77.2558), 6, blankMap);
       }
       this.map.addControl(new GLargeMapControl());
       this.map.enableScrollWheelZoom();
