@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>Chesapeake Bay FieldScope Prototype 1.19</title>
+    <title>Chesapeake Bay FieldScope Prototype 1.20</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -315,7 +315,7 @@
       </asp:ScriptManager>
       <div dojoType="dijit.layout.BorderContainer" 
            design="sidebar" 
-           style="height:600px">
+           style="height:600px;width:100%">
         <div dojoType="dijit.layout.BorderContainer" 
              design="sidebar" 
              style="width:200px;height:600px;border-bottom:1px solid gray" 
@@ -347,7 +347,7 @@
         </div>
         <div dojoType="dijit.layout.ContentPane" 
              region="center"
-             style="border:1px inset gray;width:100%;height:598px;overflow:hidden" 
+             style="border:1px inset gray;overflow:hidden;height:100%" 
              id="FieldScope.Div.Map">
           Map
         </div>

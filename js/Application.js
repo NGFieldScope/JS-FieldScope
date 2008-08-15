@@ -454,6 +454,10 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
     // Here is where we actually do the setup, now that our methods have all been defined
     //
     if (GBrowserIsCompatible()) {
+      if (false /*@cc_on || true @*/) {
+        //HACK - the overview doesn't work properly in IE unless we do this
+        mapDiv.style.width = "100%";
+      }
       this.map = new GMap2(mapDiv);
       var blankMap = new GMapType([], G_SATELLITE_MAP.getProjection(),  "FieldScope", { maxResolution : 15, minResolution : 6 });
       this.map.setCenter(new GLatLng(39.9265, -77.2558), 6, blankMap);
