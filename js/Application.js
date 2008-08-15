@@ -560,7 +560,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.5 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.permeability.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -591,7 +593,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.landcover.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.landcover.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -622,7 +626,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.impervious.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.impervious.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -654,7 +660,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 1.0 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.watersheds.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.watersheds.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -686,7 +694,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.nutrients.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.nutrients.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -717,7 +727,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.75 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.bathymetry.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.bathymetry.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -748,7 +760,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.55 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.agriculture.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.agriculture.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -779,7 +793,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.states.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.states.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -812,7 +828,9 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.physiography.tileLayer = layer;
-                                                                     this.UpdateMapType();
+                                                                     if (this.layers.physiography.IsVisible()) {
+                                                                       this.UpdateMapType();
+                                                                     }
                                                                    }));
         }), 0);
       
@@ -1029,6 +1047,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
         ];
       
       this.SetMouseMode(this.mouseModes.navigate);
+      this.UpdateMapType();
       
     } else {
       //
