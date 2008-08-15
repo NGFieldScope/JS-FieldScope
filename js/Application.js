@@ -158,7 +158,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
                                          G_SATELLITE_MAP.getProjection(), 
                                          "FieldScope",
                                          { errorMessage:"No data available",
-                                           maxResolution : 17,
+                                           maxResolution : 15,
                                            minResolution : 6 }));
         FieldScope.DomUtils.hide(this.layers.terrain.loadingIndicator);
         FieldScope.DomUtils.hide(this.layers.satellite.loadingIndicator);
@@ -454,7 +454,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
     //
     if (GBrowserIsCompatible()) {
       this.map = new GMap2(mapDiv);
-      var blankMap = new GMapType([], G_SATELLITE_MAP.getProjection(),  "FieldScope", { maxResolution : 17, minResolution : 6 });
+      var blankMap = new GMapType([], G_SATELLITE_MAP.getProjection(),  "FieldScope", { maxResolution : 15, minResolution : 6 });
       if (savedState) {
         this.map.setCenter(new GLatLng(savedState.centerLatitude, savedState.centerLongitude), savedState.zoomLevel, blankMap);
       } else {
@@ -555,7 +555,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
           var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
-                                                                 { opacity: 0.55 },
+                                                                 { opacity: 0.5 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
                                                                      this.UpdateMapType();
