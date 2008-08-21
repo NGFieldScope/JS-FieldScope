@@ -199,8 +199,8 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
           if (reading.Measurements[x].Name === "latitude") {
             lat = reading.Measurements[x].Value;
           } else if (reading.Measurements[x].Name === "longitude") {
-            lng = -reading.Measurements[x].Value;
-          } else if (reading.Measurements[x].Name) {
+            lng = reading.Measurements[x].Value;
+          } else if (reading.Measurements[x].Nogame) {
             measurements.push(reading.Measurements[x]);
           }
         }
