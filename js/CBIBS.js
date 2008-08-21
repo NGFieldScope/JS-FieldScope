@@ -34,7 +34,6 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
     this.icon.infoShadowAnchor = new GPoint(22, 22);
     
     this.CreateInfoWindowHTML = function (platform, measurements) {
-        console.log(measurements);
         var tab1 = "<div>";
         tab1 += '<table cellspacing="3">';
         tab1 += '<tr style="font-weight:bold;font-size:8pt">';
@@ -209,7 +208,6 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
             measurements.push(reading.Measurements[x]);
           }
         }
-        console.log(measurements);
         var marker = new GMarker(new GLatLng(lat, lng), this.icon);
         GEvent.addListener(marker, "click", Function.createDelegate(this, function () {
             this.OnClick(marker, reading.Platform, measurements);
