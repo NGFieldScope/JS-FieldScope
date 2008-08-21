@@ -178,6 +178,17 @@
           });
       }
       
+      function UpdateLayerControls () {
+        // Update layer controls
+        for (var layerName in application.layers) {
+          var layer = application.layers[layerName];
+          if (layer) {
+            var checkboxId = layer.id + ".Checkbox";
+            dijit.byId(checkboxId).setAttribute("checked", layer.IsVisible());
+          }
+        }
+      }
+      
       dojo.addOnLoad(function () {
           
           var savedState = null;
@@ -189,6 +200,7 @@
           application = new FieldScope.Application(
               savedState,
               $get("FieldScope.Div.Map"),
+              UpdateLayerControls,
               function () {
                 return $get("FieldScope.Input.SearchText").value;
               },

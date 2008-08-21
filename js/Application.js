@@ -1,4 +1,4 @@
-/*global FieldScope, esri, Sys, Type $get CBIBSService MetaLensService */
+/*global FieldScope, esri, Sys, Type $get $addHandler CBIBSService MetaLensService */
 /*global GBrowserIsCompatible GMap2  GLargeMapControl G_HYBRID_MAP G_PHYSICAL_MAP G_SATELLITE_MAP */
 /*global GEvent GIcon GLatLng GMapType GMarker GPoint GSize */
 
@@ -37,7 +37,11 @@ FieldScope.AsyncLayerController.registerClass('FieldScope.AsyncLayerController')
 // ----------------------------------------------------------------------------
 // Application class
 
-FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearchResultsFn) {
+FieldScope.Application = function (savedState, 
+                                   mapDiv, 
+                                   updateLayerControlsFn, 
+                                   getSearchTextFn, 
+                                   setSearchResultsFn) {
     
     this.urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
     
@@ -48,6 +52,7 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
     this.searchTool = null;
     this.GetSearchText = getSearchTextFn;
     this.SetSearchResults = setSearchResultsFn;
+    this.UpdateLayerControls = updateLayerControlsFn;
     
     this.OnSearchKey = Function.createDelegate(this, function (event) {
         if (/* backspace */ (event.keyCode === 0x08) || 
@@ -450,6 +455,29 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
           });
       });
     
+    this.OnResetDelegate = Function.createDelegate(this, function (evt) {
+        this.layers.terrain.visible = true;
+        this.layers.satellite.visible = false;
+        this.layers.streets.visible = false;
+        this.layers.landcover.visible = false;
+        this.layers.permeability.visible = false;
+        this.layers.impervious.visible = false;
+        this.layers.watersheds.visible = false;
+        this.layers.nutrients.visible = false;
+        this.layers.bathymetry.visible = false;
+        this.layers.agriculture.visible = false;
+        this.layers.states.visible = false;
+        this.layers.physiography.visible = false;
+        this.UpdateMapType();
+        this.layers.then.SetVisible(false);
+        this.layers.now.SetVisible(false);
+        this.layers.photos.SetVisible(false);
+        this.layers.cbibs.SetVisible(false);
+        this.layers.observations.SetVisible(false);
+        this.layers.studyArea.SetVisible(true);
+        this.UpdateLayerControls();
+      });
+    
     //
     // Here is where we actually do the setup, now that our methods have all been defined
     //
@@ -475,6 +503,19 @@ FieldScope.Application = function (savedState, mapDiv, getSearchTextFn, setSearc
       var dummy2 = this.map.getExtInfoWindow();
       
       this.searchTool = new FieldScope.GSearch(this.map, this.SetSearchResults);
+      
+      //HACKETY HACK HACK- method for finding the reset button in the GLargeMapControl
+      // thanks to http://groups.google.com.pk/group/Google-Maps-API/browse_thread/thread/42afb33cb2c94d49
+      var divs = this.map.getContainer().getElementsByTagName('div');
+      var resetButtonDiv;
+      for (var i=0; i<divs.length; i++){
+        if (divs[i].getAttribute('log') == 'center_result') {
+          resetButtonDiv = divs[i];
+        }
+      }
+      if (resetButtonDiv) {
+        $addHandler(resetButtonDiv, "click", this.OnResetDelegate);
+      }
       
       // Terrain layer
       this.layers.terrain = {
