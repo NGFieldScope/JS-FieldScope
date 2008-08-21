@@ -8,12 +8,18 @@ public partial class CBIBSGraph : System.Web.UI.Page {
 
     static Utilities.NameMap NAMES = new Utilities.NameMap();
     static CBIBSGraph () {
+        // Water quality variables
         NAMES.Add("concentration_of_chlorophyll_in_sea_water", "Chlorophyll A");
         NAMES.Add("concentration_of_oxygen_in_sea_water", "Dissolved Oxygen");
         NAMES.Add("simple_turbidity", "Turbidity");
         NAMES.Add("sea_water_electrical_conductivity", "Water Conductivity");
         NAMES.Add("sea_water_salinity", "Water Salinity");
         NAMES.Add("sea_water_temperature", "Water Temperature");
+        // Atmospheric parameters
+        NAMES.Add("air_pressure", "Air Pressure");
+        NAMES.Add("air_temperature", "Air Temperature");
+        NAMES.Add("relative_humidity", "Relative Humidity");
+        NAMES.Add("wind_speed", "Wind Speed");
     }
     
     static void encode (double value, double min, double max, StringBuilder sb) {

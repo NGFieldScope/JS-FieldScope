@@ -12,7 +12,11 @@ FieldScope.CBIBS.FieldNames = {
     simple_turbidity : "Turbidity",
     sea_water_electrical_conductivity : "Water Conductivity",
     sea_water_salinity : "Water Salinity",
-    sea_water_temperature : "Water Temperature"
+    sea_water_temperature : "Water Temperature",
+    air_pressure : "Air Pressure",
+    air_temperature : "Air Temperature",
+    relative_humidity : "Relative Humidity",
+    wind_speed : "Wind Speed"
   };
 
 FieldScope.CBIBS.GDataProvider = function (map, service) {
@@ -30,6 +34,7 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
     this.icon.infoShadowAnchor = new GPoint(22, 22);
     
     this.CreateInfoWindowHTML = function (platform, measurements) {
+        console.log(measurements);
         var tab1 = "<div>";
         tab1 += '<table cellspacing="3">';
         tab1 += '<tr style="font-weight:bold;font-size:8pt">';
@@ -200,10 +205,11 @@ FieldScope.CBIBS.GDataProvider = function (map, service) {
             lat = reading.Measurements[x].Value;
           } else if (reading.Measurements[x].Name === "longitude") {
             lng = reading.Measurements[x].Value;
-          } else if (reading.Measurements[x].Nogame) {
+          } else if (reading.Measurements[x].Name) {
             measurements.push(reading.Measurements[x]);
           }
         }
+        console.log(measurements);
         var marker = new GMarker(new GLatLng(lat, lng), this.icon);
         GEvent.addListener(marker, "click", Function.createDelegate(this, function () {
             this.OnClick(marker, reading.Platform, measurements);
