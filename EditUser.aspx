@@ -37,7 +37,11 @@
   		    </tr>
   		    <tr>
             <td colspan="2" style="font-weight:bold">
-              <asp:CheckBox ID="FieldScope_Password_CheckBox" runat="server" Text="Change Password" OnCheckedChanged="PasswordCheckbox_Click" AutoPostBack="True" />
+              <asp:CheckBox ID="FieldScope_Password_CheckBox" 
+                            runat="server" 
+                            Text="Change Password" 
+                            OnCheckedChanged="PasswordCheckbox_Click" 
+                            AutoPostBack="True" />
   		       </td>
   		    </tr>
   		    <tr>
@@ -45,7 +49,13 @@
               New Password:
             </td>
             <td>
-              <asp:TextBox id="FieldScope_Password_1" runat="server" width="170px" textmode="Password" Enabled="False" ReadOnly="True" BackColor="silver" />
+              <asp:TextBox id="FieldScope_Password_1" 
+                           runat="server" 
+                           width="170px" 
+                           textmode="Password" 
+                           Enabled="False" 
+                           ReadOnly="True" 
+                           BackColor="silver" />
             </td>
   		    </tr>
   		    <tr>
@@ -53,7 +63,13 @@
               Re-Type Password:
             </td>
             <td>
-              <asp:TextBox id="FieldScope_Password_2" runat="server" width="170px" textmode="Password" Enabled="False" ReadOnly="True" BackColor="silver" />
+              <asp:TextBox id="FieldScope_Password_2" 
+                           runat="server" 
+                           width="170px" 
+                           textmode="Password" 
+                           Enabled="False" 
+                           ReadOnly="True" 
+                           BackColor="silver" />
             </td>
   		    </tr>
 		      <tr>
