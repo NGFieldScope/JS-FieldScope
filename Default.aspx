@@ -368,7 +368,7 @@
           </div>
           <div dojoType="dijit.layout.ContentPane" 
                region="center"
-               style="height:462px;margin-top:8px">
+               style="margin-top:8px;overflow:auto">
             <span style="font-weight:bold">Chesapeake Bay:</span>
             <div style="width:100%;font-size:smaller" id="FieldScope.Layers.Controls"></div>
           </div>
