@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Web.UI;
 
@@ -33,17 +31,10 @@ public partial class Feedback : System.Web.UI.Page {
         msg.Append("Message: ");
         msg.AppendLine();
         msg.Append(FieldScope_Feedback.Text);
-        MailMessage mail = new MailMessage();
-        mail.From = new MailAddress("noreply@geode1.sesp.northwestern.edu");
-        mail.To.Add("soconnor@ngs.org");
-        mail.To.Add("ERussell@ngs.org");
-        mail.Subject = "FieldScope Feedback";
-        mail.Body = msg.ToString();
-        SmtpClient mailClient = new SmtpClient("geode1.sesp.northwestern.edu");
-        mailClient.UseDefaultCredentials = false;
-        mailClient.Credentials = new NetworkCredential("smtp_user", "ches$by1");
-        mailClient.Port = 25;
-        mailClient.Send(mail);
+        
+        Utilities.Email.Send(new string[] { "soconnor@ngs.org", "ERussell@ngs.org" },
+                             "FieldScope Feedback",
+                             msg.ToString());
         
         ClientScript.RegisterStartupScript(typeof(Page),
                                            "FieldScopeFeedbackComplete",

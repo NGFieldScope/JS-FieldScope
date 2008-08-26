@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using System;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
-using System.Web.UI;
 
 /// <summary>
 /// Summary description for Utilities
@@ -70,6 +67,24 @@ namespace Utilities {
                 return SqlServer.Service.CheckLogin(cookie);
             }
             return null;
+        }
+    }
+
+    public sealed class Email {
+
+        public static void Send (string[] to, string subject, string message) {
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress("FieldScope <noreply@geode1.sesp.northwestern.edu>");
+            foreach (string recipient in to) {
+                mail.To.Add(recipient);
+            }
+            mail.Subject = subject;
+            mail.Body = message;
+            SmtpClient mailClient = new SmtpClient("geode1.sesp.northwestern.edu");
+            mailClient.UseDefaultCredentials = false;
+            mailClient.Credentials = new NetworkCredential("smtp_user", "ches$by1");
+            mailClient.Port = 25;
+            mailClient.Send(mail);
         }
     }
 }
