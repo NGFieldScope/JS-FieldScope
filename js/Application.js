@@ -508,8 +508,8 @@ FieldScope.Application = function (savedState,
       // thanks to http://groups.google.com.pk/group/Google-Maps-API/browse_thread/thread/42afb33cb2c94d49
       var divs = this.map.getContainer().getElementsByTagName('div');
       var resetButtonDiv;
-      for (var i=0; i<divs.length; i++){
-        if (divs[i].getAttribute('log') == 'center_result') {
+      for (var i=0; i<divs.length; i += 1){
+        if (divs[i].getAttribute('log') === 'center_result') {
           resetButtonDiv = divs[i];
         }
       }
