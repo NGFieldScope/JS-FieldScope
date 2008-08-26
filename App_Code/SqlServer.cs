@@ -5,18 +5,22 @@ using System.Web.Security;
 
 namespace SqlServer {
 
+    public enum AuthLevel { Guest, User, Admin };
+
     public class UserInfo {
+
+        public static readonly UserInfo GUEST = new UserInfo();
 
         private readonly string _username;
         private readonly string _state;
-        private readonly bool _isAdmin;
+        private readonly AuthLevel _authLevel;
         private readonly string _organization;
         private readonly string _email;
         private readonly string _cookie;
 
         public string Username { get { return _username; } }
         public string State { get { return _state; } }
-        public bool Admin { get { return _isAdmin; } }
+        public AuthLevel AuthLevel { get { return _authLevel; } }
         public string Organization { get { return _organization; } }
         public string Email { get { return _email; } }
         public string Cookie { get { return _cookie; } }
@@ -30,14 +34,23 @@ namespace SqlServer {
             _cookie = cookie.TrimEnd();
             _username = username.TrimEnd();
             _state = state.TrimEnd();
-            _isAdmin = admin;
+            _authLevel = admin ? AuthLevel.Admin : AuthLevel.User;
             _organization = organization;
             _email = email;
         }
 
+        private UserInfo () {
+            _cookie = "0";
+            _username = "guest";
+            _state = "";
+            _authLevel = AuthLevel.Guest;
+            _organization = "";
+            _email = "";
+        }
+        
         public override string ToString () {
-            return string.Format("{{User:{0},Organization:{1},Email:{2},Admin:{3},State:{4}}}",
-                                 _username, _organization, _email, _isAdmin, _state);
+            return string.Format("{{User:{0},Organization:{1},Email:{2},AuthLevel:{3},State:{4}}}",
+                                 _username, _organization, _email, _authLevel, _state);
         }
     }
 
@@ -149,6 +162,9 @@ namespace SqlServer {
         }
 
         public static UserInfo CheckLogin (string cookie) {
+            if (cookie.Equals(UserInfo.GUEST.Cookie)) {
+                return UserInfo.GUEST;
+            }
             SqlCommand command = new SqlCommand("SELECT username,state,admin,organization,email FROM users WHERE cookie = @Cookie", conn);
             command.Parameters.Add("@Cookie", SqlDbType.VarChar, 50).Value = cookie;
             conn.Open();

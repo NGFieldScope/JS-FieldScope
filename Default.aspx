@@ -44,6 +44,7 @@
       
       // globals
       application = null;
+      newUserDialog = null;
       editUserDialog = null;
       feedbackDialog = null;
       
@@ -51,7 +52,9 @@
         for (var x = 0; x < application.mouseModeList.length; x += 1) {
           var mode = application.mouseModeList[x];
           var button = dijit.byId(mode.GetId() + ".Button");
-          button.setAttribute("checked", mode === application.currentMouseMode);
+          if (button) {
+            button.setAttribute("checked", mode === application.currentMouseMode);
+          }
         }
       }
       
@@ -71,10 +74,12 @@
       
       function WireMouseModeButton (mode) {
         var button = $get(mode.GetId() + ".Button");
-        $addHandler(button, "click", function (evt) {
-            application.SetMouseMode(mode);
-            window.setTimeout(UpdateMouseModeButtons, 0);
-          });
+        if (button) {
+          $addHandler(button, "click", function (evt) {
+              application.SetMouseMode(mode);
+              window.setTimeout(UpdateMouseModeButtons, 0);
+            });
+        }
       }
       
       function ToggleVisibility (folder, dom) {
@@ -217,9 +222,14 @@
             );
           
           // Build a button for each of the application's mouse modes
+          var cookie = $get("FieldScope_Cookie").value;
+          var loggedIn = cookie && (cookie.length > 0);
           var toolbar = $get("FieldScope.Div.Toolbar");
           for (var x = 0; x < application.mouseModeList.length; x += 1) {
-            toolbar.innerHTML += MakeMouseModeButtonHtml(application.mouseModeList[x]);
+            var mode = application.mouseModeList[x];
+            if ((!mode.LoginRequired()) || loggedIn) {
+              toolbar.innerHTML += MakeMouseModeButtonHtml(mode);
+            }
           }
           
           // Build a tree of controls for the application's data layers
@@ -255,21 +265,35 @@
         // asynchronously, most of which I tried unsuccessfully before 
         // coming up with this method.
         var cookie = $get("FieldScope_Cookie").value;
-        var state = dojo.toJson(application.GetState());
-        dojo.xhrPost({ 
-            url: "SaveUserStateService.ashx",
-            content : { "cookie" : cookie, "state" : state },
-            sync : true
-         });
-        return false;
+        if (cookie && (cookie.length > 0)) {
+          var state = dojo.toJson(application.GetState());
+          dojo.xhrPost({ 
+              url: "SaveUserStateService.ashx",
+              content : { "cookie" : cookie, "state" : state },
+              sync : true
+            });
+        }
         GUnload();
+        return false;
+      }
+      
+      function New_User () {
+        if (!newUserDialog) {
+          var pane = dojo.byId('FieldScope.NewUser.Dialog.Pane');
+          newUserDialog = new dijit.Dialog({
+	          id : "FieldScope.NewUser.Dialog",
+	          refocus : false,
+	          title : "New User Account"
+          }, pane);
+        }
+        newUserDialog.show();
       }
       
       function Edit_User () {
         if (!editUserDialog) {
           var pane = dojo.byId('FieldScope.EditUser.Dialog.Pane');
           editUserDialog = new dijit.Dialog({
-	          id : "FieldScope.EditUsers.Dialog",
+	          id : "FieldScope.EditUser.Dialog",
 	          refocus : false,
 	          title : "Edit Account Settings"
           }, pane);
@@ -294,13 +318,16 @@
         if (doc.document) {
           doc = doc.document;
         }
-        // EditUser.aspx.cs and Feedback.aspx.cs register client scripts 
-        // that call these methods
+        // NewUser.aspx.cs, EditUser.aspx.cs, and Feedback.aspx.cs 
+        // register client scripts that call these methods
         doc.FieldScopeEditUserComplete = function () {
             editUserDialog.hide();
           };
         doc.FieldScopeFeedbackComplete = function () {
             feedbackDialog.hide();
+          };
+        doc.FieldScopeNewUserComplete = function () {
+            newUserDialog.hide();
           };
       }
 //]]>
@@ -395,11 +422,15 @@
             </asp:LinkButton>
           </td>
           <td align="right"> 
-            <a href="javascript:void(0);" onclick="Edit_User();">
+            <a href="javascript:void(0);" onclick="New_User();" id="FieldScope_NewUser">
+              New User...
+            </a>
+            &nbsp;
+            <a href="javascript:void(0);" onclick="Edit_User();" id="FieldScope_EditUser">
               Settings...
             </a>
             &nbsp;
-            <a href="javascript:void(0);" onclick="Send_Feedback();">
+            <a href="javascript:void(0);" onclick="Send_Feedback();" id="FieldScope_Feedback">
               Feedback...
             </a>
           </td>
@@ -426,6 +457,17 @@
 	            src="Feedback.aspx"
 	            width="500"
 	            height="240"
+	            frameborder="0"
+	            onload="Set_Popup_Delegates(this);">
+	    </iframe>
+	  </div>
+    
+    <div id="FieldScope.NewUser.Dialog.Pane" style="display: none;">
+	    <iframe id="FieldScope.NewUser" 
+	            name="FieldScope.NewUser" 
+	            src="NewUser.aspx"
+	            width="400"
+	            height="200"
 	            frameborder="0"
 	            onload="Set_Popup_Delegates(this);">
 	    </iframe>

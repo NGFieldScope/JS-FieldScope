@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 
@@ -15,7 +13,26 @@ public partial class _Default : System.Web.UI.Page  {
                 FieldScope_Username.Text = user.Username;
                 FieldScope_Logout.Visible = true;
                 FieldScope_State.Value = user.State;
-                FieldScope_Cookie.Value = user.Cookie;
+                if (user.AuthLevel == SqlServer.AuthLevel.Guest) {
+                    FieldScope_Cookie.Value = "";
+                    ClientScript.RegisterStartupScript(
+                            typeof(Page),
+                            "DisableUserFeatures",
+                            @"$get('FieldScope_EditUser').style.display='none';
+                              $get('FieldScope_Feedback').style.display='none';",
+                            true
+                        );
+                } else {
+                    FieldScope_Cookie.Value = user.Cookie;
+                }
+                if (user.AuthLevel != SqlServer.AuthLevel.Admin) {
+                    ClientScript.RegisterStartupScript(
+                            typeof(Page),
+                            "DisableAdminFeatures",
+                            @"$get('FieldScope_NewUser').style.display='none';",
+                            true
+                        );
+                }
             } else {
                 Response.Redirect("Login.aspx");
             }

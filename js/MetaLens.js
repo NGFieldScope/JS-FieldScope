@@ -403,6 +403,10 @@ FieldScope.MetaLens.MouseMode = function (layer, url) {
     this.GetIconCssClass = function () {
         return "addPhotoIcon";
       };
+    
+    this.LoginRequired = function () {
+        return true;
+      };
   };
 
 FieldScope.MetaLens.MouseMode.registerClass('FieldScope.MetaLens.MouseMode', null, FieldScope.MouseMode);

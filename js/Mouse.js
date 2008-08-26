@@ -12,6 +12,7 @@ FieldScope.MouseMode = function () {
     this.GetName = function () { };
     this.GetId = function () { };
     this.GetIconCssClass = function () { };
+    this.LoginRequired = function () { };
     
   };
 
@@ -34,9 +35,11 @@ FieldScope.NavigateMouseMode = function () {
         return "FieldScope.Tool[navigate]";
       };
     this.GetIconCssClass = function () { 
-         return "handIcon";
+        return "handIcon";
       };
-    
+    this.LoginRequired = function () {
+        return false;
+      };
   };
 
 FieldScope.NavigateMouseMode.registerClass('FieldScope.NavigateMouseMode', null, FieldScope.MouseMode);
@@ -130,6 +133,10 @@ FieldScope.InfoMouseMode = function (layers) {
     
     this.GetIconCssClass = function () { 
          return "infoIcon";
+      };
+    
+    this.LoginRequired = function () {
+        return false;
       };
     
   };

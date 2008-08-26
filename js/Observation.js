@@ -119,6 +119,10 @@ FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
     this.GetIconCssClass = function () {
         return "addObservationIcon";
       };
+    
+    this.LoginRequired = function () {
+        return true;
+      };
   };
 
 FieldScope.Observation.MouseMode.registerClass('FieldScope.Observation.MouseMode', null, FieldScope.MouseMode);

@@ -13,26 +13,60 @@
 	      <table>
 	        <tr>
 	          <td align="left" colspan="2">
-	            FieldScope login:
+	            Log in to FieldScope:
 	          </td>
 	        </tr>
 	        <tr>
-            <td align="right" style="font-weight:bold">
-              Username:
-            </td>
-            <td>
-              <asp:TextBox id="FieldScope_Username" runat="server" width="170px" />
-            </td>
-  		    </tr>
-  		    <tr>
-            <td align="right" style="font-weight:bold">
-              Password:
-            </td>
-            <td>
-              <asp:TextBox id="FieldScope_Password" runat="server" width="170px" textmode="Password" />
-            </td>
-  		    </tr>
-		      <tr>
+	          <td colspan="2">
+              <asp:RadioButton ID="FieldScope_LoginAs_Guest" 
+                               runat="server" 
+                               groupname="LoginAs" 
+                               OnCheckedChanged="LoginAs_Click"
+                               AutoPostBack="True"
+                               text="As guest user" 
+                               checked="true"/>
+	          </td>
+	        </tr>
+	        <tr>
+	          <td colspan="2">
+              <asp:RadioButton ID="FieldScope_LoginAs_User" 
+                               runat="server" 
+                               groupname="LoginAs" 
+                               OnCheckedChanged="LoginAs_Click"
+                               AutoPostBack="True"
+                               text="As registered user" />
+	            <table>
+	              <tr>
+                  <td align="right" style="font-weight:bold">
+                    Username:
+                  </td>
+                  <td>
+                    <asp:TextBox id="FieldScope_Username" 
+                                 runat="server" 
+                                 width="170px" 
+                                 Enabled="False" 
+                                 ReadOnly="True" 
+                                 BackColor="silver"/>
+                  </td>
+  		          </tr>
+  		          <tr>
+                  <td align="right" style="font-weight:bold">
+                    Password:
+                  </td>
+                  <td>
+                    <asp:TextBox id="FieldScope_Password" 
+                                 runat="server" 
+                                 width="170px" 
+                                 Enabled="False" 
+                                 ReadOnly="True" 
+                                 BackColor="silver" 
+                                 textmode="Password" />
+                  </td>
+  		          </tr>
+  		        </table>
+	          </td>
+	        </tr>
+          <tr>
             <td align="left" style="color:#F00">
               <asp:Label id="FieldScope_Login_Message" runat="server" Visible="False" />
             </td>
@@ -40,9 +74,9 @@
               <asp:Button id="FieldScope_Login_Button" runat="server" text="Login" OnClick="LoginButton_Click" />
             </td>
           </tr>
-		      <tr>
+          <tr>
             <td align="left">
-              <a href="NewUser.aspx">New User...</a>
+              <a href="RequestAccount.aspx">New User...</a>
             </td>
             <td align="right">
               <a href="ResetPassword.aspx">Forgot Password?</a>

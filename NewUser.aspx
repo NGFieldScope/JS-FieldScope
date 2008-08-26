@@ -40,27 +40,11 @@
               <asp:TextBox id="FieldScope_Email" runat="server" width="225px" />
             </td>
   		    </tr>
-  		    <tr>
-            <td align="right" style="font-weight:bold">
-              Password:
-            </td>
-            <td>
-              <asp:TextBox id="FieldScope_Password_1" runat="server" width="170px" textmode="Password" />
-            </td>
-  		    </tr>
-  		    <tr>
-            <td align="right" style="font-weight:bold">
-              Re-Type Password:
-            </td>
-            <td>
-              <asp:TextBox id="FieldScope_Password_2" runat="server" width="170px" textmode="Password" />
-            </td>
-  		    </tr>
 		      <tr>
             <td align="right" colspan="2">
-              <asp:Label id="FieldScope_NewUser_ErrorMessage" runat="server" Visible="False" ForeColor="Red" />
+              <asp:Label id="FieldScope_NewUser_Message" runat="server" Visible="False" ForeColor="Red" />
               &nbsp;
-              <asp:Button id="FieldScope_NewUser_Button" runat="server" text="Register" OnClick="NewUserButton_Click" />
+              <asp:Button id="FieldScope_NewUser_Button" runat="server" text="Create User" OnClick="NewUserButton_Click" />
             </td>
           </tr>
   		  </table>
