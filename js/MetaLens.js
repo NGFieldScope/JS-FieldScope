@@ -312,8 +312,8 @@ FieldScope.MetaLens.MouseMode = function (layer, url) {
         result +=              'server='+encodeURIComponent(this.url)+'&';
         result +=              'lat='+encodeURIComponent(location.lat().toString())+'&';
         result +=              'lon='+encodeURIComponent(location.lng().toString())+'"';
-        result +=        ' width="350"';
-        result +=        ' height="200"';
+        result +=        ' width="450"';
+        result +=        ' height="325"';
         result +=        ' frameborder="0">';
         result += '</iframe></div>';
         return result;

@@ -8,6 +8,7 @@
   </head>
   <body>
     <form id="FieldScope_MetaLens_Form" runat="server">
+      <asp:ScriptManager ID="ScriptManager2" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
         Upload Photo To FieldScope:<br />
         <table width="98%">
@@ -30,6 +31,60 @@
             </td>
             <td>
               <asp:TextBox id="FieldScope_MetaLens_Description" runat="server" TextMode="Multiline" Rows="3" Width="200px" />
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              Keywords:
+            </td>
+            <td style="font-size:small">
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_PointSource" runat="server" Text="Point Source" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_NonPointSource" runat="server" Text="Non-point Source" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_DegradedEcosystem" runat="server" Text="Degraded Ecosystem" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_HealthyEcosystem" runat="server" Text="Healthy Ecosystem" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_AlgalBloom" runat="server" Text="Algal Bloom" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_Erosion" runat="server" Text="Erosion" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_Wetlands" runat="server" Text="Wetlands" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_RiparianBuffer" runat="server" Text="Riparian Buffer" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_PlantSpecies" runat="server" Text="Plant Species" />
+              </span>
+              <span style="white-space: nowrap">
+                <asp:CheckBox ID="CheckBox_AnimalSpecies" runat="server" Text="Animal Species" />
+              </span>
+              <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                <ContentTemplate>
+                  <span style="white-space: nowrap">
+                    <!-- Wrap this in an update panel so checking or unchecking the box doesn't clear the FileUpload -->
+                    <asp:CheckBox ID="CheckBox_Other" 
+                                  runat="server" 
+                                  Text="Other:" 
+                                  OnCheckedChanged="Other_Click"
+                                  AutoPostBack="True" />
+                    <asp:TextBox id="TextBox_Other" 
+                                 runat="server" 
+                                 Enabled="False" 
+                                 ReadOnly="True" 
+                                 BackColor="silver" />
+                  </span>
+                </ContentTemplate>
+              </asp:UpdatePanel>
             </td>
           </tr>
         </table>

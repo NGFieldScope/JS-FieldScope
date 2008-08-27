@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 public partial class MetaLensUpload : System.Web.UI.Page {
 
@@ -44,7 +47,14 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             }
         }
     }
-    
+
+    protected void Other_Click (object sender, EventArgs e) {
+        bool otherKeyword = CheckBox_Other.Checked;
+        TextBox_Other.Enabled = otherKeyword;
+        TextBox_Other.ReadOnly = (!otherKeyword);
+        TextBox_Other.BackColor = otherKeyword ? Color.White : Color.LightGray;
+    }
+
     protected void UploadButton_Click (object sender, EventArgs evt) {
         if (FieldScope_MetaLens_FileUpload.HasFile) {
             string server = (string)Session["FieldScope_MetaLens_Server"];
@@ -55,12 +65,31 @@ public partial class MetaLensUpload : System.Web.UI.Page {
             string name = FieldScope_MetaLens_FileUpload.FileName;
             string caption = FieldScope_MetaLens_Caption.Text;
             string description = FieldScope_MetaLens_Description.Text;
-            string school = null;
+            List<string> keywords = new List<string>();
+            keywords.Add("FieldScope");
+            keywords.Add("Student");
             SqlServer.UserInfo user = Utilities.User.GetCurrentUser(Request);
             if (user != null) {
-                school = user.Organization;
+                keywords.Add(user.Organization);
             }
-            string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description, school);
+            foreach (CheckBox cb in new CheckBox[] { CheckBox_PointSource, 
+                                                     CheckBox_NonPointSource,
+                                                     CheckBox_DegradedEcosystem,
+                                                     CheckBox_HealthyEcosystem,
+                                                     CheckBox_AlgalBloom,
+                                                     CheckBox_Erosion,
+                                                     CheckBox_Wetlands,
+                                                     CheckBox_RiparianBuffer,
+                                                     CheckBox_PlantSpecies,
+                                                     CheckBox_AnimalSpecies }) {
+                if (cb.Checked) {
+                    keywords.Add(cb.Text);
+                }
+            }
+            if (CheckBox_Other.Checked) {
+                keywords.Add(TextBox_Other.Text);
+            }
+            string result = MetaLens.Service.PostAsset(server, cookie, input, lat, lon, name, caption, description, keywords.ToArray());
             //string result = "complete";
             FieldScope_MetaLens_Message.Text = "Result: " + result;
             if (result == "complete") {

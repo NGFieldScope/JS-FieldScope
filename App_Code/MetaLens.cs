@@ -314,7 +314,7 @@ namespace MetaLens {
                                         string name,
                                         string caption,
                                         string description,
-                                        string school) {
+                                        string[] keywords) {
             //everything except upload file and url can be left blank if needed
             norvanco.http.MultipartForm mp = new norvanco.http.MultipartForm(url + "/assets/new.cpx");
             //mp.setFilename(@"C:\Documents and Settings\Russell\My Documents\Visual Studio 2008\Projects\DotNetTestHarness\DotNetTestHarness\output.txt");
@@ -327,12 +327,7 @@ namespace MetaLens {
             mp.setField("alat", latitude);
             mp.setField("alon", longitude);
             mp.setField("arights", "public");
-            string keywords = "FieldScope Student";
-            if (school != null) {
-                keywords += " ";
-                keywords += school;
-            }
-            mp.setField("akeywords", keywords);
+            mp.setField("akeywords", String.Join(" ", keywords));
             CookieContainer cookies = new CookieContainer();
             cookies.Add(new Cookie(".CPXAUTH", cookie, "/", mp.RequestUri.Host));
             mp.sendFile(name, input, cookies);
