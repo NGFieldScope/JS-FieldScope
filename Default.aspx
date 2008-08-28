@@ -255,6 +255,11 @@
               WireLayerControls(layer);
             }
           }
+          
+          // show the IE6 warning if the user is running IE6
+          if (false /*@cc_on || @_jscript_version < 5.7 @*/) {
+            FieldScope.DomUtils.show($get("FieldScope.IE6.Notice"));
+          }
         });
       
       function On_Uload () {
@@ -352,6 +357,25 @@
           <asp:ServiceReference Path="MetaLensService.asmx" />
         </Services>
       </asp:ScriptManager>
+      <div id="FieldScope.IE6.Notice" style="display:none;border-bottom:1px solid black;font-size:small;background-color:#FFFFAA">
+        <table>
+          <tr>
+            <td align="left">
+              You appear to be using Internet Explorer 6. This browser does not support 
+              transparent map layers, so to get the best possible experience using FieldScope, 
+              you are <b>strongly encouraged</b> to upgrade to 
+              <a href="http://www.microsoft.com/windows/downloads/ie/getitnow.mspx" target="_blank">Internet Explorer 7</a> 
+              or <a href="http://www.mozilla.com/firefox/" target="_blank">Firefox</a>.
+            </td>
+            <td align="right" style="vertical-align:bottom">
+              <a href="javascript:void(0)" 
+                 onclick="FieldScope.DomUtils.hide($get('FieldScope.IE6.Notice'));">
+                Close
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
       <div dojoType="dijit.layout.BorderContainer" 
            design="sidebar" 
            style="height:600px;width:100%">
