@@ -30,7 +30,7 @@
               Photo Description:
             </td>
             <td>
-              <asp:TextBox id="FieldScope_MetaLens_Description" runat="server" TextMode="Multiline" Rows="3" Width="200px" />
+              <asp:TextBox id="FieldScope_MetaLens_Description" runat="server" TextMode="Multiline" Rows="3" Width="325px" />
             </td>
           </tr>
           <tr>
