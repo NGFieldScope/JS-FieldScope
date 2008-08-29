@@ -13,11 +13,16 @@
   </head>
   <body>
     <form id="form1" runat="server" defaultbutton="FieldScope_Observation_SubmitButton">
+      <asp:ScriptManager ID="ScriptManager1" runat="server" ScriptMode="Release"></asp:ScriptManager>
       <div>
         <table cellspacing="1" cellpadding="0" width="100%" style="font-size:small">
           <tr style="vertical-align:top">
-            <td colspan="5" style="font-size:medium;font-weight:bold">
-              Enter Student Observation
+            <td colspan="5" style="font-size:medium;font-weight:bold;padding-bottom:8px">
+              <asp:Label ID="FieldScope_Observation_EnterLabel" runat="server" Text="Enter Student Observation" />
+              <asp:Label ID="FieldScope_Observation_ConfirmLabel" 
+                         runat="server" 
+                         Text="Confirm Observation:<br />Please double-check and ensure all your information is correct"
+                         Visible="False" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -32,6 +37,7 @@
                                    ControlToValidate="FieldScope_Observation_Temperature" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Temperature_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Temperature_Units" runat="server">
@@ -49,6 +55,7 @@
                                           ControlToValidate="FieldScope_Observation_School" 
                                           ErrorMessage="<br />Please enter your school name" 
                                           Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_School_Label" runat="server" Visible="False" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -63,6 +70,7 @@
                                    ControlToValidate="FieldScope_Observation_Salinity" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Salinity_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Salinity_Units" runat="server">
@@ -75,20 +83,24 @@
               Date
             </td>
             <td>
-              <asp:Label ID="FieldScope_Observation_Date_Label" runat="server" />
-              <asp:Button ID="FieldScope_Observation_Date_Button" 
-                          runat="server" 
-                          Text="..."
-                          OnClick="Edit_Date" 
-                          CausesValidation="False" />
-              <asp:Calendar ID="FieldScope_Observation_Date" 
-                            runat="server" 
-                            Font-Size="XX-Small" 
-                            SelectionMode="Day"
-                            OnSelectionChanged="Date_Changed"
-                            CellPadding="1"
-                            CellSpacing="0"
-                            Visible="false" />
+              <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                <ContentTemplate>
+                  <asp:Label ID="FieldScope_Observation_Date_Label" runat="server" />
+                  <asp:Button ID="FieldScope_Observation_Date_Button" 
+                              runat="server" 
+                              Text="..."
+                              OnClick="Edit_Date" 
+                              CausesValidation="False" />
+                  <asp:Calendar ID="FieldScope_Observation_Date" 
+                                runat="server" 
+                                Font-Size="XX-Small" 
+                                SelectionMode="Day"
+                                OnSelectionChanged="Date_Changed"
+                                CellPadding="1"
+                                CellSpacing="0"
+                                Visible="false" />
+                </ContentTemplate>
+              </asp:UpdatePanel>
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -103,11 +115,13 @@
                                    ControlToValidate="FieldScope_Observation_Turbidity" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Turbidity_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Turbidity_Units" runat="server">
                 <asp:ListItem Text="NTU" Value="NTU" />
                 <asp:ListItem Text="FTU" Value="FTU" />
+                <asp:ListItem Text="FAU" Value="FAU" />
               </asp:DropDownList>
             </td>
             <td style="font-weight:bold">
@@ -120,6 +134,7 @@
                                           ControlToValidate="FieldScope_Observation_Time" 
                                           ErrorMessage="<br />Please enter the observation time" 
                                           Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Time_Label" runat="server" Visible="False" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -134,6 +149,7 @@
                                    ControlToValidate="FieldScope_Observation_Oxygen" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Oxygen_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Oxygen_Units" runat="server">
@@ -165,6 +181,7 @@
                                    ControlToValidate="FieldScope_Observation_Nitrogen" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Nitrogen_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Nitrogen_Units" runat="server">
@@ -184,6 +201,7 @@
                                    ControlToValidate="FieldScope_Observation_Phosphorous" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Phosphorous_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Phosphorous_Units" runat="server">
@@ -203,6 +221,7 @@
                                    ControlToValidate="FieldScope_Observation_pH" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_pH_Label" runat="server" Visible="False" />
             </td>
           </tr>
           <tr style="vertical-align:top">
@@ -217,6 +236,7 @@
                                    ControlToValidate="FieldScope_Observation_Conductivity" 
                                    OnServerValidate="Validate_Number_Or_Empty" 
                                    Display="Dynamic" />
+              <asp:Label ID="FieldScope_Observation_Conductivity_Label" runat="server" Visible="False" />
             </td>
             <td>
               <asp:DropDownList ID="FieldScope_Observation_Conductivity_Units" runat="server">
@@ -230,7 +250,17 @@
               <asp:Button id="FieldScope_Observation_SubmitButton" 
                           Text="Save" 
                           OnClick="SaveButton_Click" 
-                          runat="server"/>
+                          runat="server" />
+              <asp:Button id="FieldScope_Observation_CorrectButton" 
+                          Text="Edit" 
+                          OnClick="CorrectButton_Click" 
+                          Visible="False"
+                          runat="server" />
+              <asp:Button id="FieldScope_Observation_ConfirmButton" 
+                          Text="Confirm" 
+                          OnClick="ConfirmButton_Click" 
+                          Visible="False"
+                          runat="server" />
             </td>
           </tr>
         </table>
