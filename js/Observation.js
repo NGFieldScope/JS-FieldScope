@@ -6,11 +6,11 @@ Type.registerNamespace("FieldScope.Observation");
 // ----------------------------------------------------------------------------
 // Observation.MouseMode class
 
-FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
+FieldScope.Observation.MouseMode = function(layer, serviceUrl, serviceName) {
     
     this.layer = layer;
     this.icon = layer.provider.icon;
-    this.serverUrl = serverUrl;
+    this.serviceUrl = serviceUrl;
     this.serviceName = serviceName;
     this.map = null;
     this.marker = null;
@@ -22,12 +22,12 @@ FieldScope.Observation.MouseMode = function (layer, serverUrl, serviceName) {
         result += '<iframe id="FieldScope.Observation.DataEntryFrame"';
         result +=        ' name="FieldScope.Observation.DataEntryFrame"';
         result +=        ' src="StudentObservation.aspx?';
-        result +=              'server='+encodeURIComponent(this.serverUrl)+'&';
-        result +=              'service='+encodeURIComponent(this.serviceName)+'&';
+        result +=              'service=' + encodeURIComponent(this.serviceUrl) + '&';
+        result +=              'name='+encodeURIComponent(this.serviceName)+'&';
         result +=              'lat='+encodeURIComponent(location.lat().toString())+'&';
         result +=              'lon='+encodeURIComponent(location.lng().toString())+'"';
-        result +=        ' width="550"';
-        result +=        ' height="300"';
+        result +=        ' width="575"';
+        result +=        ' height="350"';
         result +=        ' frameborder="0"';
         result +=        ' marginheight="0"';
         result +=        ' marginwidth="0">';
