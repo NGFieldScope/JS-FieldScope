@@ -20,7 +20,7 @@
             djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
     <script type="text/javascript" src="js/swfobject/swfobject.js"></script>
   
-  <!-- release version scripts 
+  <!-- release version scripts
     <script type="text/javascript" src="js/extinfowindow/extinfowindow_packed.js"></script>
     <script type="text/javascript" 
             src="js/dojo-1.1.1/dojo/dojo.js" 
@@ -387,7 +387,7 @@
                region="top"
                style="height:36px;border-bottom-style:ridge">
             <div id="FieldScope.Div.Toolbar" dojoType="dijit.Toolbar">
-              <span>Mouse:</span>
+              <span style="font-size:x-small">Mouse:</span>
             </div>
           </div>
           <div dojoType="dijit.layout.ContentPane" 
