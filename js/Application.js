@@ -181,7 +181,7 @@ FieldScope.Application = function (savedState,
       });
     
     this.IdentifyWatershedsDelegate = Function.createDelegate(this, function (loc, callback) {
-        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_watersheds/MapServer/3");
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/fieldscope_cb_1/watersheds/MapServer/3");
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
@@ -221,7 +221,7 @@ FieldScope.Application = function (savedState,
       });
     
     this.IdentifyNutreientsDelegate = Function.createDelegate(this, function (loc, callback) {
-        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_nutrients/MapServer/0");
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/fieldscope_cb_1/nutrients/MapServer/0");
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
@@ -391,7 +391,7 @@ FieldScope.Application = function (savedState,
       };
     
     this.IdentifyStateDelegate = Function.createDelegate(this, function (loc, callback) {
-        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_states/MapServer/0");
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/fieldscope_cb_1/states/MapServer/0");
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
@@ -427,7 +427,7 @@ FieldScope.Application = function (savedState,
       });
     
     this.IdentifyPhysiographyDelegate = Function.createDelegate(this, function (loc, callback) {
-        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/cb_physiography/MapServer/0");
+        var task = new esri.arcgis.gmaps.QueryTask(this.urlPrefix+"/ArcGIS/rest/services/fieldscope_cb_1/physiography/MapServer/0");
         var query = new esri.arcgis.gmaps.Query();
         query.queryGeometry = loc;
         query.returnGeometry = false;
@@ -594,14 +594,14 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.permeabilityVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_permeability/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_permeability/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/impermeability/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/impermeability/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_permeability/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/impermeability/MapServer",
                                                                  { opacity: 0.5 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.permeability.tileLayer = layer;
@@ -627,14 +627,14 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.landcoverVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_landcover/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/landcover/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v5.0)</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_landcover/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/landcover/MapServer",
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.landcover.tileLayer = layer;
@@ -660,14 +660,14 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.imperviousVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_impervious/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_impervious/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/impervious/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/impervious/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001; Chesapeake Bay Program</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_impervious/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/impervious/MapServer",
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.impervious.tileLayer = layer;
@@ -693,15 +693,15 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.watershedsVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_watersheds/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_watersheds/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/watersheds/MapServer/tile/6/24/18.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/watersheds/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: USGS; Chesapeake Bay Program</p>',
           Identify : this.IdentifyWatershedsDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/watersheds/MapServer",
                                                                  { opacity: 1.0 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.watersheds.tileLayer = layer;
@@ -727,15 +727,15 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.nutrientsVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_nutrients/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_nutrients/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/nutrients/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/nutrients/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v4.3)</p>',
           Identify : this.IdentifyNutreientsDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_nutrients/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/nutrients/MapServer",
                                                                  { opacity: 0.45 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.nutrients.tileLayer = layer;
@@ -761,14 +761,14 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.bathymetryVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_bathymetry/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_bathymetry/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/bathymetry/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/bathymetry/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: National Geographic Maps</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_bathymetry/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/bathymetry/MapServer",
                                                                  { opacity: 0.75 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.bathymetry.tileLayer = layer;
@@ -794,14 +794,14 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.agricultureVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_agriculture/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_agriculture/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/agriculture/MapServer/tile/10/392/295.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/agriculture/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: Chesapeake Bay Program; National Geographic Maps</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_agriculture/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/agriculture/MapServer",
                                                                  { opacity: 0.55 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.agriculture.tileLayer = layer;
@@ -827,14 +827,14 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.statesVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_states/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_states/MapServer')+'" />',
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/states/MapServer/tile/6/24/18.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/states/MapServer')+'" />',
           Identify : this.IdentifyStateDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_states/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/states/MapServer",
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.states.tileLayer = layer;
@@ -860,8 +860,8 @@ FieldScope.Application = function (savedState,
           loadingIndicator : null,
           visible : savedState ? savedState.physiographyVisible : false,
           tileLayer : null,
-          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/cb_physiography/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/cb_physiography/MapServer')+'" />' +
+          iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/physiography/MapServer/tile/6/24/18.png" style="height:16px" />',
+          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/physiography/MapServer')+'" />' +
                        '<p class="legendDataSource">Data Source: Chesapeake Bay Program; USGS</p>',
           Identify : this.IdentifyPhysiographyDelegate
         };
@@ -869,7 +869,7 @@ FieldScope.Application = function (savedState,
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
           // constructor again before the first one is finished causes IE6 to hang
-          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/cb_physiography/MapServer",
+          var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/physiography/MapServer",
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function (layer) {
                                                                      this.layers.physiography.tileLayer = layer;
@@ -951,7 +951,7 @@ FieldScope.Application = function (savedState,
       this.layers.cbibs.SetVisible(savedState ? savedState.cbibsVisible : false);
       
       // Student observations layer
-      var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_observations_2/MapServer/0";
+      var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/cb_observations_3/MapServer/0";
       var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, observationsUrl);
       observationsProvider.icon = new GIcon(null, "images/beaker.gif");
       observationsProvider.icon.shadow = "images/beaker-shadow.png";
@@ -960,42 +960,64 @@ FieldScope.Application = function (savedState,
       observationsProvider.icon.iconAnchor = new GPoint(12, 24);
       observationsProvider.icon.infoWindowAnchor = new GPoint(8, 2);
       observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
-      observationsProvider.queryfields = [ "TEMPERATURE", "SALINITY", "TURBIDITY", "OXYGEN", "NITROGEN", "PHOSPHOROUS",
-                                           "SCHOOL_NAME", "COLLECTION_DATE", "ENTRY_DATE", "FIELD_NOTES" ];
+      observationsProvider.queryfields = [ "WATER_TEMPERATURE", "AIR_TEMPERATURE",
+                                           "SALINITY", "RELATIVE_HUMIDITY",
+                                           "CONDUCTIVITY", "BAROMETRIC_PRESSURE",
+                                           "TURBIDITY", "PH",
+                                           "SECCHI_DEPTH", "DISSOLVED_OXYGEN",
+                                           "NITRATE", "PHOSPHATE",
+                                           "AMMONIA",
+                                           "SCHOOL", "COLLECTION_DATE", "ENTRY_DATE", "FIELD_NOTES" ];
       var html = '<table style="border-collapse:collapse;" cellspacing="2">';
       html +=      '<tr>';
-      html +=        '<td style="font-weight:bold;text-align:center" colspan="2">';
+      html +=        '<td style="font-weight:bold;text-align:center" colspan="4">';
       html +=          '<img src="images/info24.png" style="vertical-align:middle" height="16" />';
       html +=          '&nbsp;Student Observation';
       html +=        '</td>';
       html +=      '</tr>';
       html +=      '<tr>';
-      html +=        '<td style="font-weight:bold">Temperature:</td>';
-      html +=        '<td>{TEMPERATURE} &deg;C</td>';
+      html +=        '<td style="font-weight:bold">Water Temperature:</td>';
+      html +=        '<td>{WATER_TEMPERATURE} &deg;C</td>';
+      html +=        '<td style="font-weight:bold">Air Temperature:</td>';
+      html +=        '<td>{AIR_TEMPERATURE} &deg;C</td>';
       html +=      '</tr>';
       html +=      '<tr>';
       html +=        '<td style="font-weight:bold">Salinity:</td>';
       html +=        '<td>{SALINITY} PSU</td>';
+      html +=        '<td style="font-weight:bold">Relative Humidity:</td>';
+      html +=        '<td>{RELATIVE_HUMIDITY} %</td>';
+      html +=      '</tr>';
+      html +=      '<tr>';
+      html +=        '<td style="font-weight:bold">Conductivity:</td>';
+      html +=        '<td>{CONDUCTIVITY} NTU</td>';
+      html +=        '<td style="font-weight:bold">Barometric Pressure:</td>';
+      html +=        '<td>{BAROMETRIC_PRESSURE} mbar</td>';
       html +=      '</tr>';
       html +=      '<tr>';
       html +=        '<td style="font-weight:bold">Turbidity:</td>';
       html +=        '<td>{TURBIDITY} NTU</td>';
+      html +=        '<td style="font-weight:bold">pH:</td>';
+      html +=        '<td>{PH}</td>';
       html +=      '</tr>';
       html +=      '<tr>';
+      html +=        '<td style="font-weight:bold">Secchi Depth:</td>';
+      html +=        '<td>{SECCHI_DEPTH} cm</td>';
       html +=        '<td style="font-weight:bold">Oxygen:</td>';
-      html +=        '<td>{OXYGEN} mg/L</td>';
+      html +=        '<td>{DISSOLVED_OXYGEN} mg/L</td>';
       html +=      '</tr>';
       html +=      '<tr>';
-      html +=        '<td style="font-weight:bold">Nitrogen:</td>';
-      html +=        '<td>{NITROGEN} mg/L</td>';
+      html +=        '<td style="font-weight:bold">Nitrate:</td>';
+      html +=        '<td>{NITRATE} mg/L</td>';
+      html +=        '<td style="font-weight:bold">Phosphate:</td>';
+      html +=        '<td>{PHOSPHATE} mg/L</td>';
       html +=      '</tr>';
       html +=      '<tr>';
-      html +=        '<td style="padding-bottom:4px;font-weight:bold">Phosphorus:</td>';
-      html +=        '<td style="padding-bottom:4px">{PHOSPHOROUS} mg/L</td>';
+      html +=        '<td style="padding-bottom:4px;font-weight:bold">Ammonia:</td>';
+      html +=        '<td style="padding-bottom:4px" colspan="3">{AMMONIA} mg/L</td>';
       html +=      '</tr>';
       html +=      '<tr>';
       html +=        '<td style="border-top:thin ridge;padding-top:4px;font-weight:bold">School Name:</td>';
-      html +=        '<td style="border-top:thin ridge;padding-top:4px">{SCHOOL_NAME}</td>';
+      html +=        '<td style="border-top:thin ridge;padding-top:4px" colspan="3">{SCHOOL}</td>';
       html +=      '</tr>';
       html +=      '<tr>';
       html +=        '<td style="font-weight:bold">Collected:</td>';
@@ -1007,7 +1029,7 @@ FieldScope.Application = function (savedState,
       html +=      '</tr>';
       html +=      '<tr>';
       html +=        '<td style="border-top:thin ridge;padding-top:4px;font-weight:bold;vertical-align:top">Field Notes:</td>';
-      html +=        '<td style="border-top:thin ridge;padding-top:4px" rowspan="2">';
+      html +=        '<td style="border-top:thin ridge;padding-top:4px" colspan="3" rowspan="2" >';
       html +=          '<div style="max-width:200px">{FIELD_NOTES}</div>';
       html +=        '</td>';
       html +=      '</tr>';
@@ -1020,7 +1042,7 @@ FieldScope.Application = function (savedState,
       this.layers.observations.SetVisible(savedState ? savedState.observationsVisible : false);
       
       // Watershed boundary layer
-      var studyAreaUrl = this.urlPrefix + "/ArcGIS/rest/services/cb_watersheds/MapServer/0";
+      var studyAreaUrl = this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/watersheds/MapServer/0";
       var studyAreaProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, studyAreaUrl);
       studyAreaProvider.fillStyle = {color: "#0000FF", opacity: 0.0};
       studyAreaProvider.lineStyle = {color: "#0000FF", opacity: 0.75, weight: 2};
@@ -1072,9 +1094,9 @@ FieldScope.Application = function (savedState,
       // Setup mouse modes
       //
       this.mouseModes.navigate = new FieldScope.NavigateMouseMode();
-      this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer, 
-                                                                              this.urlPrefix,
-                                                                              "cb_observations_2");
+      this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer,
+                                                                              this.urlPrefix + "/ArcGIS/services/fieldscope_cb_1/cb_observations_3",
+                                                                              "cb_observations_3");
       this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.photos.asyncLayer, "http://focus.metalens.org");
       this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, 
                                                                this.layers.physiography, 
