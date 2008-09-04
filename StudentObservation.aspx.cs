@@ -35,14 +35,18 @@ public partial class StudentObservation : System.Web.UI.Page {
         if (!IsPostBack) {
             FieldScope_Observation_Date.SelectedDate = DateTime.Now.Date;
             FieldScope_Observation_Date_Label.Text = FieldScope_Observation_Date.SelectedDate.ToString("d");
-            string service = HttpUtility.UrlDecode(Request.QueryString["service"]);
-            string name = HttpUtility.UrlDecode(Request.QueryString["name"]);
-            string lat = HttpUtility.UrlDecode(Request.QueryString["lat"]);
-            string lon = HttpUtility.UrlDecode(Request.QueryString["lon"]);
-            Session["FieldScope_Obs_Service"] = service;
-            Session["FieldScope_Obs_Name"] = name;
-            Session["FieldScope_Obs_Lat"] = lat;
-            Session["FieldScope_Obs_Lon"] = lon;
+            FieldScope_Observation_ServiceUrl.Text = HttpUtility.UrlDecode(Request.QueryString["service"]);
+            FieldScope_Observation_ServiceName.Text = HttpUtility.UrlDecode(Request.QueryString["name"]);
+            string lat = HttpUtility.UrlDecode(Request.QueryString["lat"]) ?? "";
+            if (lat.Length > 10) {
+                lat = lat.Substring(0, 10);
+            }
+            FieldScope_Observation_Latitude.Text = lat;
+            string lon = HttpUtility.UrlDecode(Request.QueryString["lon"]) ?? "";
+            if (lon.Length > 10) {
+                lon = lon.Substring(0, 10);
+            }
+            FieldScope_Observation_Longitude.Text = lon;
             SqlServer.UserInfo user = Utilities.User.GetCurrentUser(Request);
             if (user != null) {
                 FieldScope_Observation_School.Text = user.Organization;
@@ -61,6 +65,32 @@ public partial class StudentObservation : System.Web.UI.Page {
         FieldScope_Observation_Date.Visible = false;
         FieldScope_Observation_Date_Label.Visible = true;
         FieldScope_Observation_Date_Button.Visible = true;
+    }
+    
+    protected void Validate_Latitude (object sender, ServerValidateEventArgs args) {
+        if (args.Value.Length > 0) {
+            try {
+                double value = double.Parse(args.Value);
+                args.IsValid = ((value >= 36.0) && (value <= 43.0));
+            } catch (FormatException) {
+                args.IsValid = false;
+            }
+        } else {
+            args.IsValid = true;
+        }
+    }
+
+    protected void Validate_Longitude (object sender, ServerValidateEventArgs args) {
+        if (args.Value.Length > 0) {
+            try {
+                double value = Math.Abs(double.Parse(args.Value));
+                args.IsValid = ((value >= 74.5) && (value <= 80.6));
+            } catch (FormatException) {
+                args.IsValid = false;
+            }
+        } else {
+            args.IsValid = true;
+        }
     }
     
     protected void Validate_WaterTemperature (object sender, ServerValidateEventArgs args) {
@@ -220,8 +250,10 @@ public partial class StudentObservation : System.Web.UI.Page {
     protected void SaveButton_Click (object sender, EventArgs evt) {
         if (IsValid) {
             FieldScope_Observation_EnterLabel.Visible = false;
-            FieldScope_Observation_AirTemperature.Visible = false;
+            FieldScope_Observation_Latitude.Visible = false;
+            FieldScope_Observation_Longitude.Visible = false;
             FieldScope_Observation_WaterTemperature.Visible = false;
+            FieldScope_Observation_AirTemperature.Visible = false;
             FieldScope_Observation_Salinity.Visible = false;
             FieldScope_Observation_Conductivity.Visible = false;
             FieldScope_Observation_Turbidity.Visible = false;
@@ -237,7 +269,9 @@ public partial class StudentObservation : System.Web.UI.Page {
             FieldScope_Observation_RelativeHumidity.Visible = false;
             FieldScope_Observation_BarometricPressure.Visible = false;
             FieldScope_Observation_SubmitButton.Visible = false;
-            
+
+            FieldScope_Observation_Latitude_Label.Text = FieldScope_Observation_Latitude.Text;
+            FieldScope_Observation_Longitude_Label.Text = FieldScope_Observation_Longitude.Text;
             FieldScope_Observation_WaterTemperature_Label.Text = FieldScope_Observation_WaterTemperature.Text;
             FieldScope_Observation_AirTemperature_Label.Text = FieldScope_Observation_AirTemperature.Text;
             FieldScope_Observation_Salinity_Label.Text = FieldScope_Observation_Salinity.Text;
@@ -269,8 +303,10 @@ public partial class StudentObservation : System.Web.UI.Page {
             FieldScope_Observation_Ammonia_Units.Enabled = false;
             FieldScope_Observation_Notes.Enabled = false;
             FieldScope_Observation_BarometricPressure_Units.Enabled = false;
-            
+
             FieldScope_Observation_ConfirmLabel.Visible = true;
+            FieldScope_Observation_Latitude_Label.Visible = true;
+            FieldScope_Observation_Longitude_Label.Visible = true;
             FieldScope_Observation_WaterTemperature_Label.Visible = true;
             FieldScope_Observation_AirTemperature_Label.Visible = true;
             FieldScope_Observation_Salinity_Label.Visible = true;
@@ -293,6 +329,8 @@ public partial class StudentObservation : System.Web.UI.Page {
     
     protected void CorrectButton_Click (object sender, EventArgs evt) {
         FieldScope_Observation_ConfirmLabel.Visible = false;
+        FieldScope_Observation_Latitude_Label.Visible = false;
+        FieldScope_Observation_Longitude_Label.Visible = false;
         FieldScope_Observation_WaterTemperature_Label.Visible = false;
         FieldScope_Observation_AirTemperature_Label.Visible = false;
         FieldScope_Observation_Salinity_Label.Visible = false;
@@ -325,8 +363,10 @@ public partial class StudentObservation : System.Web.UI.Page {
         FieldScope_Observation_BarometricPressure_Units.Enabled = true;
 
         FieldScope_Observation_EnterLabel.Visible = true;
-        FieldScope_Observation_AirTemperature.Visible = true;
+        FieldScope_Observation_Latitude.Visible = true;
+        FieldScope_Observation_Longitude.Visible = true;
         FieldScope_Observation_WaterTemperature.Visible = true;
+        FieldScope_Observation_AirTemperature.Visible = true;
         FieldScope_Observation_Salinity.Visible = true;
         FieldScope_Observation_Conductivity.Visible = true;
         FieldScope_Observation_Turbidity.Visible = true;
@@ -345,10 +385,10 @@ public partial class StudentObservation : System.Web.UI.Page {
     }
     
     protected void ConfirmButton_Click (object sender, EventArgs evt) {
-        string service = (string)Session["FieldScope_Obs_Service"];
-        string name = (string)Session["FieldScope_Obs_Name"];
-        string lat = (string)Session["FieldScope_Obs_Lat"];
-        string lon = (string)Session["FieldScope_Obs_Lon"];
+        string service = FieldScope_Observation_ServiceUrl.Text;
+        string name = FieldScope_Observation_ServiceName.Text;
+        string lat = FieldScope_Observation_Latitude.Text;
+        string lon = FieldScope_Observation_Longitude.Text;
         string wfs = service + "/GeoDataServer/WFSServer";
         
         Dictionary<string, string> values = new Dictionary<string, string>();

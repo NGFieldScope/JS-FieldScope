@@ -23,12 +23,55 @@
                          Visible="False" />
             </td>
           </tr>
-          <tr >
+          
+          <tr>
+            <td style="font-weight:bold">
+              Latitude:
+            </td>
+            <td>
+              <asp:TextBox ID="FieldScope_Observation_Latitude" runat="server" Columns="7" />
+              <asp:Label ID="FieldScope_Observation_Latitude_Label" runat="server" Visible="False" />
+            </td>
+            <td>
+              &deg;
+            </td>
+            
+            <td style="font-weight:bold">
+              Longitude:
+            </td>
+            <td>
+              <asp:TextBox ID="FieldScope_Observation_Longitude" runat="server" Columns="7" />
+              <asp:Label ID="FieldScope_Observation_Longitude_Label" runat="server" Visible="False" />
+            </td>
+            <td>
+              &deg;
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <asp:CustomValidator ID="FieldScope_Observation_Latitude_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="Latitude is outisde the expected range of 36&deg; to 43&deg;" 
+                                   ControlToValidate="FieldScope_Observation_Latitude" 
+                                   OnServerValidate="Validate_Latitude" 
+                                   Display="Dynamic" />
+            </td>
+            <td colspan="3">
+              <asp:CustomValidator ID="FieldScope_Observation_Longitude_Validator" 
+                                   runat="server" 
+                                   ErrorMessage="Longitude is outisde the expected range of 74.5&deg; to 80.6&deg; West" 
+                                   ControlToValidate="FieldScope_Observation_Longitude" 
+                                   OnServerValidate="Validate_Longitude" 
+                                   Display="Dynamic" />
+            </td>
+          </tr>
+          
+          <tr>
             <td style="font-weight:bold">
               Water Temperature:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_WaterTemperature" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_WaterTemperature" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_WaterTemperature_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -42,7 +85,7 @@
               Air Temperature:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_AirTemperature" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_AirTemperature" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_AirTemperature_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -76,7 +119,7 @@
               Salinity:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Salinity" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Salinity" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Salinity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -90,7 +133,7 @@
               Conductivity:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Conductivity" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Conductivity" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Conductivity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -124,7 +167,7 @@
               Turbidity:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Turbidity" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Turbidity" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Turbidity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -139,7 +182,7 @@
               Secchi Depth:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_SecchiDepth" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_SecchiDepth" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_SecchiDepth_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -173,7 +216,7 @@
               Dissolved Oxygen:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Oxygen" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Oxygen" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Oxygen_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -210,7 +253,7 @@
               Nitrate:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Nitrogen" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Nitrogen" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Nitrogen_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -258,7 +301,7 @@
               Phosphate:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Phosphorous" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Phosphorous" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Phosphorous_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -296,7 +339,7 @@
               Ammonia:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_Ammonia" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_Ammonia" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_Ammonia_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -333,7 +376,7 @@
               pH:
             </td>
             <td colspan="2">
-              <asp:TextBox ID="FieldScope_Observation_pH" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_pH" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_pH_Label" runat="server" Visible="False" />
             </td>
           </tr>
@@ -355,7 +398,7 @@
               Relative Humidity:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_RelativeHumidity" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_RelativeHumidity" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_RelativeHumidity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -380,7 +423,7 @@
               Barometric Pressure:
             </td>
             <td>
-              <asp:TextBox ID="FieldScope_Observation_BarometricPressure" runat="server" Columns="6" />
+              <asp:TextBox ID="FieldScope_Observation_BarometricPressure" runat="server" Columns="7" />
               <asp:Label ID="FieldScope_Observation_BarometricPressure_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -390,6 +433,7 @@
               </asp:DropDownList>
             </td>
           </tr>
+          <tr>
             <td colspan="3">
               <asp:CustomValidator ID="FieldScope_Observation_BarometricPressure_Validator" 
                                    runat="server" 
@@ -420,6 +464,8 @@
           </tr>
         </table>
       </div>
+      <asp:Label ID="FieldScope_Observation_ServiceUrl" runat="server" Visible="False" />
+      <asp:Label ID="FieldScope_Observation_ServiceName" runat="server" Visible="False" />
     </form>
   </body>
 </html>
