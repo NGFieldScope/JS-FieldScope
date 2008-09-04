@@ -391,9 +391,9 @@ public partial class StudentObservation : System.Web.UI.Page {
         string oxygen = FieldScope_Observation_Oxygen.Text;
         if (oxygen.Length > 0) {
             string oxygenUnits = FieldScope_Observation_Oxygen_Units.SelectedItem.Value;
-            values.Add("OXYGEN", UNIT_CONVERTERS[oxygenUnits](double.Parse(oxygen)).ToString());
+            values.Add("DISSOLVED_OXYGEN", UNIT_CONVERTERS[oxygenUnits](double.Parse(oxygen)).ToString());
         }
-        values.Add("SCHOOL_NAME", FieldScope_Observation_School.Text);
+        values.Add("SCHOOL", FieldScope_Observation_School.Text);
         
         string nitrogen = FieldScope_Observation_Nitrogen.Text;
         if (nitrogen.Length > 0) {
