@@ -951,7 +951,7 @@ FieldScope.Application = function (savedState,
       this.layers.cbibs.SetVisible(savedState ? savedState.cbibsVisible : false);
       
       // Student observations layer
-      var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/cb_observations_3/MapServer/0";
+      var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/observations/MapServer/0";
       var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, observationsUrl);
       observationsProvider.icon = new GIcon(null, "images/beaker.gif");
       observationsProvider.icon.shadow = "images/beaker-shadow.png";
@@ -1095,7 +1095,7 @@ FieldScope.Application = function (savedState,
       //
       this.mouseModes.navigate = new FieldScope.NavigateMouseMode();
       this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer,
-                                                                              this.urlPrefix + "/ArcGIS/services/fieldscope_cb_1/cb_observations_3",
+                                                                              this.urlPrefix + "/ArcGIS/services/fieldscope_cb_1/observations",
                                                                               "cb_observations_3");
       this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.photos.asyncLayer, "http://focus.metalens.org");
       this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds, 
