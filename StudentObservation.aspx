@@ -357,7 +357,7 @@
                            runat="server" 
                            TextMode="MultiLine" 
                            Rows="7" 
-                           Columns="40" 
+                           Columns="36" 
                            Font-Size="Smaller" 
                            CssClass="notesTextBox" />
             </td>
