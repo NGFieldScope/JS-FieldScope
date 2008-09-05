@@ -293,6 +293,8 @@ public partial class StudentObservation : System.Web.UI.Page {
             
             FieldScope_Observation_WaterTemperature_Units.Enabled = false;
             FieldScope_Observation_AirTemperature_Units.Enabled = false;
+            FieldScope_Observation_Latitude_Units.Enabled = false;
+            FieldScope_Observation_Longitude_Units.Enabled = false;
             FieldScope_Observation_Salinity_Units.Enabled = false;
             FieldScope_Observation_Conductivity_Units.Enabled = false;
             FieldScope_Observation_Turbidity_Units.Enabled = false;
@@ -351,6 +353,8 @@ public partial class StudentObservation : System.Web.UI.Page {
 
         FieldScope_Observation_WaterTemperature_Units.Enabled = true;
         FieldScope_Observation_AirTemperature_Units.Enabled = true;
+        FieldScope_Observation_Latitude_Units.Enabled = true;
+        FieldScope_Observation_Longitude_Units.Enabled = true;
         FieldScope_Observation_Salinity_Units.Enabled = true;
         FieldScope_Observation_Conductivity_Units.Enabled = true;
         FieldScope_Observation_Turbidity_Units.Enabled = true;

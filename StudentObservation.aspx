@@ -28,23 +28,26 @@
             <td style="font-weight:bold">
               Latitude:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Latitude" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Latitude" runat="server" Columns="10" />
               <asp:Label ID="FieldScope_Observation_Latitude_Label" runat="server" Visible="False" />
             </td>
             <td>
-              &deg;
+              <asp:DropDownList ID="FieldScope_Observation_Latitude_Units" runat="server">
+                <asp:ListItem Text="deg" Value="deg" />
+              </asp:DropDownList>
             </td>
-            
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Longitude:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Longitude" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Longitude" runat="server" Columns="10" />
               <asp:Label ID="FieldScope_Observation_Longitude_Label" runat="server" Visible="False" />
             </td>
             <td>
-              &deg;
+              <asp:DropDownList ID="FieldScope_Observation_Longitude_Units" runat="server">
+                <asp:ListItem Text="deg" Value="deg" />
+              </asp:DropDownList>
             </td>
           </tr>
           <tr>
@@ -70,8 +73,8 @@
             <td style="font-weight:bold">
               Water Temperature:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_WaterTemperature" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_WaterTemperature" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_WaterTemperature_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -80,12 +83,11 @@
                 <asp:ListItem Text="&deg;F" Value="F" />
               </asp:DropDownList>
             </td>
-            
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Air Temperature:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_AirTemperature" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_AirTemperature" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_AirTemperature_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -118,8 +120,8 @@
             <td style="font-weight:bold">
               Salinity:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Salinity" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Salinity" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Salinity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -129,11 +131,11 @@
                 <asp:ListItem Text="psu" Value="psu" />
               </asp:DropDownList>
             </td>
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Conductivity:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Conductivity" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Conductivity" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Conductivity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -166,8 +168,8 @@
             <td style="font-weight:bold">
               Turbidity:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Turbidity" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Turbidity" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Turbidity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -178,11 +180,11 @@
               </asp:DropDownList>
             </td>
             
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Secchi Depth:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_SecchiDepth" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_SecchiDepth" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_SecchiDepth_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -215,8 +217,8 @@
             <td style="font-weight:bold">
               Dissolved Oxygen:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Oxygen" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Oxygen" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Oxygen_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -224,7 +226,7 @@
                 <asp:ListItem Text="mg/L" Value="OXYGEN[mg/L]" />
               </asp:DropDownList>
             </td>
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               School Name:
             </td>
             <td colspan="2">
@@ -252,8 +254,8 @@
             <td style="font-weight:bold">
               Nitrate:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Nitrogen" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Nitrogen" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Nitrogen_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -261,7 +263,7 @@
                 <asp:ListItem Text="mg/L" Value="NITROGEN[mg/L]" />
               </asp:DropDownList>
             </td>
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Collection Date:
             </td>
             <td colspan="2">
@@ -300,8 +302,8 @@
             <td style="font-weight:bold">
               Phosphate:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Phosphorous" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Phosphorous" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Phosphorous_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -309,7 +311,7 @@
                 <asp:ListItem Text="mg/L" Value="PHOSPHOROUS[mg/L]" />
               </asp:DropDownList>
             </td>
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Time:
             </td>
             <td colspan="2">
@@ -338,8 +340,8 @@
             <td style="font-weight:bold">
               Ammonia:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_Ammonia" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_Ammonia" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_Ammonia_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -347,7 +349,7 @@
                 <asp:ListItem Text="mg/L" Value="AMMONIA[mg/L]" />
               </asp:DropDownList>
             </td>
-            <td style="font-weight:bold">
+            <td style="font-weight:bold;padding-left:4px">
               Field Notes:
             </td>
             <td colspan="2" rowspan="7">
@@ -375,8 +377,8 @@
             <td style="font-weight:bold">
               pH:
             </td>
-            <td colspan="2">
-              <asp:TextBox ID="FieldScope_Observation_pH" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_pH" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_pH_Label" runat="server" Visible="False" />
             </td>
           </tr>
@@ -397,8 +399,8 @@
             <td style="font-weight:bold">
               Relative Humidity:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_RelativeHumidity" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_RelativeHumidity" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_RelativeHumidity_Label" runat="server" Visible="False" />
             </td>
             <td>
@@ -422,8 +424,8 @@
              <td style="font-weight:bold">
               Barometric Pressure:
             </td>
-            <td>
-              <asp:TextBox ID="FieldScope_Observation_BarometricPressure" runat="server" Columns="7" />
+            <td align="right">
+              <asp:TextBox ID="FieldScope_Observation_BarometricPressure" runat="server" Columns="6" />
               <asp:Label ID="FieldScope_Observation_BarometricPressure_Label" runat="server" Visible="False" />
             </td>
             <td>
