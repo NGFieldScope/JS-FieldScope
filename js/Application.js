@@ -595,8 +595,19 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.permeabilityVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/impermeability/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/impermeability/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001</p>'
+          legendHTML: '<p class="legendTitle">Impervious Surfaces</p>\
+                       <img src="ArcGISLegendService.ashx?srv=' + encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/impermeability/MapServer') + '" />\
+                       <p class="legendInfo">\
+                         Impervious surfaces such as roads and parking lots do not allow water to easily penetrate and prevent \
+                         rainfall from entering the groundwater system. This causes surface runoff and introduces non-point \
+                         source pollution into waterways.\
+                       </p>\
+                       <p class="legendInfo">\
+                         In the raster image, cells with a value closer to 100 are highly impervious. Areas with a value \
+                         closer to zero are more permeable by rainfall. Impervious surfaces give us an indication of development \
+                         in a given area.\
+                       </p>\
+                       <p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -628,8 +639,9 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.landcoverVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/landcover/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v5.0)</p>'
+          legendHTML: '<p class="legendTitle">Land Cover</p>\
+                       <img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/landcover/MapServer')+'" />\
+                       <p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v5.0)</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -661,8 +673,9 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.imperviousVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/impervious/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/impervious/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001; Chesapeake Bay Program</p>'
+          legendHTML : '<p class="legendTitle">Percent Impervious</p>\
+                        <img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/impervious/MapServer')+'" />\
+                        <p class="legendDataSource">Data Source: MRLC National Landcover Dataset 2001; Chesapeake Bay Program</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -694,8 +707,18 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.watershedsVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/watersheds/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/watersheds/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: USGS; Chesapeake Bay Program</p>',
+          legendHTML : '<p class="legendTitle">Watershed Boundaries</p>\
+                        <img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/watersheds/MapServer')+'" /> \
+                        <p class="legendInfo">\
+                          The U.S. Geological Survey (USGS) divides watershed into successively smaller units, or sub-watersheds, \
+                          based on surface hydrologic features. Sub-watersheds are organized using a system of Hydrologic Unit Codes (HUCs). \
+                          The USGS divides the Chesapeake Bay watershed into 4 sub-regions (HUC4), 58 sub-basins (HUC8) and 506 local watersheds (HUC11).\
+                        </p>\
+                        <p class="legendInfo">\
+                          A watershed is a dynamic system connected by a network of streams, rivers and groundwater flow. A sub-watershed is a system \
+                          within a system. Investigating sub-watersheds offers the opportunity to engage in localized watershed studies. \
+                        </p>\
+                        <p class="legendDataSource">Data Source: USGS; Chesapeake Bay Program</p>',
           Identify : this.IdentifyWatershedsDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
@@ -728,8 +751,26 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.nutrientsVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/nutrients/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/nutrients/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v4.3)</p>',
+          legendHTML: '<p class="legendTitle">Nutrients & Sediment</p>\
+                       <img src="ArcGISLegendService.ashx?srv=' + encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/nutrients/MapServer') + '" />\
+                       <p class="legendInfo">\
+                         Excess nutrients and sediment are introduced to waterways by non-point and point source pollution. The vector \
+                         map depicts the yield of total nitrogen pollution (from point and non-point sources) to modeling segments \
+                         defined by the Chesapeake Bay Program.\
+                       </p>\
+                       <p class="legendInfo">\
+                         Use the query tool to click on the map to see a breakdown of nutrient and sediment pollution in an area from \
+                         point and non-point sources. The categories used are:\
+                       </p>\
+                       <ol class="legendInfo">\
+                         <li>Urban</li>\
+                         <li>Mixed use (suburban)</li>\
+                         <li>Forest</li>\
+                         <li>Agriculture</li>\
+                         <li>Point Source</li>\
+                         <li>Atmospheric Deposition</li>\
+                       </ol>\
+                       <p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v4.3)</p>',
           Identify : this.IdentifyNutreientsDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
@@ -762,8 +803,9 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.bathymetryVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/bathymetry/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/bathymetry/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: National Geographic Maps</p>'
+          legendHTML: '<p class="legendTitle">Bathymetry</p>\
+                       <img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/bathymetry/MapServer')+'" />\
+                       <p class="legendDataSource">Data Source: National Geographic Maps</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -795,8 +837,9 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.agricultureVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/agriculture/MapServer/tile/10/392/295.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/agriculture/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program; National Geographic Maps</p>'
+          legendHTML: '<p class="legendTitle">Percent Agricultural</p>\
+                       <img src="ArcGISLegendService.ashx?srv=' + encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/agriculture/MapServer') + '" />\
+                       <p class="legendDataSource">Data Source: Chesapeake Bay Program; National Geographic Maps</p>'
         };
       window.setTimeout(Function.createDelegate(this, function () {
           // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
@@ -828,7 +871,8 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.statesVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/states/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/states/MapServer')+'" />',
+          legendHTML: '<p class="legendTitle">State Boundaries</p>\
+                       <img src="ArcGISLegendService.ashx?srv=' + encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/states/MapServer') + '" />',
           Identify : this.IdentifyStateDelegate
         };
       window.setTimeout(Function.createDelegate(this, function () {
@@ -861,8 +905,15 @@ FieldScope.Application = function (savedState,
           visible : savedState ? savedState.physiographyVisible : false,
           tileLayer : null,
           iconHTML : '<img src="'+this.urlPrefix+'/ArcGIS/rest/services/fieldscope_cb_1/physiography/MapServer/tile/6/24/18.png" style="height:16px" />',
-          legendHTML : '<img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/physiography/MapServer')+'" />' +
-                       '<p class="legendDataSource">Data Source: Chesapeake Bay Program; USGS</p>',
+          legendHTML : '<p class="legendTitle">Physiographic Regions</p>\
+                        <img src="ArcGISLegendService.ashx?srv='+encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/physiography/MapServer')+'" /> \
+                        <p class="legendInfo">\
+                          Physiographic regions are surface areas defined by distinct terrain texture and geologic structure and history. \
+                          In the Chesapeake Bay watershed there are eight distinct physiographic regions. The features within a region help \
+                          to define the flow of rivers and streams and other watershed processes. A region\'s characteristics also help to \
+                          define what type of development the land is best suited for.\
+                        </p>\
+                        <p class="legendDataSource">Data Source: Chesapeake Bay Program; USGS</p>',
           Identify : this.IdentifyPhysiographyDelegate
         };
       
@@ -898,7 +949,11 @@ FieldScope.Application = function (savedState,
                                                              "Chesapeake 1607",
                                                              "FieldScope.Layer[then]",
                                                              '<img src="images/cbthen.png" style="height:16px" />');
-      this.layers.then.legendHTML = '<span>Stories from National Geographic\'s <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a></span>';
+      this.layers.then.legendHTML = '<p class="legendTitle">Chesapeake 1607</p>\
+                                     <p class="legendInfo">\
+                                       Stories from National Geographic\'s \
+                                       <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a>\
+                                     </p>';
       this.layers.then.SetVisible(savedState ? savedState.thenVisible : false);
       
       // Chesapeake "Now" layer
@@ -920,7 +975,11 @@ FieldScope.Application = function (savedState,
                                                             "Chesapeake Today",
                                                             "FieldScope.Layer[now]",
                                                             '<img src="images/cbnow.png" style="height:16px" />');
-      this.layers.now.legendHTML = '<span>Stories from National Geographic\'s <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a></span>';
+      this.layers.now.legendHTML = '<p class="legendTitle">Chesapeake Today</p>\
+                                    <p class="legendInfo">\
+                                      Stories from National Geographic\'s \
+                                      <a href="http://www.nationalgeographic.com/chesapeake/" target="_blank">Chesapeake--Then and Now</a>\
+                                    </p>';
       this.layers.now.SetVisible(savedState ? savedState.nowVisible : false);
       
       // Photos layer
@@ -947,7 +1006,11 @@ FieldScope.Application = function (savedState,
                                                               "CBIBS",
                                                               "FieldScope.Layer[cbibs]",
                                                               '<img src="images/buoy.png" style="height:16px" />');
-      this.layers.cbibs.legendHTML = '<span>Real-time water quality data from the <a href="http://www.buoybay.org/" target="_blank">Chesapeake Bay Interpretive Buoy System</a></span>';
+      this.layers.cbibs.legendHTML = '<p class="legendTitle">CBIBS</p>\
+                                      <p class="legendInfo">\
+                                        Real-time water quality data from the \
+                                        <a href="http://www.buoybay.org/" target="_blank">Chesapeake Bay Interpretive Buoy System</a>\
+                                      </p>';
       this.layers.cbibs.SetVisible(savedState ? savedState.cbibsVisible : false);
       
       // Student observations layer

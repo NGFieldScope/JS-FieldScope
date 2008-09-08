@@ -33,7 +33,24 @@
   height: 24px;
 }
 
+.legendTitle {
+  margin-top: 0px;
+  margin-bottom: 4px;
+  font-size: 9pt;
+  font-weight: bold;
+  max-width: 300px;
+}
+
+.legendInfo {
+  margin-top: 4px;
+  margin-bottom: 0px;
+  font-size: 8pt;
+  max-width: 350px;
+}
+
 .legendDataSource {
+  margin-top: 4px;
+  margin-bottom: 0px;
   font-size: 7pt;
-  max-width: 150px;
+  max-width: 350px;
 }

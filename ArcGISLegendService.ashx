@@ -30,7 +30,7 @@ public class ArcGISLegendService : IHttpHandler {
       context.Response.ContentType = cachedImg.ContentType;
       context.Response.BinaryWrite(cachedImg.Data);
     } else {
-      Bitmap bmp = ArcGIS.MapService.GetLegendImage(serviceUri, 150, -1, 72, FONT, true);
+      Bitmap bmp = ArcGIS.MapService.GetLegendImage(serviceUri, 300, -1, 72, FONT, true);
       MemoryStream outStream = new MemoryStream();
       if (string.Equals(format, "bmp", System.StringComparison.OrdinalIgnoreCase)) {
         context.Response.ContentType = "image/bmp";
