@@ -91,8 +91,8 @@ FieldScope.GAsyncLayer = function(inMap, inProvider) {
       this.overlays = newOverlays;
       // hide them if the layer has been made invisible since we started loading
       if (!this.visible) {
-        for (var x = 0; x < this.overlays.length; x += 1) {
-          this.map.removeOverlay(this.overlays[x]);
+        for (var y = 0; y < this.overlays.length; y += 1) {
+          this.map.removeOverlay(this.overlays[y]);
         }
       }
     }
