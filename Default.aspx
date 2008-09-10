@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>Chesapeake Bay FieldScope Prototype 1.22</title>
+    <title>Chesapeake Bay FieldScope Prototype 1.23</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -20,7 +20,7 @@
             djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
     <script type="text/javascript" src="js/swfobject/swfobject.js"></script>
   
-  <!-- release version scripts
+  <!-- release version scripts 
     <script type="text/javascript" src="js/extinfowindow/extinfowindow_packed.js"></script>
     <script type="text/javascript" 
             src="js/dojo-1.1.1/dojo/dojo.js" 
@@ -193,74 +193,75 @@
           }
         }
       }
-      
-      dojo.addOnLoad(function () {
-          
-          var savedState = null;
-          try {
-            savedState = dojo.fromJson($get("FieldScope_State").value);
-          } catch (e) { }
-          
-          // instantiate the application
-          application = new FieldScope.Application(
+
+      dojo.addOnLoad(function() {
+
+        var savedState = null;
+        try {
+          savedState = dojo.fromJson($get("FieldScope_State").value);
+        } catch (e) { }
+
+        // instantiate the application
+        application = new FieldScope.Application(
               savedState,
               $get("FieldScope.Div.Map"),
               UpdateLayerControls,
-              function () {
+              function() {
                 return $get("FieldScope.Input.SearchText").value;
               },
-              function (searchResults) {
-                var resultsDiv = $get("FieldScope.Div.SearchResults");
-                resultsDiv.innerHTML = "";
+              function(searchResults) {
                 if (searchResults) {
-                  resultsDiv.appendChild(searchResults);
-                  resultsDiv.style.visibility="visible";
+                  var li = document.createElement("li");
+                  li.appendChild(searchResults);
+                  $get("FieldScope.Div.SearchResults").appendChild(li);
+                  FieldScope.DomUtils.show($get("FieldScope.Div.SearchResultsContainer"));
                 } else {
-                  resultsDiv.style.visibility="hidden";
+                  $get("FieldScope.Div.SearchResults").innerHTML = "";
+                  FieldScope.DomUtils.hide($get("FieldScope.Div.SearchResultsContainer"));
                 }
               }
             );
-          
-          // Build a button for each of the application's mouse modes
-          var cookie = $get("FieldScope_Cookie").value;
-          var loggedIn = cookie && (cookie.length > 0);
-          var toolbar = $get("FieldScope.Div.Toolbar");
-          for (var x = 0; x < application.mouseModeList.length; x += 1) {
-            var mode = application.mouseModeList[x];
-            if ((!mode.LoginRequired()) || loggedIn) {
-              toolbar.innerHTML += MakeMouseModeButtonHtml(mode);
-            }
+
+        // Build a button for each of the application's mouse modes
+        var cookie = $get("FieldScope_Cookie").value;
+        var loggedIn = cookie && (cookie.length > 0);
+        var toolbar = $get("FieldScope.Div.Toolbar");
+        for (var x = 0; x < application.mouseModeList.length; x += 1) {
+          var mode = application.mouseModeList[x];
+          if ((!mode.LoginRequired()) || loggedIn) {
+            toolbar.innerHTML += MakeMouseModeButtonHtml(mode);
           }
-          
-          // Build a tree of controls for the application's data layers
-          var layerControlsHtml = '<table cellspacing="1" cellpadding="0" style="width:100%">';
-          layerControlsHtml += MakeLayerControlsHtml(application.layerTree);
-          layerControlsHtml += "</table>";
-          $get("FieldScope.Layers.Controls").innerHTML = layerControlsHtml;
-          
-          dojo.parser.parse();
-          dijit.Tooltip.defaultPosition=['above', 'below'];
-          
-          UpdateMouseModeButtons();
-          
-          // Wire up the mouse mode buttons
-          for (var y = 0; y < application.mouseModeList.length; y += 1) {
-            WireMouseModeButton(application.mouseModeList[y]);
+        }
+
+        // Build a tree of controls for the application's data layers
+        var layerControlsHtml = '<table cellspacing="1" cellpadding="0" style="width:100%">';
+        layerControlsHtml += MakeLayerControlsHtml(application.layerTree);
+        layerControlsHtml += "</table>";
+        $get("FieldScope.Layers.Controls").innerHTML = layerControlsHtml;
+
+        dojo.parser.parse();
+        dijit.Tooltip.defaultPosition = ['above', 'below'];
+
+        UpdateMouseModeButtons();
+
+        // Wire up the mouse mode buttons
+        for (var y = 0; y < application.mouseModeList.length; y += 1) {
+          WireMouseModeButton(application.mouseModeList[y]);
+        }
+
+        // Wire up the layer controls
+        for (var layerName in application.layers) {
+          var layer = application.layers[layerName];
+          if (layer) {
+            WireLayerControls(layer);
           }
-          
-          // Wire up the layer controls
-          for (var layerName in application.layers) {
-            var layer = application.layers[layerName];
-            if (layer) {
-              WireLayerControls(layer);
-            }
-          }
-          
-          // show the IE6 warning if the user is running IE6
-          if (false /*@cc_on || @_jscript_version < 5.7 @*/) {
-            FieldScope.DomUtils.show($get("FieldScope.IE6.Notice"));
-          }
-        });
+        }
+
+        // show the IE6 warning if the user is running IE6
+        if (false/*@cc_on || @_jscript_version < 5.7@*/) {
+          FieldScope.DomUtils.show($get("FieldScope.IE6.Notice"));
+        }
+      });
       
       function On_Uload () {
         // AAAAAAARGH! Safari Sux!
@@ -354,6 +355,7 @@
         </Scripts>
         <Services>
           <asp:ServiceReference Path="CBIBSService.asmx" />
+          <asp:ServiceReference Path="GeocodeService.asmx" />
           <asp:ServiceReference Path="MetaLensService.asmx" />
         </Services>
       </asp:ScriptManager>
@@ -404,7 +406,10 @@
             <div style="margin:2px">
               <input type="text" id="FieldScope.Input.SearchText" style="width:98%;margin-bottom:2px" onkeydown="application.OnSearchKey(event);" />
               <input type="button" value="Search" onclick="application.OnSearchClick(event);" />
-              <div id="FieldScope.Div.SearchResults" style="width:98%;text-align:left;visibility:hidden"></div>
+              <div id="FieldScope.Div.SearchResultsContainer" style="width:98%;text-align:left;display:none">
+                <p style="font-weight:bold;margin:0px">Search Results:</p>
+                <ul id="FieldScope.Div.SearchResults" style="margin-top:0px;margin-left:20px;font-size:10px"></ul>
+              </div>
             </div>
           </div>
         </div>

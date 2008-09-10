@@ -156,4 +156,54 @@ namespace ArcGIS {
             return result;
         }
     }
+
+    public class GeocodeResult {
+    
+        private string _status;
+        private int _score = -1;
+        private double _x = Double.NaN;
+        private double _y = Double.NaN;
+        private string _address;
+
+        public string Status { get { return _status; } }
+        public int Score { get { return _score; } }
+        public double X { get { return _x; } }
+        public double Y { get { return _y; } }
+        public string Address { get { return _address; } }
+
+        public GeocodeResult (PropertySet properties) {
+            foreach (PropertySetProperty property in properties.PropertyArray) {
+                if (property.Key == "Status") {
+                    _status = (string)property.Value;
+                } else if ((property.Key == "Score") && (property.Value != null)) {
+                    _score = (short)property.Value;
+                } else if ((property.Key == "X") && (property.Value != null)) {
+                    _x = (double)property.Value;
+                } else if ((property.Key == "Y") && (property.Value != null)) {
+                    _y = (double)property.Value;
+                } else if (property.Key == "Match_addr") {
+                    _address = (string)property.Value;
+                }
+            }
+        }
+
+        public override string ToString () {
+            return string.Format("{{X:{0},Y:{1},Status:{2},Score:{3},Address:{4}}}",
+                                 _x, _y, _status, _score, _address);
+        }
+    }
+
+    public class GeocodeService {
+        
+        public static GeocodeResult Geocode (string serviceUri, string address) {
+            GeocodeServerProxy proxy = new GeocodeServerProxy(serviceUri);
+            PropertySet geocodePropSet = new PropertySet();
+            PropertySetProperty geocodeProp = new PropertySetProperty();
+            geocodeProp.Key = "KeyField";
+            geocodeProp.Value = address;
+            geocodePropSet.PropertyArray = new PropertySetProperty[] { geocodeProp };
+            PropertySet results = proxy.GeocodeAddress(geocodePropSet, null);
+            return new GeocodeResult(results);
+        }
+    }
 }
