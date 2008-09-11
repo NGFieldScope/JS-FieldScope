@@ -65,7 +65,7 @@
 	border: solid black 1px;
 	background-color: white;
 	color: black;
-	filter: alpha(opacity=65);
-	opacity: 0.65;
-	-moz-opacity: 0.65;
+	filter: alpha(opacity=75);
+	opacity: 0.75;
+	-moz-opacity: 0.75;
 }
