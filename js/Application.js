@@ -513,6 +513,13 @@ FieldScope.Application = function(savedState,
       this.map.setCenter(new GLatLng(savedState.centerLatitude, savedState.centerLongitude), savedState.zoomLevel, blankMap);
     }
     this.map.addControl(new GLargeMapControl());
+
+    this.map.addControl(new HtmlControl('<div class="latLonControl"><div id="FieldScope.LatLon"></div></div>'),
+                        new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(6, 4)));
+    GEvent.addListener(this.map, "mousemove", function(latlng) {
+      $get("FieldScope.LatLon").innerHTML = latlng.lat().toFixed(4) + ", " + latlng.lng().toFixed(4);
+    });
+
     this.map.enableScrollWheelZoom();
     this.map.disableDoubleClickZoom();
     this.mapExtension = new esri.arcgis.gmaps.MapExtension(this.map);
@@ -521,7 +528,7 @@ FieldScope.Application = function(savedState,
     var dummy2 = this.map.getExtInfoWindow();
 
     this.searchTool = new FieldScope.GSearch(this.map,
-                                             [this.urlPrefix + "/arcgis/services/fieldscope_cb_1/school_address/GeocodeServer" ],
+                                             [this.urlPrefix + "/arcgis/services/fieldscope_cb_1/school_address/GeocodeServer"],
                                              this.OnSearchResult);
     this.searchTool.AttachEvent("onfinishsearch", this.OnFinishSearch);
 

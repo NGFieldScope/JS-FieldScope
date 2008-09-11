@@ -12,6 +12,7 @@
     
     <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQkzReMT6KcnZeGz7n-Q5b7By3ebRQHjl1BuehZRVJFoqAs85jHN9ZOUg"></script>
     <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1"></script>
+    <script type="text/javascript" src="js/HtmlControl/HtmlControl.js"></script>
   
   <!-- development version scripts -->
     <script type="text/javascript" src="js/extinfowindow/extinfowindow.js"></script>
