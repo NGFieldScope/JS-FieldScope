@@ -409,7 +409,7 @@
               <input type="button" value="Search" onclick="application.OnSearchClick(event);" />
               <div id="FieldScope.Div.SearchResultsContainer" style="width:98%;text-align:left;display:none">
                 <p style="font-weight:bold;margin:0px">Search Results:</p>
-                <ul id="FieldScope.Div.SearchResults" style="margin-top:0px;margin-left:20px;font-size:10px"></ul>
+                <ul id="FieldScope.Div.SearchResults" style="margin-top:0px;padding-left:20px;font-size:10px"></ul>
               </div>
             </div>
           </div>
