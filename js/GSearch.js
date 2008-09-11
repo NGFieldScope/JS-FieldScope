@@ -7,10 +7,10 @@ Type.registerNamespace("FieldScope");
 // ----------------------------------------------------------------------------
 // Google Geocoding class
 
-FieldScope.GSearch = function(map, geocodeServiceUrl, appendResultCallback) {
+FieldScope.GSearch = function(map, geocodeServiceUrls, appendResultCallback) {
 
   this.map = map;
-  this.geocodeServiceUrl = geocodeServiceUrl;
+  this.geocodeServiceUrls = geocodeServiceUrls;
   this.AppendResult = appendResultCallback;
   this.eventHandlers = new Sys.EventHandlerList();
   this.googleGeocoder = new GClientGeocoder();
@@ -23,7 +23,7 @@ FieldScope.GSearch = function(map, geocodeServiceUrl, appendResultCallback) {
       if (handler) { handler.call(this, Sys.EventArgs.Empty); }
     }
   };
-  
+
   this.OnFailureDelegate = Function.createDelegate(this, function(err) {
     console.error(err);
     this.codersWorking -= 1;
@@ -47,9 +47,11 @@ FieldScope.GSearch = function(map, geocodeServiceUrl, appendResultCallback) {
     var handler = this.eventHandlers.getHandler("onbeginsearch");
     if (handler) { handler.call(this, Sys.EventArgs.Empty); }
     this.googleGeocoder.setViewport(this.map.getBounds());
-    this.codersWorking += 2;
+    this.codersWorking += this.geocodeServiceUrls.length + 1;
     this.googleGeocoder.getLocations(text, this.GoogleCallbackDelegate);
-    GeocodeService.Geocode(text, geocodeServiceUrl, this.ArcGISCallbackDelegate, this.OnFailureDelegate);
+    for (var x = 0; x < this.geocodeServiceUrls.length; x += 1) {
+      GeocodeService.Geocode(text, geocodeServiceUrls[x], this.ArcGISCallbackDelegate, this.OnFailureDelegate);
+    }
   });
 
   this.MakePlacemark = function(x, y, address) {

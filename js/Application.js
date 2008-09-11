@@ -521,7 +521,7 @@ FieldScope.Application = function(savedState,
     var dummy2 = this.map.getExtInfoWindow();
 
     this.searchTool = new FieldScope.GSearch(this.map,
-                                             this.urlPrefix + "/arcgis/services/fieldscope_cb_1/school_address/GeocodeServer",
+                                             [this.urlPrefix + "/arcgis/services/fieldscope_cb_1/school_address/GeocodeServer" ],
                                              this.OnSearchResult);
     this.searchTool.AttachEvent("onfinishsearch", this.OnFinishSearch);
 
