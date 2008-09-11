@@ -124,7 +124,7 @@ FieldScope.MetaLens.GDataProvider = function (map, service, url) {
           result += '</td>';
           if (data.Description !== null) {
             result += '<td style="vertical-align:top;width:100%">';
-            result +=   '<div style="font-size:9pt;max-height:150px;overflow:auto;margin-left:3px">';
+            result += '<div style="font-size:9pt;max-height:150px;max-width:256px;word-wrap:break-word;overflow:auto;margin-left:3px">';
             result +=     data.Description;
             result +=   '</div>';
             result += '</td>';
