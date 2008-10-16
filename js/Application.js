@@ -1052,13 +1052,13 @@ FieldScope.Application = function(savedState,
     observationsProvider.icon.infoWindowAnchor = new GPoint(8, 2);
     observationsProvider.icon.infoShadowAnchor = new GPoint(16, 8);
     observationsProvider.queryfields = ["WATER_TEMPERATURE", "AIR_TEMPERATURE",
-                                           "SALINITY", "RELATIVE_HUMIDITY",
-                                           "CONDUCTIVITY", "BAROMETRIC_PRESSURE",
-                                           "TURBIDITY", "PH",
-                                           "SECCHI_DEPTH", "DISSOLVED_OXYGEN",
-                                           "NITRATE", "PHOSPHATE",
-                                           "AMMONIA",
-                                           "SCHOOL", "COLLECTION_DATE", "ENTRY_DATE", "FIELD_NOTES"];
+                                        "SALINITY", "RELATIVE_HUMIDITY",
+                                        "CONDUCTIVITY", "BAROMETRIC_PRESSURE",
+                                        "TURBIDITY", "PH",
+                                        "SECCHI_DEPTH", "DISSOLVED_OXYGEN",
+                                        "NITRATE", "PHOSPHATE",
+                                        "AMMONIA",
+                                        "SCHOOL", "COLLECTION_DATE", "ENTRY_DATE", "FIELD_NOTES"];
     var html = '<table style="border-collapse:collapse;" cellspacing="2">';
     html += '<tr>';
     html += '<td style="font-weight:bold;text-align:center" colspan="4">';
@@ -1190,13 +1190,13 @@ FieldScope.Application = function(savedState,
     //
     this.mouseModes.navigate = new FieldScope.NavigateMouseMode();
     this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer,
-                                                                              this.urlPrefix + "/ArcGIS/services/fieldscope_cb_1/observations",
-                                                                              "cb_observations_3");
+                                                                            this.urlPrefix + "/ArcGIS/services/fieldscope_cb_1/observations",
+                                                                            "observations");
     this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.photos.asyncLayer, "http://focus.metalens.org");
     this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds,
-                                                               this.layers.physiography,
-                                                               this.layers.states,
-                                                               this.layers.nutrients]);
+                                                             this.layers.physiography,
+                                                             this.layers.states,
+                                                             this.layers.nutrients]);
 
     //
     // The mouse mode list determines how mode buttons are presented to the user

@@ -36,7 +36,7 @@ namespace WFS {
                 request.WriteStartElement(geometryName, wfsUrl);
                 request.WriteStartElement("Point", "http://www.opengis.net/gml");
                 request.WriteAttributeString("gid", "1");
-                request.WriteElementString("pos", "http://www.opengis.net/gml", string.Format("{0} {1}", longitude, latitude));
+                request.WriteElementString("pos", "http://www.opengis.net/gml", string.Format("{0} {1}", latitude, longitude));
                 request.WriteEndElement(); // Point
                 request.WriteEndElement(); // geometryName
                 foreach (string key in values.Keys) {
