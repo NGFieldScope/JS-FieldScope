@@ -128,6 +128,7 @@ FieldScope.Application = function(savedState,
     agriculture: {},
     states: {},
     physiography: {},
+    smithtrail: {},
     // Async point layers
     then: {},
     now: {},
@@ -173,6 +174,9 @@ FieldScope.Application = function(savedState,
     if (this.layers.states.tileLayer && this.layers.states.visible) {
       tileLayers.push(this.layers.states.tileLayer);
     }
+    if (this.layers.smithtrail.tileLayer && this.layers.smithtrail.visible) {
+      tileLayers.push(this.layers.smithtrail.tileLayer);
+    }
     if (this.layers.streets.tileLayer && this.layers.streets.visible) {
       tileLayers.push(this.layers.streets.tileLayer);
     }
@@ -195,6 +199,7 @@ FieldScope.Application = function(savedState,
     FieldScope.DomUtils.hide(this.layers.watersheds.loadingIndicator);
     FieldScope.DomUtils.hide(this.layers.physiography.loadingIndicator);
     FieldScope.DomUtils.hide(this.layers.states.loadingIndicator);
+    FieldScope.DomUtils.hide(this.layers.smithtrail.loadingIndicator);
     FieldScope.DomUtils.hide(this.layers.streets.loadingIndicator);
   });
 
@@ -486,6 +491,7 @@ FieldScope.Application = function(savedState,
     this.layers.agriculture.visible = false;
     this.layers.states.visible = false;
     this.layers.physiography.visible = false;
+    this.layers.smithtrail.visible = false;
     this.UpdateMapType();
     this.layers.then.SetVisible(false);
     this.layers.now.SetVisible(false);
@@ -957,7 +963,46 @@ FieldScope.Application = function(savedState,
                                                                    }
                                                                  }));
     }), 0);
+    
+    // John Smith Trail layer
+    this.layers.smithtrail = {
+      name: "John Smith Trail",
+      id: "FieldScope.Layer[smithtrail]",
+      IsVisible: Function.createDelegate(this, function() {
+        return this.layers.smithtrail.visible;
+      }),
+      SetVisible: Function.createDelegate(this, function(visible) {
+        this.layers.smithtrail.visible = visible;
+        FieldScope.DomUtils.show(this.layers.smithtrail.loadingIndicator);
+        // use setTimeout so the checkbox updates immediately
+        window.setTimeout(this.UpdateMapType, 0);
+      }),
+      loadingIndicator: null,
+      visible: savedState ? savedState.smithtrailVisible : false,
+      tileLayer: null,
+      iconHTML: '<img src="' + this.urlPrefix + '/ArcGIS/rest/services/fieldscope_cb_1/smith/MapServer/tile/6/24/18.png" style="height:16px" />',
+      legendHTML: '<p class="legendTitle">John Smith Trail</p>' +
+                       '<p class="legendInfo">' +
+                       '  The Captain John Smith Chesapeake National Historic Trail. ' +
+                       '  <a href="http://www.nps.gov/cajo/">NPS Site</a> ' + 
+                       '  <a href="http://cbf.typepad.com/johnsmith/">Blog</a>' +
+                       '</p>' +
+                       '<p class="legendDataSource">Data Source: USGS; NG Maps</p>'
+    };
 
+    window.setTimeout(Function.createDelegate(this, function() {
+      // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
+      // constructor again before the first one is finished causes IE6 to hang
+      var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/smith/MapServer",
+                                                                 { opacity: 0.65 },
+                                                                 Function.createDelegate(this, function(layer) {
+                                                                  this.layers.smithtrail.tileLayer = layer;
+                                                                    if (this.layers.smithtrail.IsVisible()) {
+                                                                     this.UpdateMapType();
+                                                                   }
+                                                                 }));
+    }), 0);
+    
     // Chesapeake "Then" layer
     var thenProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
     thenProvider.keyword = "thenjs";
@@ -1153,32 +1198,29 @@ FieldScope.Application = function(savedState,
           this.layers.cbibs,
           this.layers.photos,
           [{ name: "Chesapeake Then & Now",
-            id: "FieldScope.LayerGroup[thenAndNow]",
-            visible: savedState ? savedState.thenAndNowOpen : false
-          },
+             id: "FieldScope.LayerGroup[thenAndNow]",
+             visible: savedState ? savedState.thenAndNowOpen : false },
             this.layers.then,
-            this.layers.now],
+            this.layers.now,
+            this.layers.smithtrail],
           [{ name: "Boundaries",
-            id: "FieldScope.LayerGroup[boundaries]",
-            visible: savedState ? savedState.boundariesOpen : true
-          },
+             id: "FieldScope.LayerGroup[boundaries]",
+             visible: savedState ? savedState.boundariesOpen : true },
             this.layers.studyArea,
             this.layers.watersheds,
             this.layers.states,
             this.layers.physiography],
           [{ name: "Land Use",
-            id: "FieldScope.LayerGroup[landuse]",
-            visible: savedState ? savedState.landuseOpen : true
-          },
+              id: "FieldScope.LayerGroup[landuse]",
+            visible: savedState ? savedState.landuseOpen : true },
             this.layers.landcover,
             this.layers.permeability,
             this.layers.impervious,
             this.layers.agriculture,
             this.layers.nutrients],
           [{ name: "Basemap",
-            id: "FieldScope.LayerGroup[basemap]",
-            visible: savedState ? savedState.basemapOpen : true
-          },
+             id: "FieldScope.LayerGroup[basemap]",
+             visible: savedState ? savedState.basemapOpen : true },
             this.layers.streets,
             this.layers.bathymetry,
             this.layers.satellite,
@@ -1242,6 +1284,7 @@ FieldScope.Application = function(savedState,
       observationsVisible: this.layers.observations.IsVisible(),
       studyAreaVisible: this.layers.studyArea.IsVisible(),
       physiographyVisible: this.layers.physiography.IsVisible(),
+      smithtrailVisible: this.layers.smithtrail.IsVisible(),
       thenAndNowOpen: FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[thenAndNow]")),
       boundariesOpen: FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[boundaries]")),
       landuseOpen: FieldScope.DomUtils.visible($get("FieldScope.LayerGroup[landuse]")),
