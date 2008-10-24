@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Text;
 using ESRI.ArcGIS.ADF.ArcGISServer;
 
 namespace ArcGIS {
@@ -153,6 +154,91 @@ namespace ArcGIS {
             }
             graphics.Dispose();
             //result.MakeTransparent(result.GetPixel(0, 0));
+            return result;
+        }
+
+        public static StringBuilder GetLegendJson (string serviceUri) {
+            StringBuilder result = new StringBuilder();
+            result.Append("[");
+            MapServerProxy proxy = new MapServerProxy(serviceUri);
+            string mapName = proxy.GetDefaultMapName();
+            ImageType imageType = new ImageType();
+            imageType.ImageFormat = esriImageFormat.esriImageBMP;
+            imageType.ImageReturnType = esriImageReturnType.esriImageReturnMimeData;
+
+            MapServerLegendInfo[] legends = proxy.GetLegendInfo(mapName, null, null, imageType);
+            if (legends != null && legends.Length > 0) {
+                bool firstLegend = true;
+                foreach (MapServerLegendInfo legend in legends) {
+                    if (firstLegend) {
+                        firstLegend = false;
+                    } else {
+                        result.Append(",");
+                    }
+                    result.Append("{");
+                    if (legend.Name.Length > 0) {
+                        result.Append("\"Name\":\"");
+                        result.Append(legend.Name);
+                        result.Append("\",");
+                    }
+                    result.Append("\"Groups\":[");
+                    bool firstGroup = true;
+                    foreach (MapServerLegendGroup group in legend.LegendGroups) {
+                        if (firstGroup) {
+                            firstGroup = false;
+                        } else {
+                            result.Append(",");
+                        }
+                        result.Append("{");
+                        if (group.Heading.Length > 0) {
+                            result.Append("\"Heading\":\"");
+                            result.Append(group.Heading);
+                            result.Append("\",");
+                        }
+                        result.Append("\"Entries\":[");
+                        bool firstEntry = true;
+                        for (int i = 0; i < group.LegendClasses.Length; i += 1) {
+                            MapServerLegendClass legendClass = group.LegendClasses[i];
+                            if (firstEntry) {
+                                firstEntry = false;
+                            } else {
+                                result.Append(",");
+                            }
+                            result.Append("{\"Label\":\"");
+                            result.Append(legendClass.Label);
+                            result.Append("\",");
+                            Bitmap colors = new Bitmap(new System.IO.MemoryStream(legendClass.SymbolImage.ImageData));
+                            //colors.Save(@"E:\arcgisserver\arcgisoutput\Class" + (i++).ToString() + ".jpg");
+                            System.Drawing.Color lc = colors.GetPixel(2, 2);
+                            result.Append("\"LineColor\":{\"r\":");
+                            result.Append(lc.R);
+                            result.Append(",\"g\":");
+                            result.Append(lc.G);
+                            result.Append(",\"b\":");
+                            result.Append(lc.B);
+                            result.Append("},");
+                            int sampleX = colors.Width / 2;
+                            int sampleY;
+                            if (group.LegendClasses.Length == 1) {
+                                sampleY = colors.Height / 2;
+                            } else {
+                                sampleY = (int)(3 + ((colors.Height - 6) * (i / (group.LegendClasses.Length - 1.0))));
+                            }
+                            System.Drawing.Color fc = colors.GetPixel(sampleX, sampleY);
+                            result.Append("\"FillColor\":{\"r\":");
+                            result.Append(fc.R);
+                            result.Append(",\"g\":");
+                            result.Append(fc.G);
+                            result.Append(",\"b\":");
+                            result.Append(fc.B);
+                            result.Append("}}");
+                        }
+                        result.Append("]}");
+                    }
+                    result.Append("]}");
+                }
+                result.Append("]");
+            }
             return result;
         }
     }
