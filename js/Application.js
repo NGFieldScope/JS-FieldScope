@@ -984,10 +984,10 @@ FieldScope.Application = function(savedState,
       legendHTML: '<p class="legendTitle">John Smith Trail</p>' +
                        '<p class="legendInfo">' +
                        '  The Captain John Smith Chesapeake National Historic Trail. ' +
-                       '  <a href="http://www.nps.gov/cajo/">NPS Site</a> ' + 
+                       '  <a href="http://www.nps.gov/cajo/">NPS Site</a> |' + 
                        '  <a href="http://cbf.typepad.com/johnsmith/">Blog</a>' +
                        '</p>' +
-                       '<p class="legendDataSource">Data Source: USGS; NG Maps</p>'
+                       '<p class="legendDataSource">Data Source: USGS; National Park Service</p>'
     };
 
     window.setTimeout(Function.createDelegate(this, function() {
@@ -1197,7 +1197,7 @@ FieldScope.Application = function(savedState,
           this.layers.observations,
           this.layers.cbibs,
           this.layers.photos,
-          [{ name: "Chesapeake Then & Now",
+          [{ name: "Chesapeake History",
              id: "FieldScope.LayerGroup[thenAndNow]",
              visible: savedState ? savedState.thenAndNowOpen : false },
             this.layers.then,
