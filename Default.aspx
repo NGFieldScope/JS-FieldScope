@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>Chesapeake Bay FieldScope Prototype 1.24</title>
+    <title>Chesapeake Bay FieldScope Prototype 1.25</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -14,21 +14,31 @@
     <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1"></script>
     <script type="text/javascript" src="js/HtmlControl/HtmlControl.js"></script>
   
-  <!-- development version scripts 
+  <!-- development version scripts -->
     <script type="text/javascript" src="js/extinfowindow/extinfowindow.js"></script>
     <script type="text/javascript" 
             src="js/dojo-1.1.1/dojo/dojo.js.uncompressed.js" 
             djConfig="isDebug:true, parseOnLoad:false, usePlainJson:true"></script>
     <script type="text/javascript" src="js/swfobject/swfobject.js"></script>
-  -->
-  <!-- release version scripts -->
+    <script type="text/javascript">Observation_Service = "observations_test";</script>
+    <script type="text/javascript">
+      Observation_Service = { map: "/ArcGIS/rest/services/fieldscope_cb_2/observations_test/MapServer/0",
+                              wfs: "/ArcGIS/services/fieldscope_cb_2/observations_test",
+                              prefix: "observations_test" };
+    </script>
+  
+  <!-- release version scripts 
     <script type="text/javascript" src="js/extinfowindow/extinfowindow_packed.js"></script>
     <script type="text/javascript" 
             src="js/dojo-1.1.1/dojo/dojo.js" 
             djConfig="parseOnLoad:false, usePlainJson:true"></script>
     <script type="text/javascript" src="js/swfobject/swfobject_packed.js"></script>
-  
-  
+    <script type="text/javascript">
+      Observation_Service = { map: "/ArcGIS/rest/services/fieldscope_cb_1/observations/MapServer/0",
+                              wfs: "/ArcGIS/services/fieldscope_cb_1/observations",
+                              prefix: "observations" };
+    </script>
+  -->
     <script type="text/javascript">
 //<![CDATA[
       /*globals dojo dijit $addHandler $get FieldScope application editUserDialog feedbackDialog */

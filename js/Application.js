@@ -38,10 +38,10 @@ FieldScope.AsyncLayerController.registerClass('FieldScope.AsyncLayerController')
 // Application class
 
 FieldScope.Application = function(savedState,
-                                   mapDiv,
-                                   updateLayerControlsFn,
-                                   getSearchTextFn,
-                                   appendSearchResultsFn) {
+                                  mapDiv,
+                                  updateLayerControlsFn,
+                                  getSearchTextFn,
+                                  appendSearchResultsFn) {
 
   this.urlPrefix = "http://" + FieldScope.StringUtils.removePortNumber(location.host);
 
@@ -963,7 +963,7 @@ FieldScope.Application = function(savedState,
                                                                    }
                                                                  }));
     }), 0);
-    
+
     // John Smith Trail layer
     this.layers.smithtrail = {
       name: "John Smith Trail",
@@ -984,7 +984,7 @@ FieldScope.Application = function(savedState,
       legendHTML: '<p class="legendTitle">John Smith Trail</p>' +
                        '<p class="legendInfo">' +
                        '  The Captain John Smith Chesapeake National Historic Trail. ' +
-                       '  <a href="http://www.nps.gov/cajo/">NPS Site</a> |' + 
+                       '  <a href="http://www.nps.gov/cajo/">NPS Site</a> |' +
                        '  <a href="http://cbf.typepad.com/johnsmith/">Blog</a>' +
                        '</p>' +
                        '<p class="legendDataSource">Data Source: USGS; National Park Service</p>'
@@ -996,13 +996,13 @@ FieldScope.Application = function(savedState,
       var dummy = new esri.arcgis.gmaps.TiledMapServiceLayer(this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/smith/MapServer",
                                                                  { opacity: 0.65 },
                                                                  Function.createDelegate(this, function(layer) {
-                                                                  this.layers.smithtrail.tileLayer = layer;
-                                                                    if (this.layers.smithtrail.IsVisible()) {
+                                                                   this.layers.smithtrail.tileLayer = layer;
+                                                                   if (this.layers.smithtrail.IsVisible()) {
                                                                      this.UpdateMapType();
                                                                    }
                                                                  }));
     }), 0);
-    
+
     // Chesapeake "Then" layer
     var thenProvider = new FieldScope.MetaLens.GDataProvider(this.map, MetaLensService, "http://focus.metalens.org");
     thenProvider.keyword = "thenjs";
@@ -1087,7 +1087,7 @@ FieldScope.Application = function(savedState,
     this.layers.cbibs.SetVisible(savedState ? savedState.cbibsVisible : false);
 
     // Student observations layer
-    var observationsUrl = this.urlPrefix + "/ArcGIS/rest/services/fieldscope_cb_1/observations/MapServer/0";
+    var observationsUrl = this.urlPrefix + Observation_Service.map;
     var observationsProvider = new FieldScope.ArcGISServer.GDataProvider(this.mapExtension, observationsUrl);
     observationsProvider.icon = new GIcon(null, "images/beaker.gif");
     observationsProvider.icon.shadow = "images/beaker-shadow.png";
@@ -1198,29 +1198,33 @@ FieldScope.Application = function(savedState,
           this.layers.cbibs,
           this.layers.photos,
           [{ name: "Chesapeake History",
-             id: "FieldScope.LayerGroup[thenAndNow]",
-             visible: savedState ? savedState.thenAndNowOpen : false },
+            id: "FieldScope.LayerGroup[thenAndNow]",
+            visible: savedState ? savedState.thenAndNowOpen : false
+          },
             this.layers.then,
             this.layers.now,
             this.layers.smithtrail],
           [{ name: "Boundaries",
-             id: "FieldScope.LayerGroup[boundaries]",
-             visible: savedState ? savedState.boundariesOpen : true },
+            id: "FieldScope.LayerGroup[boundaries]",
+            visible: savedState ? savedState.boundariesOpen : true
+          },
             this.layers.studyArea,
             this.layers.watersheds,
             this.layers.states,
             this.layers.physiography],
           [{ name: "Land Use",
-              id: "FieldScope.LayerGroup[landuse]",
-            visible: savedState ? savedState.landuseOpen : true },
+            id: "FieldScope.LayerGroup[landuse]",
+            visible: savedState ? savedState.landuseOpen : true
+          },
             this.layers.landcover,
             this.layers.permeability,
             this.layers.impervious,
             this.layers.agriculture,
             this.layers.nutrients],
           [{ name: "Basemap",
-             id: "FieldScope.LayerGroup[basemap]",
-             visible: savedState ? savedState.basemapOpen : true },
+            id: "FieldScope.LayerGroup[basemap]",
+            visible: savedState ? savedState.basemapOpen : true
+          },
             this.layers.streets,
             this.layers.bathymetry,
             this.layers.satellite,
@@ -1232,8 +1236,8 @@ FieldScope.Application = function(savedState,
     //
     this.mouseModes.navigate = new FieldScope.NavigateMouseMode();
     this.mouseModes.placeObservation = new FieldScope.Observation.MouseMode(this.layers.observations.asyncLayer,
-                                                                            this.urlPrefix + "/ArcGIS/services/fieldscope_cb_1/observations",
-                                                                            "observations");
+                                                                            this.urlPrefix + Observation_Service.wfs,
+                                                                            Observation_Service.prefix);
     this.mouseModes.placePhoto = new FieldScope.MetaLens.MouseMode(this.layers.photos.asyncLayer, "http://focus.metalens.org");
     this.mouseModes.identify = new FieldScope.InfoMouseMode([this.layers.watersheds,
                                                              this.layers.physiography,
