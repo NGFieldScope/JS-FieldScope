@@ -675,7 +675,7 @@ FieldScope.Application = function(savedState,
       iconHTML: '<img src="' + this.urlPrefix + '/ArcGIS/rest/services/fieldscope_cb_1/landcover/MapServer/tile/10/392/295.png" style="height:16px" />',
       legendHTML: '<p class="legendTitle">Land Cover</p>' +
                       '<img src="ArcGISLegendService.ashx?srv=' + encodeURIComponent(this.urlPrefix + '/ArcGIS/services/fieldscope_cb_1/landcover/MapServer') + '" />' +
-                      '<p class="legendDataSource">Data Source: Chesapeake Bay Program (Watershed Model v5.0)</p>'
+                      '<p class="legendDataSource">USGS; Chesapeake Bay Program; University of Maryland Regional Earth Science Applications Center (RESAC)</p>'
     };
     window.setTimeout(Function.createDelegate(this, function() {
       // We have to do this with setTimeout, because calling TiledMapServiceLayer's 
