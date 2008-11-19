@@ -5,6 +5,10 @@ public partial class RequestAccount : System.Web.UI.Page {
 
     protected void Page_Load (object sender, EventArgs e) { }
 
+    protected void CancelButton_Click (object sender, EventArgs e) {
+        Response.Redirect("Login.aspx");
+    }
+
     protected void NewUserButton_Click (object sender, EventArgs e) {
         string username = FieldScope_Username.Text;
         if (username.Length == 0) {
@@ -30,7 +34,7 @@ public partial class RequestAccount : System.Web.UI.Page {
             FieldScope_NewUser_ErrorMessage.Visible = true;
             return;
         }
-        
+
         StringBuilder msg = new StringBuilder();
         msg.Append("A user has requested a new FieldScope account: ");
         msg.AppendLine();
@@ -43,6 +47,9 @@ public partial class RequestAccount : System.Web.UI.Page {
         msg.Append("         email: ");
         msg.Append(email);
         msg.AppendLine();
+        msg.Append("         notes: ");
+        msg.AppendLine(FieldScope_Notes.Text);
+        msg.AppendLine();
         msg.AppendLine();
         msg.AppendLine("--");
         msg.AppendLine("FieldScope");
@@ -50,7 +57,7 @@ public partial class RequestAccount : System.Web.UI.Page {
         Utilities.Email.Send(new string[] { "soconnor@ngs.org", "ERussell@ngs.org" },
                              "FieldScope Account Request",
                              msg.ToString());
-        
+
         Response.Redirect("RequestSubmitted.aspx");
     }
 }
