@@ -11,16 +11,16 @@
       <div>
 	      <table width="385px">
 	        <tr>
-	          <td align="left" colspan="2" style="font-weight:bold">
-	            Request A New FieldScope User Account:
-	          </td>
-	        </tr>
-	        <tr>
-	          <td align="left" colspan="2" style="font-size:small">
-	            Please note that user accounts are only for teachers and classrooms currently pilot-testing FieldScope. 
-	            All of the same functionality is available as a guest user, except the ability to enter new data. If 
-	            you are not a pilot teacher or student and feel you still need an account, please add a note letting 
-	            the FieldScope team know why.
+	          <td align="left" colspan="2">
+	            <p style="font-weight:bold">
+	              Request A New FieldScope User Account:
+	            </p>
+	            <p style="font-size:small;margin-bottom:12px">
+	              Please note that user accounts are only for teachers and classrooms currently pilot-testing FieldScope. 
+	              All of the same functionality is available as a guest user, except the ability to enter new data. If 
+	              you are not a pilot teacher or student and feel you still need an account, please add a note letting 
+	              the FieldScope team know why.
+	            </p>
 	          </td>
 	        </tr>
 	        <tr>
