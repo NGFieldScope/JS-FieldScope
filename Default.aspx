@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head id="Head1" runat="server">
-    <title>Chesapeake Bay FieldScope Prototype 1.26</title>
+    <title>Chesapeake Bay FieldScope Prototype 1.27</title>
     <style type="text/css">
       @import "js/dojo-1.1.1/dijit/themes/tundra/tundra.css";
       @import "js/dojo-1.1.1/dojo/resources/dojo.css";
@@ -10,7 +10,7 @@
       @import "css/App.css";
     </style>
     
-    <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQkzReMT6KcnZeGz7n-Q5b7By3ebRQHjl1BuehZRVJFoqAs85jHN9ZOUg"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWNN8v7R4waUa5Xh7F5YzNRQxsQLtNfArA_uPdUARZjQg3f0wOxSz3njof9IPIUra_8sDBvDhJkqQIQ"></script>
     <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/gmaps/?v=1"></script>
     <script type="text/javascript" src="js/HtmlControl/HtmlControl.js"></script>
   
