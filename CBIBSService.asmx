@@ -10,9 +10,9 @@ using System.Web.Services;
 public class CBIBSService : System.Web.Services.WebService {
   
   public CBIBSService () { }
-  
-  [WebMethod(Description = "Get current measurements for all CBIBS platforms")]
-  [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+
+  [WebMethod]
+  [ScriptMethod(UseHttpGet = true)]
   public CBIBS.PlatformMeasurements[] GetAllCurrentReadings () {
     return CBIBS.Service.GetAllCurrentReadings("CBIBS");
   }
